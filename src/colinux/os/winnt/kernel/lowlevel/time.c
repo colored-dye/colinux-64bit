@@ -14,7 +14,7 @@
 #include <colinux/os/kernel/time.h>
 #include <colinux/os/timer.h>
 
-uintptr_t co_os_get_time()
+unsigned long co_os_get_time()
 {
 	LARGE_INTEGER CurrentTime;
 
@@ -44,7 +44,7 @@ void co_os_get_timestamp_freq(co_timestamp_t *dts, co_timestamp_t *freq)
 	}
 }
 
-uintptr_t co_os_get_cpu_khz(void)
+unsigned long co_os_get_cpu_khz(void)
 {
 	NTSTATUS status;
 	static ULONG mhz = 0;

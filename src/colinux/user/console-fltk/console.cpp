@@ -135,7 +135,7 @@ console_main_window_t::console_main_window_t(console_window_t* console)
 
 int console_main_window_t::handle(int event)
 {
-	int last_focus = keyboard_focus;
+	long last_focus = keyboard_focus;
 	int x, y;
 
 	x = Fl::event_x();
@@ -181,6 +181,8 @@ int console_main_window_t::handle(int event)
 
 console_window_t::console_window_t()
 {
+	co_rc_t rc;
+
 	/* Default settings */
 	start_parameters.attach_id = CO_INVALID_ID;
 	attached_id	  	   = CO_INVALID_ID;
@@ -188,7 +190,7 @@ console_window_t::console_window_t()
 	window		  	   = 0;
 	widget	          	   = 0;
 	resized_on_attach 	   = PTRUE;
-	co_reactor_create(&reactor);
+	rc = co_reactor_create(&reactor);
 }
 
 console_window_t::~console_window_t()
@@ -405,12 +407,12 @@ console_window_t* g_console;
 
 co_rc_t console_window_t::message_receive(co_reactor_user_t user,
 		                          unsigned char*    buffer,
-		                          uintptr_t     size)
+		                          unsigned long     size)
 {
 	co_message_t* message;
-	uintptr_t message_size;
-	intptr_t          size_left = size;
-	intptr_t          position  = 0;
+	unsigned long message_size;
+	long          size_left = size;
+	long          position  = 0;
 
 	while (size_left > 0) {
 		message      = (typeof(message))(&buffer[position]);

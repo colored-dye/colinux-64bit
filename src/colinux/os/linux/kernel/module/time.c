@@ -14,7 +14,7 @@
 #include <colinux/common/common.h>
 #include <colinux/os/timer.h>
 
-uintptr_t co_os_get_time(void)
+unsigned long co_os_get_time(void)
 {
 	return get_seconds();
 }
@@ -37,7 +37,7 @@ void co_os_get_timestamp_freq(co_timestamp_t *dts, co_timestamp_t *freq)
 		freq->quad = 1000000;
 }
 
-uintptr_t co_os_get_cpu_khz(void)
+unsigned long co_os_get_cpu_khz(void)
 {
 	return cpu_khz;
 }

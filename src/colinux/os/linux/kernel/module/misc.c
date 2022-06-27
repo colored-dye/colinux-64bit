@@ -12,12 +12,12 @@
 #include <asm/io.h>
 #include <colinux/os/kernel/misc.h>
 
-uintptr_t co_os_virt_to_phys(void *addr)
+unsigned long co_os_virt_to_phys(void *addr)
 {
 	return virt_to_phys(addr);
 }
 
-co_rc_t co_os_physical_memory_pages(uintptr_t *pages)
+co_rc_t co_os_physical_memory_pages(unsigned long *pages)
 {
 	*pages = num_physpages;
 

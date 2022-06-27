@@ -8,15 +8,6 @@
  *
  */
 
-
-#ifdef WIN64
-/*
-  Hack to fix intrin.h externals
-  src/colinux/os/winnt/build/driver.o:mutex.c:(.text+0xb9e9): undefined reference to `__readcr8'
- */
-#include <conio.h>
-#endif
-
 #include "../ddk.h"
 
 #include <colinux/os/alloc.h>
@@ -46,7 +37,8 @@ co_rc_t co_os_mutex_create(co_os_mutex_t *mutex_out)
 
 void co_os_mutex_acquire(co_os_mutex_t mutex)
 {
-	KeWaitForMutexObject(&mutex->mutex, UserRequest,
+	NTSTATUS status;
+	status = KeWaitForMutexObject(&mutex->mutex, UserRequest,
 				      KernelMode, FALSE, NULL);
 
 }

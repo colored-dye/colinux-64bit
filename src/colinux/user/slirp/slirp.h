@@ -20,20 +20,18 @@ typedef uint32_t u_int32_t;
 typedef uint64_t u_int64_t;
 typedef char *caddr_t;
 
-# include <winsock2.h>
 # include <windows.h>
+# include <winsock2.h>
 # include <ws2tcpip.h>		/* for 'socklen_t' */
 # include <sys/timeb.h>
 # include <iphlpapi.h>
 
-#ifndef _WIN64
 # define EWOULDBLOCK WSAEWOULDBLOCK
 # define EINPROGRESS WSAEINPROGRESS
 # define ENOTCONN WSAENOTCONN
 # define EHOSTUNREACH WSAEHOSTUNREACH
 # define ENETUNREACH WSAENETUNREACH
 # define ECONNREFUSED WSAECONNREFUSED
-#endif
 #else
 # define ioctlsocket ioctl
 # define closesocket(s) close(s)
@@ -253,7 +251,7 @@ void if_start _P((struct ttys *));
 #endif
 
 #ifndef HAVE_GETHOSTID
- int gethostid _P((void));
+ long gethostid _P((void));
 #endif
 
 void lprint _P((const char *, ...));

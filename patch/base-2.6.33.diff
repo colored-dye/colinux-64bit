@@ -44,7 +44,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  	select HAVE_ARCH_KGDB
  	select HAVE_ARCH_TRACEHOOK
 -	select HAVE_GENERIC_DMA_COHERENT if X86_32
-+	select HAVE_GENERIC_DMA_COHERENT if (!COOPERATIVE)
++	select HAVE_GENERIC_DMA_COHERENT if (X86_32 && !COOPERATIVE)
  	select HAVE_EFFICIENT_UNALIGNED_ACCESS
  	select USER_STACKTRACE_SUPPORT
  	select HAVE_DMA_API_DEBUG
@@ -104,23 +104,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  	---help---
  	  Enabled scanning of DMI to identify machine quirks. Say Y
  	  here unless you have verified that your setup is not
-@@ -628,6 +636,7 @@
- 	default y
- 	select SWIOTLB
- 	depends on X86_64 && PCI && K8_NB
-+	depends on !COOPERATIVE
- 	---help---
- 	  Support for full DMA access of devices with 32bit memory access only
- 	  on systems with more than 3GB. This is usually needed for USB,
-@@ -697,6 +706,7 @@
- # need this always selected by IOMMU for the VIA workaround
- config SWIOTLB
- 	def_bool y if X86_64
-+	depends on !COOPERATIVE
- 	---help---
- 	  Support for software bounce buffers used on x86-64 systems
- 	  which don't have a hardware IOMMU (e.g. the current generation
-@@ -780,13 +790,19 @@
+@@ -780,6 +788,10 @@
  	  to use it. If you say Y here even though your machine doesn't have
  	  an IO-APIC, then the kernel will still run with no slowdown at all.
  
@@ -131,16 +115,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  config X86_LOCAL_APIC
  	def_bool y
  	depends on X86_64 || SMP || X86_32_NON_STANDARD || X86_UP_APIC
-+	depends on !COOPERATIVE
- 
- config X86_IO_APIC
- 	def_bool y
- 	depends on X86_64 || SMP || X86_32_NON_STANDARD || X86_UP_APIC
-+	depends on !COOPERATIVE
- 
- config X86_VISWS_APIC
- 	def_bool y
-@@ -894,6 +910,7 @@
+@@ -894,6 +906,7 @@
  
  config I8K
  	tristate "Dell laptop support"
@@ -148,7 +123,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  	---help---
  	  This adds a driver to safely access the System Management Mode
  	  of the CPU on the Dell Inspiron 8000. The System Management Mode
-@@ -915,6 +932,7 @@
+@@ -915,6 +928,7 @@
  config X86_REBOOTFIXUPS
  	bool "Enable X86 board specific fixups for reboot"
  	depends on X86_32
@@ -156,7 +131,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  	---help---
  	  This enables chipset and/or board specific fixups to be done
  	  in order to get reboot to work correctly. This is only needed on
-@@ -994,6 +1012,7 @@
+@@ -994,6 +1008,7 @@
  	default HIGHMEM4G if !X86_NUMAQ
  	default HIGHMEM64G if X86_NUMAQ
  	depends on X86_32
@@ -164,7 +139,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  
  config NOHIGHMEM
  	bool "off"
-@@ -1100,6 +1119,7 @@
+@@ -1100,6 +1115,7 @@
  config X86_PAE
  	bool "PAE (Physical Address Extension) Support"
  	depends on X86_32 && !HIGHMEM4G
@@ -172,7 +147,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  	---help---
  	  PAE is required for NX support, and furthermore enables
  	  larger swapspace support for non-overcommit purposes. It
-@@ -1230,6 +1250,7 @@
+@@ -1230,6 +1246,7 @@
  config ARCH_SPARSEMEM_ENABLE
  	def_bool y
  	depends on X86_64 || NUMA || (EXPERIMENTAL && X86_32) || X86_32_NON_STANDARD
@@ -180,7 +155,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  	select SPARSEMEM_STATIC if X86_32
  	select SPARSEMEM_VMEMMAP_ENABLE if X86_64
  
-@@ -1336,6 +1357,7 @@
+@@ -1336,6 +1353,7 @@
  config MTRR
  	bool
  	default y
@@ -188,7 +163,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  	prompt "MTRR (Memory Type Range Register) support" if EMBEDDED
  	---help---
  	  On Intel P6 family processors (Pentium Pro, Pentium II and later)
-@@ -1470,6 +1492,7 @@
+@@ -1470,6 +1488,7 @@
  
  config KEXEC
  	bool "kexec system call"
@@ -196,7 +171,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  	---help---
  	  kexec is a system call that implements the ability to shutdown your
  	  current kernel, and to start another kernel.  It is like a reboot
-@@ -1603,6 +1626,26 @@
+@@ -1603,6 +1622,26 @@
  	    automatically on SMP systems. )
  	  Say N if you want to disable CPU hotplug.
  
@@ -223,7 +198,7 @@ Index: linux-2.6.33-source/arch/x86/Kconfig
  config COMPAT_VDSO
  	def_bool y
  	prompt "Compat VDSO support"
-@@ -1676,6 +1719,7 @@
+@@ -1676,6 +1715,7 @@
  	depends on NUMA
  
  menu "Power management and ACPI options"
@@ -267,7 +242,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/Makefile
  obj-y			+= traps.o irq.o irq_$(BITS).o dumpstack_$(BITS).o
 -obj-y			+= time.o ioport.o ldt.o dumpstack.o
 -obj-y			+= setup.o x86_init.o i8259.o irqinit.o
-+obj-y			+= time.o ldt.o dumpstack.o
++obj-y			+= ldt.o dumpstack.o
 +obj-y			+= setup.o irqinit.o
  obj-$(CONFIG_X86_VISWS)	+= visws_quirks.o
 +ifndef CONFIG_COOPERATIVE
@@ -305,15 +280,10 @@ Index: linux-2.6.33-source/arch/x86/kernel/Makefile
  apm-y				:= apm_32.o
  obj-$(CONFIG_APM)		+= apm.o
  obj-$(CONFIG_SMP)		+= smp.o
-@@ -128,5 +140,23 @@
- 	obj-$(CONFIG_AMD_IOMMU)		+= amd_iommu_init.o amd_iommu.o
- 
+@@ -130,3 +142,19 @@
  	obj-$(CONFIG_PCI_MMCONFIG)	+= mmconf-fam10h_64.o
--	obj-y				+= vsmp_64.o
-+ifndef CONFIG_COOPERATIVE
-+	#obj-y				+= vsmp_64.o
-+endif
-+endif
+ 	obj-y				+= vsmp_64.o
+ endif
 +
 +###
 +# coLinux specific files
@@ -325,11 +295,11 @@ Index: linux-2.6.33-source/arch/x86/kernel/Makefile
 +obj-y			+= x86_init_cooperative.o
 +else
 +obj-y			+= i8253.o i8259.o
-+obj-y			+= ioport.o
++obj-y			+= time.o ioport.o
 +obj-y			+= e820.o
 +obj-y			+= reboot.o
 +obj-y			+= x86_init.o
- endif
++endif
 Index: linux-2.6.33-source/arch/x86/kernel/cooperative.c
 ===================================================================
 --- /dev/null
@@ -396,7 +366,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/cooperative.c
 +	/*
 +	 * Delete NT
 +	 */
-+	__asm__("pushfq ; andl $0xffffbfff,(%esp) ; popfq");
++	__asm__("pushfl ; andl $0xffffbfff,(%esp) ; popfl");
 +
 +	t->x86_tss.io_bitmap_base = offsetof(struct tss_struct, io_bitmap);
 +
@@ -454,13 +424,13 @@ Index: linux-2.6.33-source/arch/x86/kernel/cooperative.c
 +void co_switch_wrapper(void)
 +{
 +	/* taken from irq.c: debugging check for stack overflow */
-+//	long esp;
++	long esp;
 +
-+//	__asm__ __volatile__("andl %%esp,%0" : "=r" (esp) : "0" (THREAD_SIZE - 1));
-+//	if (unlikely(esp < (sizeof(struct thread_info) + STACK_WARN))) {
-+//		printk("co_switch_wrapper: stack overflow: %ld\n", esp - sizeof(struct thread_info));
-+//		co_terminate(CO_TERMINATE_STACK_OVERFLOW);
-+//	}
++	__asm__ __volatile__("andl %%esp,%0" : "=r" (esp) : "0" (THREAD_SIZE - 1));
++	if (unlikely(esp < (sizeof(struct thread_info) + STACK_WARN))) {
++		printk("co_switch_wrapper: stack overflow: %ld\n", esp - sizeof(struct thread_info));
++		co_terminate(CO_TERMINATE_STACK_OVERFLOW);
++	}
 +
 +#ifdef CONFIG_COLINUX_STATS
 +	co_proc_counts.switches[co_passage_page->operation]++;
@@ -582,34 +552,6 @@ Index: linux-2.6.33-source/arch/x86/kernel/entry_32.S
  	jmp error_code
  	CFI_ENDPROC
  END(device_not_available)
-Index: linux-2.6.33-source/arch/x86/kernel/entry_64.S
-===================================================================
---- linux-2.6.33-source.orig/arch/x86/kernel/entry_64.S
-+++ linux-2.6.33-source/arch/x86/kernel/entry_64.S
-@@ -975,8 +975,10 @@
- apicinterrupt UV_BAU_MESSAGE \
- 	uv_bau_message_intr1 uv_bau_message_interrupt
- #endif
-+#ifndef CONFIG_COOPERATIVE
- apicinterrupt LOCAL_TIMER_VECTOR \
- 	apic_timer_interrupt smp_apic_timer_interrupt
-+#endif
- apicinterrupt X86_PLATFORM_IPI_VECTOR \
- 	x86_platform_ipi smp_x86_platform_ipi
- 
-@@ -1018,10 +1020,12 @@
- 	reschedule_interrupt smp_reschedule_interrupt
- #endif
- 
-+#ifndef CONFIG_COOPERATIVE
- apicinterrupt ERROR_APIC_VECTOR \
- 	error_interrupt smp_error_interrupt
- apicinterrupt SPURIOUS_APIC_VECTOR \
- 	spurious_interrupt smp_spurious_interrupt
-+#endif
- 
- #ifdef CONFIG_PERF_EVENTS
- apicinterrupt LOCAL_PENDING_VECTOR \
 Index: linux-2.6.33-source/arch/x86/kernel/head_32.S
 ===================================================================
 --- linux-2.6.33-source.orig/arch/x86/kernel/head_32.S
@@ -654,32 +596,6 @@ Index: linux-2.6.33-source/arch/x86/kernel/head_32.S
  	.long __BOOT_DS
  
  ready:	.byte 0
-Index: linux-2.6.33-source/arch/x86/kernel/head_64.S
-===================================================================
---- linux-2.6.33-source.orig/arch/x86/kernel/head_64.S
-+++ linux-2.6.33-source/arch/x86/kernel/head_64.S
-@@ -197,6 +197,8 @@
- 	/* Make changes effective */
- 	movq	%rax, %cr0
- 
-+/* FIXME: W64: Verify this */
-+ENTRY(co_arch_start_kernel)
- 	/* Setup a boot time stack */
- 	movq stack_start(%rip),%rsp
- 
-@@ -259,7 +260,12 @@
- 	__REFDATA
- 	.align	8
- 	ENTRY(initial_code)
-+/* FIXME: W64: Verify this */
-+#ifdef CONFIG_COOPERATIVE
-+	.quad	start_kernel
-+#else /* CONFIG_COOPERATIVE */
- 	.quad	x86_64_start_kernel
-+#endif
- 	ENTRY(initial_gs)
- 	.quad	INIT_PER_CPU_VAR(irq_stack_union)
- 
 Index: linux-2.6.33-source/arch/x86/kernel/setup.c
 ===================================================================
 --- linux-2.6.33-source.orig/arch/x86/kernel/setup.c
@@ -692,36 +608,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  
  #include <linux/errno.h>
  #include <linux/kernel.h>
-@@ -131,12 +132,16 @@
- #ifdef CONFIG_X86_64
- int default_cpu_present_to_apicid(int mps_cpu)
- {
--	return __default_cpu_present_to_apicid(mps_cpu);
-+/* FIXME: W64: Check is APIC should be supported or not */
-+	//return __default_cpu_present_to_apicid(mps_cpu);
-+	return 0;
- }
- 
- int default_check_phys_apicid_present(int phys_apicid)
- {
--	return __default_check_phys_apicid_present(phys_apicid);
-+/* FIXME: W64: Check is APIC should be supported or not */
-+	//return __default_check_phys_apicid_present(phys_apicid);
-+	return 0;
- }
- #endif
- 
-@@ -204,7 +207,8 @@
- 
- #else
- struct cpuinfo_x86 boot_cpu_data __read_mostly = {
--	.x86_phys_bits = MAX_PHYSMEM_BITS,
-+/* FIXME: W64: Implement correctly */
-+	.x86_phys_bits = 0,//MAX_PHYSMEM_BITS,
- };
- EXPORT_SYMBOL(boot_cpu_data);
- #endif
-@@ -299,8 +302,10 @@
+@@ -299,8 +300,10 @@
  
  static void __init reserve_brk(void)
  {
@@ -732,7 +619,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  
  	/* Mark brk area as locked down and no longer taking any
  	   new allocations */
-@@ -309,6 +314,7 @@
+@@ -309,6 +312,7 @@
  
  #ifdef CONFIG_BLK_DEV_INITRD
  
@@ -740,7 +627,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  #define MAX_MAP_CHUNK	(NR_FIX_BTMAPS << PAGE_SHIFT)
  static void __init relocate_initrd(void)
  {
-@@ -371,9 +377,20 @@
+@@ -371,9 +375,20 @@
  		ramdisk_image, ramdisk_image + ramdisk_size - 1,
  		ramdisk_here, ramdisk_here + ramdisk_size - 1);
  }
@@ -761,7 +648,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  	u64 ramdisk_image = boot_params.hdr.ramdisk_image;
  	u64 ramdisk_size  = boot_params.hdr.ramdisk_size;
  	u64 ramdisk_end   = ramdisk_image + ramdisk_size;
-@@ -410,6 +427,7 @@
+@@ -410,6 +425,7 @@
  	relocate_initrd();
  
  	free_early(ramdisk_image, ramdisk_end);
@@ -769,7 +656,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  }
  #else
  static void __init reserve_initrd(void)
-@@ -417,6 +435,7 @@
+@@ -417,6 +433,7 @@
  }
  #endif /* CONFIG_BLK_DEV_INITRD */
  
@@ -777,7 +664,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  static void __init parse_setup_data(void)
  {
  	struct setup_data *data;
-@@ -482,6 +501,7 @@
+@@ -482,6 +499,7 @@
  		early_iounmap(data, sizeof(*data));
  	}
  }
@@ -785,7 +672,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  
  /*
   * --------- Crashkernel reservation ------------------------------
-@@ -549,6 +569,7 @@
+@@ -549,6 +567,7 @@
  }
  #endif
  
@@ -793,7 +680,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  static struct resource standard_io_resources[] = {
  	{ .name = "dma1", .start = 0x00, .end = 0x1f,
  		.flags = IORESOURCE_BUSY | IORESOURCE_IO },
-@@ -581,6 +602,7 @@
+@@ -581,6 +600,7 @@
  		request_resource(&ioport_resource, &standard_io_resources[i]);
  
  }
@@ -801,7 +688,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  
  /*
   * Note: elfcorehdr_addr is not just limited to vmcore. It is also used by
-@@ -618,6 +640,7 @@
+@@ -618,6 +638,7 @@
  }
  #endif
  
@@ -809,7 +696,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  /* List of systems that have known low memory corruption BIOS problems */
  static struct dmi_system_id __initdata bad_bios_dmi_table[] = {
  #ifdef CONFIG_X86_RESERVE_LOW_64K
-@@ -666,6 +689,7 @@
+@@ -677,6 +698,7 @@
  #endif
  	{}
  };
@@ -817,7 +704,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  
  /*
   * Determine if we were loaded by an EFI loader.  If so, then we have also been
-@@ -740,10 +764,12 @@
+@@ -751,10 +773,12 @@
  
  	x86_init.oem.arch_setup();
  
@@ -830,7 +717,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  
  	copy_edd();
  
-@@ -761,6 +787,9 @@
+@@ -772,6 +796,9 @@
  	bss_resource.start = virt_to_phys(&__bss_start);
  	bss_resource.end = virt_to_phys(&__bss_stop)-1;
  
@@ -840,7 +727,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  #ifdef CONFIG_CMDLINE_BOOL
  #ifdef CONFIG_CMDLINE_OVERRIDE
  	strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
-@@ -793,8 +822,10 @@
+@@ -804,8 +831,10 @@
  	/* Must be before kernel pagetables are setup */
  	vmi_activate();
  
@@ -851,7 +738,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  
  	if (acpi_mps_check()) {
  #ifdef CONFIG_X86_LOCAL_APIC
-@@ -803,16 +834,19 @@
+@@ -814,16 +843,19 @@
  		setup_clear_cpu_cap(X86_FEATURE_APIC);
  	}
  
@@ -871,7 +758,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  	dmi_scan_machine();
  
  	dmi_check_system(bad_bios_dmi_table);
-@@ -824,13 +858,18 @@
+@@ -835,13 +867,16 @@
  	init_hypervisor_platform();
  
  	x86_init.resources.probe_roms();
@@ -884,31 +771,20 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  
 -
 +#ifdef CONFIG_COOPERATIVE
-+/* FIXME: W64: Check this! */
 +	max_pfn = co_boot_params.co_memory_size >> PAGE_SHIFT;
-+	max_low_pfn = max_pfn;
 +#else /* CONFIG_COOPERATIVE */
  #ifdef CONFIG_X86_32
  	if (ppro_with_ram_bug()) {
  		e820_update_range(0x70000000ULL, 0x40000ULL, E820_RAM,
-@@ -862,7 +900,7 @@
- #else
- 	num_physpages = max_pfn;
- 
--	check_x2apic();
-+	//check_x2apic();
- 
- 	/* How many end-of-memory variables you have, grandma! */
- 	/* need this before calling reserve_initrd */
-@@ -874,6 +912,7 @@
- 	high_memory = (void *)__va(max_pfn * PAGE_SIZE - 1) + 1;
- 	max_pfn_mapped = KERNEL_IMAGE_SIZE >> PAGE_SHIFT;
- #endif
+@@ -866,6 +901,7 @@
+ 	mtrr_bp_init();
+ 	if (mtrr_trim_uncached_memory(max_pfn))
+ 		max_pfn = e820_end_of_ram_pfn();
 +#endif /* CONFIG_COOPERATIVE */
  
- #ifdef CONFIG_X86_CHECK_BIOS_CORRUPTION
- 	setup_bios_corruption_check();
-@@ -922,11 +961,11 @@
+ #ifdef CONFIG_X86_32
+ 	/* max_low_pfn get updated here */
+@@ -933,8 +969,6 @@
  		init_ohci1394_dma_on_all_controllers();
  #endif
  
@@ -916,31 +792,16 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
 -
  	reserve_crashkernel();
  
-+#ifndef CONFIG_COOPERATIVE
  	vsmp_init();
-+#endif /* !CONFIG_COOPERATIVE */
- 
- 	io_delay_init();
- 
-@@ -950,7 +989,9 @@
+@@ -961,6 +995,7 @@
  #endif
  
  	initmem_init(0, max_pfn, acpi, k8);
 +	reserve_initrd();
  
-+#ifndef CONFIG_COOPERATIVE
  #ifdef CONFIG_X86_64
  	/*
- 	 * dma32_reserve_bootmem() allocates bootmem which may conflict
-@@ -959,6 +1000,7 @@
- 	 */
- 	dma32_reserve_bootmem();
- #endif
-+#endif /* !CONFIG_COOPERATIVE */
- 
- 	reserve_ibft_region();
- 
-@@ -1007,15 +1049,21 @@
+@@ -1018,15 +1053,21 @@
  
  	kvm_guest_init();
  
@@ -963,7 +824,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  	if (!efi_enabled || (efi_mem_type(0xa0000) != EFI_CONVENTIONAL_MEMORY))
  		conswitchp = &vga_con;
  #elif defined(CONFIG_DUMMY_CONSOLE)
-@@ -1029,6 +1077,7 @@
+@@ -1040,6 +1081,7 @@
  
  #ifdef CONFIG_X86_32
  
@@ -971,7 +832,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/setup.c
  static struct resource video_ram_resource = {
  	.name	= "Video RAM area",
  	.start	= 0xa0000,
-@@ -1041,5 +1090,6 @@
+@@ -1052,5 +1094,6 @@
  	request_resource(&iomem_resource, &video_ram_resource);
  	reserve_standard_io_resources();
  }
@@ -1036,7 +897,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/traps.c
  
  	nmi_exit();
  }
-@@ -549,6 +559,10 @@
+@@ -558,6 +568,10 @@
  	/* Store the virtualized DR6 value */
  	tsk->thread.debugreg6 = dr6;
  
@@ -1047,7 +908,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/traps.c
  	if (notify_die(DIE_DEBUG, "debug", regs, PTR_ERR(&dr6), error_code,
  							SIGTRAP) == NOTIFY_STOP)
  		return;
-@@ -824,6 +838,13 @@
+@@ -833,6 +847,13 @@
  
  	clts();				/* Allow maths ops (or we recurse) */
  
@@ -1127,7 +988,23 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  
  pte_t *kmap_pte;
  pgprot_t kmap_prot;
-@@ -717,7 +725,18 @@
+@@ -471,6 +479,7 @@
+ 
+ void __init native_pagetable_setup_start(pgd_t *base)
+ {
++#ifndef CONFIG_COOPERATIVE
+ 	unsigned long pfn, va;
+ 	pgd_t *pgd;
+ 	pud_t *pud;
+@@ -499,6 +508,7 @@
+ 		pte_clear(NULL, va, pte);
+ 	}
+ 	paravirt_alloc_pmd(&init_mm, __pa(base) >> PAGE_SHIFT);
++#endif /* CONFIG_COOPERATIVE */
+ }
+ 
+ void __init native_pagetable_setup_done(pgd_t *base)
+@@ -717,7 +727,18 @@
  	num_physpages = highend_pfn;
  	high_memory = (void *) __va(highstart_pfn * PAGE_SIZE - 1) + 1;
  #else
@@ -1146,7 +1023,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  	sparse_memory_present_with_active_regions(0);
  	num_physpages = max_low_pfn;
  	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE - 1) + 1;
-@@ -738,8 +757,10 @@
+@@ -738,8 +759,10 @@
  {
  	unsigned long max_zone_pfns[MAX_NR_ZONES];
  	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
@@ -1157,7 +1034,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
  #ifdef CONFIG_HIGHMEM
  	max_zone_pfns[ZONE_HIGHMEM] = highend_pfn;
-@@ -748,6 +769,7 @@
+@@ -748,6 +771,7 @@
  	free_area_init_nodes(max_zone_pfns);
  }
  
@@ -1165,7 +1042,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  static unsigned long __init setup_node_bootmem(int nodeid,
  				 unsigned long start_pfn,
  				 unsigned long end_pfn,
-@@ -768,25 +790,40 @@
+@@ -768,25 +792,40 @@
  
  	return bootmap + bootmap_size;
  }
@@ -1208,7 +1085,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  	for_each_online_node(nodeid) {
  		 unsigned long start_pfn, end_pfn;
  
-@@ -804,6 +841,7 @@
+@@ -804,6 +843,7 @@
  		bootmap = setup_node_bootmem(nodeid, start_pfn, end_pfn,
  						 bootmap);
  	}
@@ -1216,7 +1093,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  
  	after_bootmem = 1;
  }
-@@ -836,6 +874,7 @@
+@@ -836,6 +876,7 @@
   * black magic jumps to work around some nasty CPU bugs, but fortunately the
   * switch to using exceptions got rid of all that.
   */
@@ -1224,7 +1101,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  static void __init test_wp_bit(void)
  {
  	printk(KERN_INFO
-@@ -856,13 +895,16 @@
+@@ -856,13 +897,16 @@
  		printk(KERN_CONT "Ok.\n");
  	}
  }
@@ -1241,7 +1118,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  
  #ifdef CONFIG_FLATMEM
  	BUG_ON(!mem_map);
-@@ -895,15 +937,15 @@
+@@ -895,15 +939,15 @@
  		totalhigh_pages << (PAGE_SHIFT-10));
  
  	printk(KERN_INFO "virtual kernel memory layout:\n"
@@ -1264,7 +1141,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  		FIXADDR_START, FIXADDR_TOP,
  		(FIXADDR_TOP - FIXADDR_START) >> 10,
  
-@@ -911,9 +953,19 @@
+@@ -911,9 +955,19 @@
  		PKMAP_BASE, PKMAP_BASE+LAST_PKMAP*PAGE_SIZE,
  		(LAST_PKMAP*PAGE_SIZE) >> 10,
  #endif
@@ -1285,7 +1162,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  
  		(unsigned long)__va(0), (unsigned long)high_memory,
  		((unsigned long)high_memory - (unsigned long)__va(0)) >> 20,
-@@ -946,11 +998,19 @@
+@@ -946,11 +1000,19 @@
  	BUG_ON(PKMAP_BASE + LAST_PKMAP*PAGE_SIZE	> FIXADDR_START);
  	BUG_ON(VMALLOC_END				> PKMAP_BASE);
  #endif
@@ -1305,7 +1182,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  
  	save_pg_dir();
  	zap_low_mappings(true);
-@@ -972,6 +1032,7 @@
+@@ -972,6 +1034,7 @@
   * This function cannot be __init, since exceptions don't work in that
   * section.  Put this after the callers, so that it cannot be inlined.
   */
@@ -1313,7 +1190,7 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  static noinline int do_test_wp_bit(void)
  {
  	char tmp_reg;
-@@ -991,6 +1052,7 @@
+@@ -991,6 +1054,7 @@
  
  	return flag;
  }
@@ -1321,88 +1198,6 @@ Index: linux-2.6.33-source/arch/x86/mm/init_32.c
  
  #ifdef CONFIG_DEBUG_RODATA
  const int rodata_test_data = 0xC3;
-Index: linux-2.6.33-source/arch/x86/mm/init_64.c
-===================================================================
---- linux-2.6.33-source.orig/arch/x86/mm/init_64.c
-+++ linux-2.6.33-source/arch/x86/mm/init_64.c
-@@ -22,6 +22,7 @@
- #include <linux/pagemap.h>
- #include <linux/bootmem.h>
- #include <linux/proc_fs.h>
-+#include <linux/cooperative_internal.h>
- #include <linux/pci.h>
- #include <linux/pfn.h>
- #include <linux/poison.h>
-@@ -53,6 +54,9 @@
- 
- static unsigned long dma_reserve __initdata;
- 
-+/* colinux start_va */
-+static long co_start_va = 0;
-+
- static int __init parse_direct_gbpages_off(char *arg)
- {
- 	direct_gbpages = 0;
-@@ -528,6 +532,7 @@
- 	return phys_pud_init(pud, addr, end, page_size_mask);
- }
- 
-+#ifndef CONFIG_COOPERATIVE
- unsigned long __meminit
- kernel_physical_mapping_init(unsigned long start,
- 			     unsigned long end,
-@@ -567,11 +572,23 @@
- 
- 	return last_map_addr;
- }
-+#endif /* !CONFIG_COOPERATIVE */
- 
- #ifndef CONFIG_NUMA
- void __init initmem_init(unsigned long start_pfn, unsigned long end_pfn,
- 				int acpi, int k8)
- {
-+#ifdef CONFIG_COOPERATIVE
-+/* FIXME: W64: Check this! */
-+	/* Allocate boot memory from host */
-+	max_low_pfn = max_pfn = co_boot_params.co_memory_size >> PAGE_SHIFT;
-+	min_low_pfn = PFN_UP(__pa((unsigned long)&_end)) + 0x10;
-+	co_start_va = (unsigned long)__va(min_low_pfn << PAGE_SHIFT);
-+	co_alloc_pages(co_start_va, 0x20);
-+
-+	/* Add single region without check via e820_find_active_region */
-+	add_active_range(0, 0, max_low_pfn);
-+#else /* CONFIG_COOPERATIVE */
- 	unsigned long bootmap_size, bootmap;
- 
- 	bootmap_size = bootmem_bootmap_pages(end_pfn)<<PAGE_SHIFT;
-@@ -586,6 +602,7 @@
- 	free_bootmem_with_active_regions(0, end_pfn);
- 	early_res_to_bootmem(0, end_pfn<<PAGE_SHIFT);
- 	reserve_bootmem(bootmap, bootmap_size, BOOTMEM_DEFAULT);
-+#endif /* CONFIG_COOPERATIVE */
- }
- #endif
- 
-@@ -594,7 +611,9 @@
- 	unsigned long max_zone_pfns[MAX_NR_ZONES];
- 
- 	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
-+#ifndef CONFIG_COOPERATIVE
- 	max_zone_pfns[ZONE_DMA] = MAX_DMA_PFN;
-+#endif
- 	max_zone_pfns[ZONE_DMA32] = MAX_DMA32_PFN;
- 	max_zone_pfns[ZONE_NORMAL] = max_pfn;
- 
-@@ -674,7 +693,9 @@
- 	long codesize, reservedpages, datasize, initsize;
- 	unsigned long absent_pages;
- 
-+#ifndef CONFIG_COOPERATIVE
- 	pci_iommu_alloc();
-+#endif
- 
- 	/* clear_bss() already clear the empty_zero_page */
- 
 Index: linux-2.6.33-source/arch/x86/mm/init.c
 ===================================================================
 --- linux-2.6.33-source.orig/arch/x86/mm/init.c
@@ -1659,7 +1454,7 @@ Index: linux-2.6.33-source/arch/x86/include/asm/cooperative.h
 ===================================================================
 --- /dev/null
 +++ linux-2.6.33-source/arch/x86/include/asm/cooperative.h
-@@ -0,0 +1,213 @@
+@@ -0,0 +1,205 @@
 +/*
 + *  linux/include/asm/cooperative.h
 + *
@@ -1672,14 +1467,6 @@ Index: linux-2.6.33-source/arch/x86/include/asm/cooperative.h
 +
 +#ifndef __LINUX_ASM_COOPERATIVE_H__
 +#define __LINUX_ASM_COOPERATIVE_H__
-+
-+#ifdef _WIN64
-+typedef unsigned __int64		co_ulong_t;
-+typedef __int64		co_long_t;
-+#else
-+ typedef unsigned long		co_ulong_t;
-+ typedef long		co_long_t;
-+#endif
 +
 +typedef struct {
 +	unsigned short size;
@@ -1694,34 +1481,34 @@ Index: linux-2.6.33-source/arch/x86/include/asm/cooperative.h
 +typedef struct {
 +	unsigned char border2[0x4];
 +
-+	co_ulong_t cs;
++	unsigned long cs;
 +        #define CO_ARCH_STATE_STACK_CS "0x04"
 +
-+	co_ulong_t ds;
++	unsigned long ds;
 +        #define CO_ARCH_STATE_STACK_DS "0x08"
 +
-+	co_ulong_t es;
++	unsigned long es;
 +        #define CO_ARCH_STATE_STACK_ES "0x0C"
 +
-+	co_ulong_t cr3;
++	unsigned long cr3;
 +        #define CO_ARCH_STATE_STACK_CR3 "0x10"
 +
-+	co_ulong_t cr4;
++	unsigned long cr4;
 +        #define CO_ARCH_STATE_STACK_CR4 "0x14"
 +
-+	co_ulong_t cr2;
++	unsigned long cr2;
 +        #define CO_ARCH_STATE_STACK_CR2 "0x18"
 +
-+	co_ulong_t cr0;
++	unsigned long cr0;
 +        #define CO_ARCH_STATE_STACK_CR0 "0x1C"
 +
 +	x86_gdt_t gdt;
 +        #define CO_ARCH_STATE_STACK_GDT "0x20"
 +
-+	co_ulong_t fs;
++	unsigned long fs;
 +        #define CO_ARCH_STATE_STACK_FS  "0x26"
 +
-+	co_ulong_t gs;
++	unsigned long gs;
 +        #define CO_ARCH_STATE_STACK_GS  "0x2A"
 +
 +	unsigned short ldt;
@@ -1733,67 +1520,67 @@ Index: linux-2.6.33-source/arch/x86/include/asm/cooperative.h
 +	unsigned short tr;
 +        #define CO_ARCH_STATE_STACK_TR  "0x36"
 +
-+	co_ulong_t return_eip;
++	unsigned long return_eip;
 +        #define CO_ARCH_STATE_STACK_RETURN_EIP  "0x38"
 +
-+	co_ulong_t flags;
++	unsigned long flags;
 +        #define CO_ARCH_STATE_STACK_FLAGS "0x3C"
 +
-+	co_ulong_t esp;
++	unsigned long esp;
 +        #define CO_ARCH_STATE_STACK_ESP "0x40"
 +
-+	co_ulong_t ss;
++	unsigned long ss;
 +        #define CO_ARCH_STATE_STACK_SS "0x44"
 +
-+	co_ulong_t dr0;
++	unsigned long dr0;
 +        #define CO_ARCH_STATE_STACK_DR0 "0x48"
 +
-+	co_ulong_t dr1;
++	unsigned long dr1;
 +        #define CO_ARCH_STATE_STACK_DR1 "0x4C"
 +
-+	co_ulong_t dr2;
++	unsigned long dr2;
 +        #define CO_ARCH_STATE_STACK_DR2 "0x50"
 +
-+	co_ulong_t dr3;
++	unsigned long dr3;
 +        #define CO_ARCH_STATE_STACK_DR3 "0x54"
 +
-+	co_ulong_t dr6;
++	unsigned long dr6;
 +        #define CO_ARCH_STATE_STACK_DR6 "0x58"
 +
-+	co_ulong_t dr7;
++	unsigned long dr7;
 +        #define CO_ARCH_STATE_STACK_DR7 "0x5C"
 +
 +	union {
-+		co_ulong_t temp_cr3;
-+		co_ulong_t other_map;
++		unsigned long temp_cr3;
++		unsigned long other_map;
 +	} __attribute__((packed));
 +        #define CO_ARCH_STATE_STACK_TEMP_CR3 "0x60"
 +        #define CO_ARCH_STATE_STACK_OTHERMAP "0x60"
 +
-+	co_ulong_t relocate_eip;
++	unsigned long relocate_eip;
 +        #define CO_ARCH_STATE_STACK_RELOCATE_EIP "0x64"
 +
-+	co_ulong_t pad1;
++	unsigned long pad1;
 +        #define CO_ARCH_STATE_STACK_RELOCATE_EIP_AFTER "0x68"
 +
-+	co_ulong_t va;
++	unsigned long va;
 +        #define CO_ARCH_STATE_STACK_VA "0x6C"
 +
-+	co_ulong_t sysenter_cs;
++	unsigned long sysenter_cs;
 +        #define CO_ARCH_STATE_SYSENTER_CS "0x70"
 +
-+	co_ulong_t sysenter_esp;
++	unsigned long sysenter_esp;
 +        #define CO_ARCH_STATE_SYSENTER_ESP "0x74"
 +
-+	co_ulong_t sysenter_eip;
++	unsigned long sysenter_eip;
 +        #define CO_ARCH_STATE_SYSENTER_EIP "0x78"
 +} __attribute__((packed)) co_arch_state_stack_t;
 +
 +#define CO_MAX_PARAM_SIZE 0x400
 +
 +typedef struct co_arch_passage_page_normal_address_space {
-+	co_ulong_t pgd[0x400];
-+	co_ulong_t pte[2][0x400];
++	unsigned long pgd[0x400];
++	unsigned long pte[2][0x400];
 +} co_arch_passage_page_normal_address_space_t;
 +
 +typedef struct co_arch_passage_page_pae_address_space {
@@ -1808,15 +1595,15 @@ Index: linux-2.6.33-source/arch/x86/include/asm/cooperative.h
 +			union {
 +				struct {
 +					union {
-+						co_ulong_t self_physical_address;
-+						co_ulong_t temp_pgd_physical;
++						unsigned long self_physical_address;
++						unsigned long temp_pgd_physical;
 +					} __attribute__((packed));
-+					co_ulong_t dr0;
-+					co_ulong_t dr1;
-+					co_ulong_t dr2;
-+					co_ulong_t dr3;
-+					co_ulong_t dr6;
-+					co_ulong_t dr7;
++					unsigned long dr0;
++					unsigned long dr1;
++					unsigned long dr2;
++					unsigned long dr3;
++					unsigned long dr6;
++					unsigned long dr7;
 +					unsigned char code[0x260];
 +				} __attribute__((packed));
 +				unsigned char pad[0x280]; /* Be careful! see NOTE below */
@@ -1833,8 +1620,8 @@ Index: linux-2.6.33-source/arch/x86/include/asm/cooperative.h
 +			co_arch_state_stack_t linuxvm_state;
 +
 +			/* Control parameters */
-+			co_ulong_t operation;
-+			co_ulong_t params[];
++			unsigned long operation;
++			unsigned long params[];
 +		} __attribute__((packed));
 +		unsigned char first_page[0x1000];
 +	};
@@ -1868,8 +1655,8 @@ Index: linux-2.6.33-source/arch/x86/include/asm/cooperative.h
 +#define CO_LOWMEMORY_MAX_MB 984
 +
 +typedef struct {
-+	co_ulong_t kernel_cs;
-+	co_ulong_t kernel_ds;
++	unsigned long kernel_cs;
++	unsigned long kernel_ds;
 +} __attribute__((packed)) co_arch_info_t;
 +
 +#endif
@@ -2231,7 +2018,7 @@ Index: linux-2.6.33-source/include/linux/cooperative.h
 +	co_module_t to;
 +	co_priority_t priority;
 +	co_message_type_t type;
-+	co_ulong_t size;
++	unsigned long size;
 +	unsigned char data[0];
 +} __attribute__((packed)) co_message_t;
 +
@@ -2285,13 +2072,13 @@ Index: linux-2.6.33-source/include/linux/cooperative.h
 +} __attribute__((packed)) co_linux_message_power_t;
 +
 +typedef struct {
-+	co_ulong_t tick_count;
++	unsigned long tick_count;
 +} __attribute__((packed)) co_linux_message_idle_t;
 +
 +typedef struct {
 +	co_device_t device;
 +	unsigned int unit;
-+	co_ulong_t size;
++	unsigned long size;
 +	char data[];
 +} __attribute__((packed)) co_linux_message_t;
 +
@@ -2429,15 +2216,15 @@ Index: linux-2.6.33-source/include/linux/cooperative.h
 +} __attribute__((packed)) co_console_message_t;
 +
 +typedef struct {
-+	co_ulong_t messages_waiting;
++	unsigned long messages_waiting;
 +	unsigned char buffer[];
 +} co_io_buffer_t;
 +
 +typedef struct {
-+	co_ulong_t index;
-+	co_ulong_t flags;
-+	co_ulong_t func;
-+	co_ulong_t pid;
++	unsigned long index;
++	unsigned long flags;
++	unsigned long func;
++	unsigned long pid;
 +} __attribute__((packed)) co_trace_point_info_t;
 +
 +typedef enum {
@@ -2465,12 +2252,12 @@ Index: linux-2.6.33-source/include/linux/cooperative.h
 +typedef void *vm_ptr_t;
 +#  else
 +/* But inside the host, the type is considered not to be a pointer in its own address space */
-+typedef co_ulong_t vm_ptr_t;
++typedef unsigned long vm_ptr_t;
 +# endif
 +
 +typedef struct {
 +	co_block_request_type_t type;
-+	co_long_t rc;
++	long rc;
 +	union {
 +		struct {
 +			unsigned long long offset;
@@ -2502,19 +2289,19 @@ Index: linux-2.6.33-source/include/linux/cooperative.h
 +#endif /* CO_KERNEL */
 +
 +typedef struct {
-+	co_ulong_t api_version;
-+	co_ulong_t compiler_major;
-+	co_ulong_t compiler_minor;
-+	co_ulong_t compiler_abi;
++	unsigned long api_version;
++	unsigned long compiler_major;
++	unsigned long compiler_minor;
++	unsigned long compiler_abi;
 +} __attribute__((packed)) co_info_t;
 +
 +typedef struct {
-+	co_ulong_t co_core_end;
-+	co_ulong_t co_memory_size;
++	unsigned long co_core_end;
++	unsigned long co_memory_size;
 +	void *co_initrd;
-+	co_ulong_t co_initrd_size;
-+	co_ulong_t co_cpu_khz;
-+	co_ulong_t filler[5];		// compatible old api: empty 5,6,7,8,9
++	unsigned long co_initrd_size;
++	unsigned long co_cpu_khz;
++	unsigned long filler[5];		// compatible old api: empty 5,6,7,8,9
 +	char co_boot_parameters[CO_BOOTPARAM_STRING_LENGTH]; // params[10]
 +} __attribute__((packed)) co_boot_params_t;
 +
@@ -2562,7 +2349,7 @@ Index: linux-2.6.33-source/include/linux/cooperative_internal.h
 +
 +#ifdef CONFIG_COLINUX_STATS
 +typedef struct co_proc_counts {
-+	co_ulong_t switches[CO_OPERATION_MAX];
++	unsigned long switches[CO_OPERATION_MAX];
 +} co_proc_counts_t;
 +
 +extern co_proc_counts_t co_proc_counts;
@@ -3657,7 +3444,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/i8259_cooperative.c
 +		int vector = FIRST_EXTERNAL_VECTOR + i;
 +		if (i >= NR_IRQS)
 +			break;
-+		if (vector != IA32_SYSCALL_VECTOR)
++		if (vector != SYSCALL_VECTOR)
 +			set_intr_gate(vector, interrupt[i]);
 +	}
 +}
@@ -3935,29 +3722,6 @@ Index: linux-2.6.33-source/arch/x86/include/asm/io_32.h
  
  #if defined(CONFIG_PARAVIRT)
  #include <asm/paravirt.h>
-Index: linux-2.6.33-source/arch/x86/include/asm/io_64.h
-===================================================================
---- linux-2.6.33-source.orig/arch/x86/include/asm/io_64.h
-+++ linux-2.6.33-source/arch/x86/include/asm/io_64.h
-@@ -35,10 +35,18 @@
-   *  - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
-   */
- 
-+#ifdef CONFIG_COOPERATIVE
-+static inline void native_io_delay(void)
-+{
-+	asm volatile("jmp 1f; 1: jmp 1f; 1:" : : : "memory");
-+}
-+static inline void io_delay_init(void) {}
-+#else
- extern void native_io_delay(void);
- 
- extern int io_delay_type;
- extern void io_delay_init(void);
-+#endif
- 
- #if defined(CONFIG_PARAVIRT)
- #include <asm/paravirt.h>
 Index: linux-2.6.33-source/arch/x86/include/asm/mmzone_32.h
 ===================================================================
 --- linux-2.6.33-source.orig/arch/x86/include/asm/mmzone_32.h
@@ -3970,18 +3734,6 @@ Index: linux-2.6.33-source/arch/x86/include/asm/mmzone_32.h
  
  #ifdef CONFIG_NUMA
  extern struct pglist_data *node_data[];
-Index: linux-2.6.33-source/arch/x86/include/asm/mmzone_64.h
-===================================================================
---- linux-2.6.33-source.orig/arch/x86/include/asm/mmzone_64.h
-+++ linux-2.6.33-source/arch/x86/include/asm/mmzone_64.h
-@@ -10,6 +10,7 @@
- #include <linux/mmdebug.h>
- 
- #include <asm/smp.h>
-+#include <asm/cooperative.h>
- 
- /* Simple perfect hash to map physical addresses to node numbers */
- struct memnode {
 Index: linux-2.6.33-source/arch/x86/include/asm/pgtable_32.h
 ===================================================================
 --- linux-2.6.33-source.orig/arch/x86/include/asm/pgtable_32.h
@@ -4391,20 +4143,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/cpu/common.c
 ===================================================================
 --- linux-2.6.33-source.orig/arch/x86/kernel/cpu/common.c
 +++ linux-2.6.33-source/arch/x86/kernel/cpu/common.c
-@@ -774,9 +774,12 @@
- 		c->x86_capability[i] |= cpu_caps_set[i];
- 	}
- 
-+#ifndef CONFIG_COOPERATIVE
-+/* FIXME: W64: Check this! */
- #ifdef CONFIG_X86_64
- 	c->apicid = apic->phys_pkg_id(c->initial_apicid, 0);
- #endif
-+#endif
- 
- 	/*
- 	 * Vendor-specific initialization.  In this section we
-@@ -818,7 +820,9 @@
+@@ -818,7 +818,9 @@
  	detect_ht(c);
  #endif
  
@@ -4414,7 +4153,7 @@ Index: linux-2.6.33-source/arch/x86/kernel/cpu/common.c
  
  	/*
  	 * Clear/Set all flags overriden by options, need do it
-@@ -864,7 +868,9 @@
+@@ -864,7 +866,9 @@
  void __init identify_boot_cpu(void)
  {
  	identify_cpu(&boot_cpu_data);
@@ -4424,30 +4163,6 @@ Index: linux-2.6.33-source/arch/x86/kernel/cpu/common.c
  #ifdef CONFIG_X86_32
  	sysenter_setup();
  	enable_sep_cpu();
-@@ -1139,8 +1145,11 @@
- 	barrier();
- 
- 	x86_configure_nx();
-+#ifndef CONFIG_COOPERATIVE
-+/* FIXME: W64: Check this! */
- 	if (cpu != 0)
- 		enable_x2apic();
-+#endif
- 
- 	/*
- 	 * set up and load the per-CPU TSS
-@@ -1191,8 +1199,11 @@
- 
- 	raw_local_save_flags(kernel_eflags);
- 
-+#ifndef CONFIG_COOPERATIVE
-+/* FIXME: W64: Check this! */
- 	if (is_uv_system())
- 		uv_cpu_init();
-+#endif
- }
- 
- #else
 Index: linux-2.6.33-source/include/linux/page-flags.h
 ===================================================================
 --- linux-2.6.33-source.orig/include/linux/page-flags.h
@@ -4490,68 +4205,19 @@ Index: linux-2.6.33-source/arch/x86/kernel/cpu/intel.c
  			sched_clock_stable = 1;
  	}
  
-Index: linux-2.6.33-source/arch/x86/pci/amd_bus.c
+Index: linux-2.6.33-source/scripts/mkmakefile
 ===================================================================
---- linux-2.6.33-source.orig/arch/x86/pci/amd_bus.c
-+++ linux-2.6.33-source/arch/x86/pci/amd_bus.c
-@@ -15,7 +15,7 @@
-  * also get peer root bus resource for io,mmio
-  */
+--- linux-2.6.33-source.orig/scripts/mkmakefile
++++ linux-2.6.33-source/scripts/mkmakefile
+@@ -44,7 +44,10 @@
  
--#ifdef CONFIG_X86_64
-+#if defined(CONFIG_X86_64) && !defined(CONFIG_COOPERATIVE)
+ Makefile:;
  
- #define RANGE_NUM 16
- 
-Index: linux-2.6.33-source/arch/x86/kernel/cpu/amd.c
-===================================================================
---- linux-2.6.33-source.orig/arch/x86/kernel/cpu/amd.c
-+++ linux-2.6.33-source/arch/x86/kernel/cpu/amd.c
-@@ -470,7 +470,10 @@
- 		set_cpu_cap(c, X86_FEATURE_REP_GOOD);
- 
- 	/* get apicid instead of initial apic id from cpuid */
-+#ifndef CONFIG_COOPERATIVE
-+/* FIXME: W64: Check this! */
- 	c->apicid = hard_smp_processor_id();
-+#endif
- #else
- 
- 	/*
-Index: linux-2.6.33-source/arch/x86/kernel/apic/Makefile
-===================================================================
---- linux-2.6.33-source.orig/arch/x86/kernel/apic/Makefile
-+++ linux-2.6.33-source/arch/x86/kernel/apic/Makefile
-@@ -6,12 +6,14 @@
- obj-$(CONFIG_X86_IO_APIC)	+= io_apic.o
- obj-$(CONFIG_SMP)		+= ipi.o
- 
-+ifndef CONFIG_COOPERATIVE
- ifeq ($(CONFIG_X86_64),y)
- obj-y				+= apic_flat_64.o
- obj-$(CONFIG_X86_X2APIC)	+= x2apic_cluster.o
- obj-$(CONFIG_X86_X2APIC)	+= x2apic_phys.o
- obj-$(CONFIG_X86_UV)		+= x2apic_uv_x.o
- endif
-+endif
- 
- obj-$(CONFIG_X86_BIGSMP)	+= bigsmp_32.o
- obj-$(CONFIG_X86_NUMAQ)		+= numaq_32.o
-Index: linux-2.6.33-source/arch/x86/kernel/time.c
-===================================================================
---- linux-2.6.33-source.orig/arch/x86/kernel/time.c
-+++ linux-2.6.33-source/arch/x86/kernel/time.c
-@@ -30,6 +30,8 @@
- volatile unsigned long __jiffies __section_jiffies = INITIAL_JIFFIES;
- #endif
- 
-+#ifndef CONFIG_COOPERATIVE
+-\$(all) %/: all
++\$(all): all
++	@:
 +
- unsigned long profile_pc(struct pt_regs *regs)
- {
- 	unsigned long pc = instruction_pointer(regs);
-@@ -119,3 +121,4 @@
- {
- 	late_time_init = x86_late_time_init;
- }
-+#endif /* CONFIG_COOPERATIVE */
++%/: all
+ 	@:
+ 
+ EOF

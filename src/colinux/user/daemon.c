@@ -9,7 +9,6 @@
  */
 
 #include <colinux/common/common.h>
-#include <colinux/common/common64.h>
 #include <colinux/common/version.h>
 #include <colinux/common/libc.h>
 #include <colinux/os/user/config.h>
@@ -109,7 +108,7 @@ co_rc_t co_daemon_parse_args(co_command_line_params_t cmdline, co_start_paramete
 	co_rc_t      rc;
 	bool_t 	     dont_launch_console = PFALSE;
 	bool_t       verbose_specified   = PFALSE;
-	uintptr_t verbose_level       = 0;
+	unsigned int verbose_level       = 0;
 
 	co_snprintf(start_parameters->console, sizeof(start_parameters->console), "fltk");
 
@@ -150,8 +149,8 @@ co_rc_t co_daemon_parse_args(co_command_line_params_t cmdline, co_start_paramete
 							  &verbose_specified, &verbose_level);
 
 #ifdef COLINUX_DEBUG
-	if (co_global_debug_levels.misc_level < (unsigned int)verbose_level)
-		co_global_debug_levels.misc_level = (unsigned int)verbose_level;
+	if (co_global_debug_levels.misc_level < verbose_level)
+		co_global_debug_levels.misc_level = verbose_level;
 #else
 	co_terminal_print("daemon: \"-v\" ignored, COLINUX_DEBUG was not compiled in.\n");
 #endif
@@ -228,9 +227,9 @@ void co_daemon_destroy(co_daemon_t* daemon)
 static
 co_rc_t co_daemon_load_symbol_and_data(co_daemon_t*	daemon,
 				       const char*	symbol_name,
-				       uintptr_t*	address_out,
+				       unsigned long*	address_out,
 				       void*		buffer,
-				       uintptr_t	buffer_size)
+				       unsigned long	buffer_size)
 {
 	co_rc_t		 rc = CO_RC_OK;
 	co_elf_symbol_t* sym;
@@ -260,7 +259,7 @@ co_rc_t co_daemon_load_symbol_and_data(co_daemon_t*	daemon,
 static
 co_rc_t co_daemon_load_symbol(co_daemon_t*	daemon,
 			      const char*	symbol_name,
-			      uintptr_t*	address_out)
+			      unsigned long*	address_out)
 {
 	co_rc_t		 rc = CO_RC_OK;
 	co_elf_symbol_t* sym;
@@ -326,7 +325,7 @@ void co_daemon_prepare_net_macs(co_daemon_t* daemon, int monitor_index)
 
 		rc = co_net_config_macs_read(monitor_index, i, net_dev->mac_address);
 		if (!CO_OK(rc)) {
-			unsigned int rand_mac = rand();
+			unsigned long rand_mac = rand();
 			int c;
 
 			for (c=0; c < 10; c++)
@@ -349,7 +348,7 @@ co_rc_t co_load_initrd(co_daemon_t* daemon)
 {
 	co_rc_t		rc;
 	char*		initrd;
-	uintptr_t	initrd_size;
+	unsigned long	initrd_size;
 
 	if (!daemon->config.initrd_enabled)
 		return CO_RC(OK);
@@ -362,7 +361,7 @@ co_rc_t co_load_initrd(co_daemon_t* daemon)
 		return rc;
 	}
 
-	co_debug("initrd size: %d bytes", (int)initrd_size);
+	co_debug("initrd size: %ld bytes", initrd_size);
 
 	rc = co_user_monitor_load_initrd(daemon->monitor, initrd, initrd_size);
 
@@ -378,8 +377,8 @@ memory_usage_limit_resached(co_manager_ioctl_create_t *create_params)
 	co_manager_handle_t	handle;
 	co_rc_t			rc;
 
-	co_terminal_print("colinux: memory size configuration for this VM: %I64d MB\n",
-			  (int64_t)create_params->actual_memsize_used / 0x100000);
+	co_terminal_print("colinux: memory size configuration for this VM: %ld MB\n",
+			  create_params->actual_memsize_used / 0x100000);
 	co_terminal_print("colinux: memory usage limit reached\n");
 	co_terminal_print("colinux: try to decrease memory size configuration\n");
 
@@ -397,10 +396,10 @@ memory_usage_limit_resached(co_manager_ioctl_create_t *create_params)
 	}
 	co_os_manager_close(handle);
 
-	co_terminal_print("colinux: memory usage limit: %I64d MB\n",
-			  (int64_t)info.hostmem_usage_limit / 0x100000);
-	co_terminal_print("colinux: current memory used by running VMs: %I64d MB\n",
-			  (int64_t)info.hostmem_used / 0x100000);
+	co_terminal_print("colinux: memory usage limit: %ld MB\n",
+			  info.hostmem_usage_limit / 0x100000);
+	co_terminal_print("colinux: current memory used by running VMs: %ld MB\n",
+			  info.hostmem_used / 0x100000);
 }
 
 static
@@ -460,21 +459,21 @@ co_rc_t co_daemon_monitor_create(co_daemon_t* daemon)
 		goto out;
 
 	if (create_params.info.api_version != CO_LINUX_API_VERSION) {
-		co_terminal_print("colinux: error, expected kernel API version %d, got %I64d\n",
-				  CO_LINUX_API_VERSION, (int64_t)create_params.info.api_version);
+		co_terminal_print("colinux: error, expected kernel API version %d, got %ld\n",
+				  CO_LINUX_API_VERSION, create_params.info.api_version);
 
 		rc = CO_RC(VERSION_MISMATCHED);
 		goto out;
 	}
 
 	if (create_params.info.compiler_abi != __GXX_ABI_VERSION) {
-		co_terminal_print("colinux: error, expected gcc abi version %d, got %I64d\n",
-				  __GXX_ABI_VERSION, (int64_t)create_params.info.compiler_abi);
+		co_terminal_print("colinux: error, expected gcc abi version %d, got %ld\n",
+				  __GXX_ABI_VERSION, create_params.info.compiler_abi);
 		co_terminal_print("colinux: Daemons gcc version %d.%d.x, "
-				  "incompatible to kernel gcc version %I64d.%I64d.x\n",
+				  "incompatible to kernel gcc version %ld.%ld.x\n",
 				  __GNUC__, __GNUC_MINOR__,
-				  (int64_t)create_params.info.compiler_major,
-				  (int64_t)create_params.info.compiler_minor);
+				  create_params.info.compiler_major,
+				  create_params.info.compiler_minor);
 
 		rc = CO_RC(COMPILER_MISMATCHED);
 		goto out;
@@ -527,7 +526,7 @@ void co_daemon_monitor_destroy(co_daemon_t* daemon)
 co_rc_t co_daemon_start_monitor(co_daemon_t* daemon)
 {
 	co_rc_t		rc;
-	uintptr_t	size;
+	unsigned long	size;
 
 	rc = co_os_file_load(daemon->config.vmlinux_path, &daemon->buf, &size, 0);
 	if (!CO_OK(rc)) {
@@ -537,8 +536,8 @@ co_rc_t co_daemon_start_monitor(co_daemon_t* daemon)
 
 	rc = co_elf_image_read(&daemon->elf_data, daemon->buf, size);
 	if (!CO_OK(rc)) {
-		co_terminal_print("%s: error reading image (%d bytes)\n",
-				  daemon->config.vmlinux_path, (int)size);
+		co_terminal_print("%s: error reading image (%ld bytes)\n",
+				  daemon->config.vmlinux_path, size);
 		goto out_free_vmlinux;
 	}
 
@@ -620,12 +619,12 @@ co_rc_t co_daemon_handle_printk(co_daemon_t *daemon, co_message_t* message)
 
 static co_rc_t message_receive(co_reactor_user_t user,
 			       unsigned char*    buffer,
-			       uintptr_t	 size)
+			       unsigned long	 size)
 {
 	co_message_t*	message;
-	uintptr_t	message_size;
-	intptr_t		size_left = size;
-	intptr_t		position  = 0;
+	unsigned long	message_size;
+	long		size_left = size;
+	long		position  = 0;
 	co_daemon_t*	daemon    = (typeof(daemon))(user->private_data);
 
 	while (size_left > 0) {
@@ -969,17 +968,13 @@ co_rc_t co_daemon_run(co_daemon_t* daemon)
 				break;
 
 			case CO_TERMINATE_BUG:
-				co_terminal_print("colinux: BUG at %s:%d\n",
+				co_terminal_print("colinux: BUG at %s:%ld\n",
 						  params.bug_info.text,
-						  (int)params.bug_info.line);
+						  params.bug_info.line);
 				break;
 
 			case CO_TERMINATE_VMXE:
 				co_terminal_print("colinux: An other virtualization runs in VMX mode.\n");
-				break;
-
-			case CO_TERMINATE_NOT_SUPPORTED:
-				co_terminal_print("colinux: Function currently not implented.\n");
 				break;
 
 			default:

@@ -174,12 +174,12 @@ co_rc_t console_window_t::start()
 // Process all messages in buffer
 co_rc_t console_window_t::message_receive(co_reactor_user_t user,
 	                                  unsigned char*    buffer,
-	                                  uintptr_t     size)
+	                                  unsigned long     size)
 {
 	co_message_t* message;
-	uintptr_t message_size;
-	intptr_t          size_left = size;
-	intptr_t          position  = 0;
+	unsigned long message_size;
+	long          size_left = size;
+	long          position  = 0;
 
 	while (size_left > 0) {
 		message      = (typeof(message))(&buffer[position]);

@@ -11,20 +11,8 @@
 
 #include "ddk.h"
 #include <ddk/ntifs.h>
-#include <ntdddisk.h>
-#ifdef WIN64
-#include <ntddscsi.h>
-#else
+#include <ddk/ntdddisk.h>
 #include <ddk/ntddscsi.h>
-#endif
-
-#ifdef WIN64
-// FIXME: W64: Collision with Linux kernel headers
-#define _SIZE_T
-#define _SSIZE_T
-#define _PTRDIFF_T
-#define _TIME_T
-#endif
 
 #include <colinux/kernel/scsi.h>
 #include <colinux/kernel/transfer.h>
@@ -41,7 +29,7 @@
 #define COSCSI_DEBUG_IO 0
 #define COSCSI_DEBUG_PASS 0
 
-typedef /*NTOSAPI*/ NTSTATUS NTAPI (*xfer_func_t)( /*IN*/ HANDLE  FileHandle, /*IN*/ HANDLE  Event  /*OPTIONAL*/, /*IN*/ PIO_APC_ROUTINE  ApcRoutine  /*OPTIONAL*/, /*IN*/ PVOID  ApcContext  /*OPTIONAL*/, /*OUT*/ PIO_STATUS_BLOCK  IoStatusBlock, /*IN*/ PVOID  Buffer, /*IN*/ ULONG  Length, /*IN*/ PLARGE_INTEGER  ByteOffset  /*OPTIONAL*/, /*IN*/ PULONG  Key  /*OPTIONAL*/);
+typedef /*NTOSAPI*/ NTSTATUS DDKAPI (*xfer_func_t)( /*IN*/ HANDLE  FileHandle, /*IN*/ HANDLE  Event  /*OPTIONAL*/, /*IN*/ PIO_APC_ROUTINE  ApcRoutine  /*OPTIONAL*/, /*IN*/ PVOID  ApcContext  /*OPTIONAL*/, /*OUT*/ PIO_STATUS_BLOCK  IoStatusBlock, /*IN*/ PVOID  Buffer, /*IN*/ ULONG  Length, /*IN*/ PLARGE_INTEGER  ByteOffset  /*OPTIONAL*/, /*IN*/ PULONG  Key  /*OPTIONAL*/);
 
 extern PDEVICE_OBJECT coLinux_DeviceObject;
 
@@ -98,7 +86,7 @@ int scsi_file_open(co_monitor_t *cmon, co_scsi_dev_t *dp) {
 	ULONG FileAttributes, CreateDisposition, CreateOptions;
 	co_rc_t rc;
 
-	co_debug("_io_req size: %d, IO_QUEUE_SIZE: %d", (int)sizeof(struct _io_req), IO_QUEUE_SIZE);
+	co_debug("_io_req size: %d, IO_QUEUE_SIZE: %d", sizeof(struct _io_req), IO_QUEUE_SIZE);
 
 #if COSCSI_DEBUG_OPEN
 	co_debug("scsi_file_open: pathname: %s", dp->conf->pathname);
@@ -129,7 +117,7 @@ again:
 
 		eof.EndOfFile.QuadPart = (unsigned long long)dp->conf->size * 1048576LL;
 #if COSCSI_DEBUG_OPEN
-		co_debug("eof.EndOfFile.QuadPart: %I64d", eof.EndOfFile.QuadPart);
+		co_debug("eof.EndOfFile.QuadPart: %lld", eof.EndOfFile.QuadPart);
 #endif
 		status = ZwSetInformationFile(dp->os_handle, &IoStatusBlock, &eof, sizeof(eof), FileEndOfFileInformation);
 #if COSCSI_DEBUG_OPEN
@@ -200,7 +188,7 @@ typedef struct {
 
 static co_rc_t scsi_transfer_file_block(co_monitor_t *cmon,
 				  void *host_data, void *linuxvm,
-				  uintptr_t size,
+				  unsigned long size,
 				  co_monitor_transfer_dir_t dir)
 {
 	IO_STATUS_BLOCK isb;
@@ -218,8 +206,8 @@ static co_rc_t scsi_transfer_file_block(co_monitor_t *cmon,
 				NULL);
 
 	if (status != STATUS_SUCCESS) {
-		co_debug_error("scsi io failed: %p %I64x (reason: %x)",
-				linuxvm, (int64_t)size, (int)status);
+		co_debug_error("scsi io failed: %p %lx (reason: %x)",
+				linuxvm, size, (int)status);
 		return co_status_convert(status);
 	}
 
@@ -229,34 +217,38 @@ static co_rc_t scsi_transfer_file_block(co_monitor_t *cmon,
 }
 
 #if COSCSI_ASYNC
-static VOID NTAPI _scsi_dio(PDEVICE_OBJECT DeviceObject, PVOID Context) {
+static VOID DDKAPI _scsi_dio(PDEVICE_OBJECT DeviceObject, PVOID Context) {
 #else
 static int _scsi_dio(PDEVICE_OBJECT DeviceObject, PVOID Context) {
 #endif
 	struct _io_req *r = Context;
-	struct scatterlist *sg;
-	co_pfn_t sg_pfn;
-	unsigned char *sg_page;
+	struct scatterlist *sg, *sg_buf;
 	int x;
 	co_rc_t rc;
 	scsi_transfer_file_block_data_t data;
 	int bytes_req = 0;
+	int sg_size;
 
 	data.file_handle = (HANDLE)r->dp->os_handle;
 	data.offset.QuadPart = r->io.offset;
 	data.func = r->func;
 
-	/* Map the SG */
-	rc = co_monitor_host_linuxvm_transfer_map(r->mp, r->io.sg,
-					r->io.count * sizeof(struct scatterlist),
-					(void*)&sg, &sg_page, &sg_pfn);
+	/* Copy the SG from Guest */
+	sg_size = r->io.count * sizeof(struct scatterlist);
+	sg_buf = co_os_malloc(sg_size);
+	if (!sg_buf) {
+		rc = CO_RC(ERROR);
+		co_debug("scsi_io: out of memory error");
+		goto io_done;
+	}
+	rc = co_monitor_linuxvm_to_host(r->mp, r->io.sg, sg_buf, sg_size);
 	if (!CO_OK(rc)) {
 		co_debug("scsi_io: error mapping sg");
 		goto io_done;
 	}
 
 	/* For each vector */
-	for(x=0; x < r->io.count; x++, sg++) {
+	for(x = 0, sg = sg_buf; x < r->io.count; x++, sg++) {
 		bytes_req += sg->length;
 		rc = co_monitor_host_linuxvm_transfer(
 				r->mp,
@@ -271,7 +263,7 @@ static int _scsi_dio(PDEVICE_OBJECT DeviceObject, PVOID Context) {
 		}
 	}
 
-	co_monitor_host_linuxvm_transfer_unmap(r->mp, sg_page, sg_pfn);
+	co_os_free(sg_buf);
 
 io_done:
 #if COSCSI_ASYNC

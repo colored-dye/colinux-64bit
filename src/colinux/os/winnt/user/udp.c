@@ -11,8 +11,8 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <winsock2.h>
 #include <windows.h>
+#include <winsock2.h>
 
 #include <colinux/os/alloc.h>
 #include <colinux/common/libc.h>
@@ -44,7 +44,7 @@ int co_udp_socket_connect(const char *addr, unsigned short int port)
 	return sock;
 }
 
-int co_udp_socket_send(int sock, const char *buffer, uintptr_t size)
+int co_udp_socket_send(int sock, const char *buffer, unsigned long size)
 {
 	return send(sock, buffer, size, 0);
 }

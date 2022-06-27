@@ -12,7 +12,10 @@
 
 #include <stdio.h>
 #include <windows.h>
-#include <winioctl.h>  /* CTL_CODE */
+
+#include <ddk/ntapi.h>
+#include <ddk/winddk.h>
+#include <ddk/ntddk.h>
 
 #include <colinux/common/common.h>
 #include <colinux/os/user/misc.h>
@@ -251,9 +254,9 @@ co_rc_t open_tap_win32(HANDLE *phandle, char *prefered_name)
 	BOOL bret;
 	char name_buffer[0x100] = {0, };
 	struct {
-		uintptr_t major;
-		uintptr_t minor;
-		uintptr_t debug;
+		unsigned long major;
+		unsigned long minor;
+		unsigned long debug;
 	} version;
 	DWORD version_len;
 
@@ -299,7 +302,7 @@ co_rc_t open_tap_win32(HANDLE *phandle, char *prefered_name)
 		return CO_RC(ERROR);
 	}
 
-	co_terminal_print("colinux-net-daemon: TAP driver version %d.%d\n", (int)version.major, (int)version.minor);
+	co_terminal_print("colinux-net-daemon: TAP driver version %ld.%ld\n", version.major, version.minor);
 
 	*phandle = handle;
 
@@ -309,7 +312,7 @@ co_rc_t open_tap_win32(HANDLE *phandle, char *prefered_name)
 
 BOOL tap_win32_set_status(HANDLE handle, BOOL status)
 {
-	DWORD len = 0;
+	unsigned long len = 0;
 
 	return DeviceIoControl(handle, TAP_IOCTL_SET_MEDIA_STATUS,
 				&status, sizeof (status),

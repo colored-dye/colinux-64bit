@@ -25,7 +25,7 @@ struct co_linux_reactor_packet_user {
 	struct co_reactor_os_user os_user;
 
 	unsigned char buffer[0x10000];
-	uintptr_t size;
+	unsigned long size;
 };
 
 typedef struct co_linux_reactor_packet_user *co_linux_reactor_packet_user_t;

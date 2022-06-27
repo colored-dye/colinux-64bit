@@ -10,7 +10,6 @@
 #ifndef __COLINUX_LINUX_COMMON_H__
 #define __COLINUX_LINUX_COMMON_H__
 
-#include <stdint.h>
 #include "common_base.h"
 
 /*
@@ -22,9 +21,9 @@
  * happening by defining common types for both compilation modes.
  */
 
-typedef uintptr_t linux_pte_t;
-typedef uintptr_t linux_pmd_t;
-typedef uintptr_t linux_pgd_t;
+typedef unsigned long linux_pte_t;
+typedef unsigned long linux_pmd_t;
+typedef unsigned long linux_pgd_t;
 
 #include <linux/cooperative.h>
 
@@ -36,30 +35,40 @@ typedef uintptr_t linux_pgd_t;
 # define NULL 	(void*)0
 #endif
 
-#ifdef WIN64
-static inline uint64_t co_div64(uint64_t a, uint32_t b0)
-{
-        return a/b0;
-}
-#else /* WIN64 */
 /*
- * Following is taken from Linux's ./arch/i386/kernel/smpboot.c
+ * Following is taken from Linux's linux-2.6.33.5-source/lib/div64.c
  */
-static inline uint64_t co_div64(uint64_t a, uint32_t b0)
+static inline unsigned long co_div64_32(unsigned long long *n, unsigned long base)
 {
-        uint32_t a1, a2;
-        uint64_t res;
+	unsigned long long rem = *n;
+	unsigned long long b = base;
+	unsigned long long res, d = 1;
+	unsigned long high = rem >> 32;
 
-        a1 = ((uint32_t*)&a)[0];
-        a2 = ((uint32_t*)&a)[1];
+	/* Reduce the thing a bit first */
+	res = 0;
+	if (high >= base) {
+		high /= base;
+		res = (unsigned long long) high << 32;
+		rem -= (unsigned long long) (high*base) << 32;
+	}
 
-        res = a1/b0 +
-                (uint64_t)a2 * (uint64_t)(0xffffffff/b0) +
-                a2 / b0 +
-                (a2 * (0xffffffff % b0)) / b0;
+	while ((signed long long)b > 0 && b < rem) {
+		b = b+b;
+		d = d+d;
+	}
 
-        return res;
+	do {
+		if (rem >= b) {
+			rem -= b;
+			res += d;
+		}
+		b >>= 1;
+		d >>= 1;
+	} while (d);
+
+	*n = res;
+	return rem;
 }
-#endif /* WIN64 */
 
 #endif

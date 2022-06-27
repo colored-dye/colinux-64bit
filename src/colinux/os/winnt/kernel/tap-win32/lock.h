@@ -28,7 +28,7 @@
 
 typedef struct
 {
-  volatile int count;
+  volatile long count;
 } MUTEX;
 
 #define MUTEX_SLEEP_TIME  10000 // microseconds

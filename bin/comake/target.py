@@ -191,8 +191,8 @@ class Target(object):
 
         if rebuild_target:
             if not self.tool.EMPTY:
-                reporter.print_title()
-                reporter.print_text("Building: %s" % (rebuild_reason, ))
+                reporter.print(title())
+                reporter.print(text("Building: %s" % (rebuild_reason, )))
             self._make(reporter)
             builds += 1
 
@@ -200,22 +200,22 @@ class Target(object):
         return builds
 
     def dump(self, indent=0):
-        print indent*"  " + self.pathname + " { "
-        print indent*"  " + "  Built: %r" % (self.built, )
-        print indent*"  " + "  %x" % (id(self), )
-        print indent*"  " + "  " + self.hash.encode('hex')
-        print indent*"  " + "  %r" % (self.tool.cache(self), )
+        print(indent*"  " + self.pathname + " { ")
+        print(indent*"  " + "  Built: %r" % (self.built, ))
+        print(indent*"  " + "  %x" % (id(self), ))
+        print(indent*"  " + "  " + self.hash.encode('hex'))
+        print(indent*"  " + "  %r" % (self.tool.cache(self), ))
         count = 1
         if len(self.inputs) != 0:
-            print indent*"  " + "  Inputs#: %d" % (len(self.inputs), )
+            print(indent*"  " + "  Inputs#: %d" % (len(self.inputs), ))
             if not self.built:
                 for tinput in self.inputs:
                     count += tinput.dump(indent+1)
             else:
-                print indent*"  " + "  [..]"
+                print(indent*"  " + "  [..]")
 
-            print indent*"  " + "  %d" % (count, )
-        print indent*"  " + "} "
+            print(indent*"  " + "  %d" % (count, ))
+        print(indent*"  " + "} ")
         self.built = True
         return count
 
@@ -295,7 +295,7 @@ def get_raw_target(pathname):
             if not os.path.islink(pathname):
                 return RawTarget()
             else:
-                print os.readlink(pathname)
+                print(os.readlink(pathname))
     return raw_target
 
 class TargetNotFoundError(Exception):
@@ -305,7 +305,7 @@ def create_target_tree(pathname):
     def _recur(pathname, original_tinput, options):
         raw_target = get_raw_target(pathname)
         if not raw_target:
-            print "Error, target %s not found" % (pathname, )
+            print("Error, target %s not found" % (pathname, ))
             raise TargetNotFoundError()
 
         options = copy.deepcopy(options)
@@ -326,7 +326,7 @@ def create_target_tree(pathname):
             try:
                 inputs.append(_recur(abs_name, tinput, options))
             except TargetNotFoundError:
-                print "Included from: %s [%d]" % (pathname, index+1)
+                print("Included from: %s [%d]" % (pathname, index+1))
                 raise
 
         if raw_target.mono_options:
@@ -344,12 +344,12 @@ def clean():
 
     def unlink(pathname):
         pathname_display = pathname[len(build_root)+1:]
-        print "removing file %s" % (pathname_display, )
+        print("removing file %s" % (pathname_display, ))
         os.unlink(pathname)
 
     def rmdir(pathname):
         pathname_display = pathname[len(build_root)+1:]
-        print "removing dir %s" % (pathname_display, )
+        print("removing dir %s" % (pathname_display, ))
         os.rmdir(pathname)
 
     def _recur(pathname):

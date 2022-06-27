@@ -50,12 +50,12 @@ public:
 	virtual void verify_parameters();
 	virtual void syntax();
 	virtual void prepare_for_loop();
-	virtual void send_to_monitor_raw(co_device_t device, unsigned char *buffer, uintptr_t size);
+	virtual void send_to_monitor_raw(co_device_t device, unsigned char *buffer, unsigned long size);
 
 protected:
 	co_reactor_t reactor;
 	co_user_monitor_t *monitor_handle;
-	uintptr_t param_index;
+	unsigned int param_index;
 	co_id_t param_instance;
 
 };

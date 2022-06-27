@@ -15,12 +15,12 @@
 
 struct co_os_timer {
 	struct timer_list timer;
-	intptr_t msec;
+	long msec;
 	co_os_func_t func;
 	void *data;
 };
 
-static void os_timer(uintptr_t data)
+static void os_timer(unsigned long data)
 {
 	struct co_os_timer *t = (struct co_os_timer *)data;
 	t->func(t->data);
@@ -29,7 +29,7 @@ static void os_timer(uintptr_t data)
 }
 
 co_rc_t co_os_timer_create(co_os_func_t func, void *data,
-			   intptr_t msec, co_os_timer_t *timer_out)
+			   long msec, co_os_timer_t *timer_out)
 {
 	struct co_os_timer *t;
 
@@ -39,7 +39,7 @@ co_rc_t co_os_timer_create(co_os_func_t func, void *data,
 
 	init_timer(&t->timer);
 
-	t->timer.data = (uintptr_t)t;
+	t->timer.data = (unsigned long)t;
 	t->timer.expires = jiffies + (msec+HZ-1)/HZ;
 	t->timer.function = os_timer;
 	t->msec = msec;

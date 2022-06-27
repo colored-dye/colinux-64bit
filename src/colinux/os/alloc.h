@@ -11,9 +11,8 @@
 #ifndef __CO_OS_ALLOC_H__
 #define __CO_OS_ALLOC_H__
 
-#include <stdint.h>
-extern void *co_os_malloc(uintptr_t bytes);
-extern void *co_os_realloc(void *ptr, uintptr_t size);
+extern void *co_os_malloc(unsigned long bytes);
+extern void *co_os_realloc(void *ptr, unsigned long size);
 extern void co_os_free(void *ptr);
 
 #endif

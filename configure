@@ -28,7 +28,6 @@ targetkerneldir=NONE
 targetmoduledir="\$COLINUX_TARGET_KERNEL_BUILD/_install"
 hostkerneldir=NONE
 colinux_os=NONE
-colinux_arch=NONE
 configfile="bin/user-build.cfg"
 no_create=""
 verbose=no
@@ -126,11 +125,6 @@ Sample for WinNT as host (default):
 	--downloaddir=$DOWNLOADS \\
 	--prefix=$PREFIX
 
-Sample for WinNT 64 bit as host:
-  ./configure --target=x86_64-w64-mingw32 \\
-	--downloaddir=$DOWNLOADS \\
-	--prefix=$PREFIX
-
 Sample for Linux as host:
   ./configure --target=i686-pc-linux \\
 	--downloaddir=$DOWNLOADS \\
@@ -212,11 +206,6 @@ EOF
     prev=colinux-os ;;
   --colinux-os=*)
     colinux_os="$optarg" ;;
-
-  --colinux-arch)
-    prev=colinux-arch ;;
-  --colinux-arch=*)
-    colinux_arch="$optarg" ;;
 
   --configfile)
     prev=configfile ;;
@@ -315,18 +304,6 @@ NONE)
   esac ;;
 esac
 echo "Setting colinux_os=$colinux_os"
-
-#
-# Check defaulting arch
-#
-case $colinux_arch in
-NONE)
-  case $target_cpu in
-  x86_64) colinux_arch=$target_cpu ;;
-  *) colinux_arch="i386" ;;
-  esac ;;
-esac
-echo "Setting colinux_arch=$colinux_arch"
 
 # Default prefix directory
 case $prefix in
@@ -533,10 +510,7 @@ gcc_helper()
 	fi
 
 	# ABI from local GCC
-	touch /tmp/colinux-$$.c
-	LOCAL_ABI=`gcc -E -dM /tmp/colinux-$$.c 2>/dev/null | sed -n -e \
-          's/^#define __GXX_ABI_VERSION \([0-9]*\)$/\1/p'`
-	rm /tmp/colinux-$$.c
+	LOCAL_ABI=`echo | gcc -E -dM - | sed -n -e 's/.* __GXX_ABI_VERSION \([0-9]*\)/\1/p'`
 
 	# ABI from known mingw compilers
 	case $GCC_VERSION in
@@ -596,12 +570,12 @@ check_depmod()
 		 which depmod 2>/dev/null`; then
 
     # Depmod 2.4.x is bugy with "-V" only, "--help" does nothing real.
-    installed=`$depmod_cfg -V --help 2>/dev/null | grep -E 'module-init-tools|kmod version'`
+    installed=`$depmod_cfg -V --help 2>/dev/null | grep module-init-tools`
     if [ -z "$installed" ]; then
       cat << EOF
 ($depmod_cfg) wrong version.
 
-	Warning: you may need to install module-init-tools
+	Warning: you may need to install module-init-tools"
 	See http://www.codemonkey.org.uk/docs/post-halloween-2.6.txt
 
 	Install the file 'depmod', in directory
@@ -640,7 +614,7 @@ fi
 
 # General tools for winnt and linux
 check_exec_tool "wget" "wget --version" ""
-check_exec_tool "Python interpreter" "python -V" "2.3.x" ""
+check_exec_tool "Python interpreter" "python -V" "3.x.x" ""
 check_exec_tool "patch" "patch --version" ""
 check_exec_tool "make" "make --version" ""
 check_exec_tool "bunzip2" "bunzip2 --help" ""
@@ -733,10 +707,6 @@ echo "Create $configfile"
 # Setup target OS (winnt or linux)
 #
 COLINUX_HOST_OS="$colinux_os"
-
-# Setup target architecture (i386 ot x86_64)
-#
-COLINUX_HOST_ARCH="$colinux_arch"
 
 # Directory where we start for all subdirs in build processing
 # default: \$HOME/colinux-devel  (use only in this file)

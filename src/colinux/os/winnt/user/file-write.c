@@ -13,11 +13,11 @@
 
 #include "misc.h"
 
-co_rc_t co_os_file_write(co_pathname_t pathname, void *buf, uintptr_t size)
+co_rc_t co_os_file_write(co_pathname_t pathname, void *buf, unsigned long size)
 {
 	HANDLE handle;
 	BOOL ret;
-	DWORD wrote;
+	unsigned long wrote;
 	co_rc_t rc = CO_RC_OK;
 	char last_error[0x100];
 

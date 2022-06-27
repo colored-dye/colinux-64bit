@@ -10,7 +10,7 @@
 
 #include "ddk.h"
 #include <ddk/ntifs.h>
-#include <ntdddisk.h>
+#include <ddk/ntdddisk.h>
 
 #include <colinux/os/alloc.h>
 #include <colinux/common/libc.h>
@@ -31,7 +31,7 @@ co_rc_t co_winnt_utf8_to_unicode(const char *src, UNICODE_STRING *unicode_str)
 {
 	co_rc_t rc;
 	co_wchar_t *wstring;
-	uintptr_t size;
+	unsigned long size;
 
 	unicode_str->Buffer = NULL;
 
@@ -70,9 +70,9 @@ co_rc_t co_status_convert(NTSTATUS status)
 	}
 }
 
-co_rc_t co_os_file_create(char *pathname, PHANDLE FileHandle, uintptr_t open_flags,
-			  uintptr_t file_attribute, uintptr_t create_disposition,
-			  uintptr_t options)
+co_rc_t co_os_file_create(char *pathname, PHANDLE FileHandle, unsigned long open_flags,
+			  unsigned long file_attribute, unsigned long create_disposition,
+			  unsigned long options)
 {
 	NTSTATUS status;
 	OBJECT_ATTRIBUTES ObjectAttributes;
@@ -111,7 +111,7 @@ co_rc_t co_os_file_create(char *pathname, PHANDLE FileHandle, uintptr_t open_fla
 	return co_status_convert(status);
 }
 
-co_rc_t co_os_file_open(char *pathname, PHANDLE FileHandle, uintptr_t open_flags)
+co_rc_t co_os_file_open(char *pathname, PHANDLE FileHandle, unsigned long open_flags)
 {
 	return co_os_file_create(pathname, FileHandle, open_flags | SYNCHRONIZE, 0, FILE_OPEN, FILE_SYNCHRONOUS_IO_NONALERT);
 }
@@ -178,7 +178,7 @@ co_rc_t co_os_set_file_information(char *filename,
 }
 
 co_rc_t co_os_file_read_write(co_monitor_t *linuxvm, char *filename,
-			      unsigned long long offset, uintptr_t size,
+			      unsigned long long offset, unsigned long size,
 			      vm_ptr_t src_buffer, bool_t read)
 {
 	co_rc_t rc;
@@ -237,7 +237,7 @@ static void change_file_info_func(void *data, VOID *buffer, ULONG len)
 	KeQuerySystemTime(&fbi->ChangeTime);
 }
 
-co_rc_t co_os_file_set_attr(char *filename, uintptr_t valid, struct fuse_attr *attr)
+co_rc_t co_os_file_set_attr(char *filename, unsigned long valid, struct fuse_attr *attr)
 {
 	IO_STATUS_BLOCK io_status;
 	co_rc_t rc = CO_RC(OK);
@@ -292,14 +292,14 @@ co_rc_t co_os_file_get_attr(char *fullname, struct fuse_attr *attr)
 	HANDLE handle;
 	struct {
 		union {
-			FILE_FULL_DIR_INFORMATION entry;
-			FILE_BOTH_DIR_INFORMATION entry2;
+			FILE_FULL_DIRECTORY_INFORMATION entry;
+			FILE_BOTH_DIRECTORY_INFORMATION entry2;
 		};
 		WCHAR name_filler[sizeof(co_pathname_t)];
 	} entry_buffer;
 	IO_STATUS_BLOCK io_status;
 	co_rc_t rc;
-	int len;
+	int len, len1;
 	LARGE_INTEGER LastAccessTime;
 	LARGE_INTEGER LastWriteTime;
 	LARGE_INTEGER ChangeTime;
@@ -313,6 +313,7 @@ co_rc_t co_os_file_get_attr(char *fullname, struct fuse_attr *attr)
 	attr->nlink = 1;
 
 	len = co_strlen(fullname);
+	len1 = len;
 
 	/* Hack: WinNT detects "C:\" not as directory! */
 	if (len >= 3 && fullname[len-1] == ':') {
@@ -593,7 +594,7 @@ error:
 	return rc;
 }
 
-co_rc_t co_os_file_mknod(co_filesystem_t *filesystem, char *filename, uintptr_t mode)
+co_rc_t co_os_file_mknod(co_filesystem_t *filesystem, char *filename, unsigned long mode)
 {
 	co_rc_t rc;
 	HANDLE handle;
@@ -624,7 +625,7 @@ co_rc_t co_os_file_getdir(char *dirname, co_filesystem_dir_names_t *names)
 	NTSTATUS status;
 	HANDLE handle;
 	FILE_DIRECTORY_INFORMATION *dir_entries_buffer, *entry;
-	uintptr_t dir_entries_buffer_size = 0x1000;
+	unsigned long dir_entries_buffer_size = 0x1000;
 	IO_STATUS_BLOCK io_status;
 	BOOLEAN first_iteration = TRUE;
 	co_filesystem_name_t *new_name;

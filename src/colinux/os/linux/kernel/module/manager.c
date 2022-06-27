@@ -14,6 +14,13 @@
 
 #include "../../ioctl.h"
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,26)
+ #define CO_PROC_ROOT_PTR NULL
+#else
+ #define CO_PROC_ROOT_PTR &proc_root
+#endif
+
+
 static
 int co_os_manager_open(struct inode *inode, struct file *file)
 {
@@ -38,7 +45,7 @@ static
 int co_os_manager_ioctl_buffer(co_linux_io_t *ioctl, char *buffer, struct file *file)
 {
 	co_rc_t rc;
-	uintptr_t return_size = 0;
+	unsigned long return_size = 0;
 	co_manager_open_desc_t opened = (typeof(opened))(file->private_data);
 
 	if (copy_from_user(buffer, ioctl->input_buffer, ioctl->input_buffer_size))
@@ -58,7 +65,7 @@ int co_os_manager_ioctl_buffer(co_linux_io_t *ioctl, char *buffer, struct file *
 	}
 
 	if (ioctl->output_returned != NULL) {
-		if (copy_to_user(ioctl->output_returned, &return_size, sizeof(uintptr_t))) {
+		if (copy_to_user(ioctl->output_returned, &return_size, sizeof(unsigned long))) {
 			return -EFAULT;
 		}
 	}
@@ -68,10 +75,10 @@ int co_os_manager_ioctl_buffer(co_linux_io_t *ioctl, char *buffer, struct file *
 
 static
 int co_os_manager_ioctl(struct inode *inode, struct file *file,
-			unsigned int cmd, uintptr_t arg)
+			unsigned int cmd, unsigned long arg)
 {
 	co_linux_io_t ioctl;
-	uintptr_t buffer_size;
+	unsigned long buffer_size;
 	int ret = -1;
 
 	if (cmd != CO_LINUX_IOCTL_ID)
@@ -133,7 +140,7 @@ ssize_t co_os_manager_read(struct file *file, char __user *buffer, size_t size, 
 	{
 		co_message_queue_item_t *message_item;
 		co_message_t *message;
-		uintptr_t size;
+		unsigned long size;
 
 		rc = co_queue_peek_tail(queue, (void **)&message_item);
 		if (!CO_OK(rc)) {
@@ -184,9 +191,9 @@ ssize_t co_os_manager_write(struct file *file, const char __user *buffer, size_t
 	co_manager_open_desc_t opened = (typeof(opened))(file->private_data);
 	const char __user *scan_buffer;
 	co_message_t __user *message;
-	uintptr_t message_size;
-	intptr_t size_left;
-	intptr_t position;
+	unsigned long message_size;
+	long size_left;
+	long position;
 	int ret = 0;
 
 	if (!opened)
@@ -292,7 +299,7 @@ co_rc_t co_os_manager_init(co_manager_t *manager, co_osdep_manager_t *osdep)
 
 	memset(dep, 0, sizeof(*dep));
 
-	dep->proc_root = proc_mkdir("colinux", &proc_root);
+	dep->proc_root = proc_mkdir("colinux", CO_PROC_ROOT_PTR);
 	if (dep->proc_root == NULL) {
 		rc = CO_RC(ERROR);
 		goto error;
@@ -311,7 +318,7 @@ co_rc_t co_os_manager_init(co_manager_t *manager, co_osdep_manager_t *osdep)
 	return rc;
 
 error_root:
-	remove_proc_entry("colinux", &proc_root);
+	remove_proc_entry("colinux", CO_PROC_ROOT_PTR);
 
 error:
 	co_os_free(dep);
@@ -321,7 +328,7 @@ error:
 void co_os_manager_free(co_osdep_manager_t osdep)
 {
 	remove_proc_entry("ioctl", osdep->proc_root);
-	remove_proc_entry("colinux", &proc_root);
+	remove_proc_entry("colinux", CO_PROC_ROOT_PTR);
 	co_os_free(osdep);
 }
 

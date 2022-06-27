@@ -54,7 +54,7 @@ int client()
 }
 
 typedef struct {
-	intptr_t state;
+	long state;
 } client_data_t;
 
 
@@ -77,7 +77,7 @@ co_rc_t connected(co_os_pipe_connection_t *conn,
 co_rc_t packet(co_os_pipe_connection_t *conn,
 	       void **data,
 	       char *packet_data,
-	       uintptr_t size)
+	       unsigned long size)
 {
 	client_data_t *client_data;
 
@@ -86,11 +86,11 @@ co_rc_t packet(co_os_pipe_connection_t *conn,
 	printf("%p: %s (%d)\n", conn, __FUNCTION__, size);
 
 	if (client_data->state == 0) {
-		if (size != sizeof(uintptr_t)) {
-			co_debug("Size of first packet is not uintptr_t");
+		if (size != sizeof(unsigned long)) {
+			co_debug("Size of first packet is not unsigned long");
 			return CO_RC(ERROR);
 		}
-		co_debug("id: %d", (*(uintptr_t *)packet_data));
+		co_debug("id: %d", (*(unsigned long *)packet_data));
 		client_data->state += 1;
 	} else {
 		int i;

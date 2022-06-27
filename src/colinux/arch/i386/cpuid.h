@@ -14,16 +14,16 @@
 
 typedef union {
 	struct {
-		uintptr_t eax, ebx, ecx, edx;
+		unsigned long eax, ebx, ecx, edx;
 	};
 	struct {
-		uintptr_t highest_op;
+		unsigned long highest_op;
 		char id_string[12];
 	};
 } cpuid_t;
 
 bool_t co_i386_has_cpuid(void);
-void co_i386_get_cpuid(uintptr_t op, cpuid_t *cpuid);
-co_rc_t co_i386_get_cpuid_capabilities(uintptr_t *caps);
+void co_i386_get_cpuid(unsigned long op, cpuid_t *cpuid);
+co_rc_t co_i386_get_cpuid_capabilities(unsigned long *caps);
 
 #endif

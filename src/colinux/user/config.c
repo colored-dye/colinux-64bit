@@ -62,7 +62,7 @@ static co_rc_t check_cobd_file(co_pathname_t pathname, char* name, int index)
 #ifdef COLINUX_DEBUG
 	co_rc_t       rc;
 	char*         buf;
-	uintptr_t size;
+	unsigned long size;
 
 	static const char magic_bz2 [3] = "BZh";		/* bzip2 compressed data */
 	static const char magic_7z  [6] = "7z\274\257\047\034";	/* 7z archive data */
@@ -1163,12 +1163,13 @@ static co_rc_t parse_args_config_color(co_command_line_params_t cmdline,
 #if CO_ENABLE_CON_COLOR
 	bool_t  exists;
 	char    buf[32];
+	co_rc_t rc;
 #endif
 
 	conf->console.attr = CO_ATTR_DEFAULT;
 
 #if CO_ENABLE_CON_COLOR
-	co_cmdline_get_next_equality(cmdline,
+	rc = co_cmdline_get_next_equality(cmdline,
 					  "color",
 					  0,
 					  NULL,

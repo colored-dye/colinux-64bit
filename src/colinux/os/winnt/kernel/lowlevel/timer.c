@@ -18,11 +18,11 @@ struct co_os_timer {
 	KTIMER ktimer;
 	co_os_func_t func;
 	void *data;
-	intptr_t msec;
+	long msec;
 };
 
 VOID
-NTAPI
+DDKAPI
 co_os_timer_routine(
 	IN PKDPC Dpc,
 	IN PVOID DeferredContext,
@@ -36,7 +36,7 @@ co_os_timer_routine(
 }
 
 co_rc_t co_os_timer_create(co_os_func_t func, void *data,
-			   intptr_t msec, co_os_timer_t *timer_out)
+			   long msec, co_os_timer_t *timer_out)
 {
 	co_os_timer_t timer;
 

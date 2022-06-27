@@ -10,7 +10,6 @@
 
 #include <colinux/os/current/memory.h>
 #include <colinux/os/alloc.h>
-#include <string.h>
 
 #include "console.h"
 
@@ -22,7 +21,7 @@
 co_rc_t co_console_create(co_console_config_t* config_par,
 			  co_console_t**       console_out)
 {
-	uintptr_t      struct_size;
+	unsigned long      struct_size;
 	co_console_t*      console;
 
 	/*
@@ -87,13 +86,13 @@ co_rc_t co_console_op(co_console_t* console, co_console_message_t* message)
 	{
 	case CO_OPERATION_CONSOLE_SCROLL_UP:
 	{
-		uintptr_t lines = message->scroll.lines;
-		uintptr_t t     = message->scroll.top;
-		uintptr_t b     = message->scroll.bottom + 1;
-		uintptr_t config_x = console->config.x;
-		uintptr_t t_count  = config_x * t;
-		uintptr_t s_count  = config_x * lines; /* Filled with spaces */
-		uintptr_t offs; /* Offset in buffer between scroll and fill area */
+		unsigned long lines = message->scroll.lines;
+		unsigned long t     = message->scroll.top;
+		unsigned long b     = message->scroll.bottom + 1;
+		unsigned long config_x = console->config.x;
+		unsigned long t_count  = config_x * t;
+		unsigned long s_count  = config_x * lines; /* Filled with spaces */
+		unsigned long offs; /* Offset in buffer between scroll and fill area */
 		co_console_cell_t blank = *(co_console_cell_t*)(&message->scroll.charattr);
 		co_console_cell_t *dest;
 
@@ -135,17 +134,17 @@ co_rc_t co_console_op(co_console_t* console, co_console_message_t* message)
 
 	case CO_OPERATION_CONSOLE_SCROLL_DOWN:
 	{
-		uintptr_t lines = message->scroll.lines;
-		uintptr_t t     = message->scroll.top;
-		uintptr_t b     = message->scroll.bottom + 1;
-		uintptr_t config_x = console->config.x;
-		uintptr_t s_count  = config_x * lines; /* Rest filled with spaces */
+		unsigned long lines = message->scroll.lines;
+		unsigned long t     = message->scroll.top;
+		unsigned long b     = message->scroll.bottom + 1;
+		unsigned long config_x = console->config.x;
+		unsigned long s_count  = config_x * lines; /* Rest filled with spaces */
 		co_console_cell_t blank = *(co_console_cell_t*)(&message->scroll.charattr);
 		co_console_cell_t *dest;
 
 		if(t || (b!=console->config.y))
 		{
-			uintptr_t t_count = config_x * t;
+			unsigned long t_count = config_x * t;
 
 			// i.e., t is non-zero, meaning scroll inside an editor for example
 			if (b > console->config.max_y)
@@ -180,7 +179,7 @@ co_rc_t co_console_op(co_console_t* console, co_console_message_t* message)
 		int                x     = message->putcs.x;
 		int                y     = message->putcs.y;
 		int                count = message->putcs.count;
-		uintptr_t   config_x = console->config.x;
+		unsigned long   config_x = console->config.x;
 		co_console_cell_t* cells = (co_console_cell_t *)&message->putcs.data;
 		co_console_cell_t* dest;
 
@@ -200,7 +199,7 @@ co_rc_t co_console_op(co_console_t* console, co_console_message_t* message)
 		/* Copy single char-attr pair to screen */
 		int x = message->putc.x;
 		int y = message->putc.y;
-		uintptr_t config_x = console->config.x;
+		unsigned long config_x = console->config.x;
 
 		if (y >= console->config.y || x >= config_x)
 			return CO_RC(ERROR);
@@ -224,7 +223,7 @@ co_rc_t co_console_op(co_console_t* console, co_console_message_t* message)
 		int 		   l;
 		co_console_cell_t* cell;
 		co_console_cell_t blank = *(co_console_cell_t*)(&message->clear.charattr);
-		uintptr_t config_x = console->config.x;
+		unsigned long config_x = console->config.x;
 
 		while (t <= b) {
 			l    = message->clear.left;
@@ -243,7 +242,7 @@ co_rc_t co_console_op(co_console_t* console, co_console_message_t* message)
 		int l = message->bmove.left;
 		int b = message->bmove.bottom;
 		int r = message->bmove.right;
-		uintptr_t config_x = console->config.x;
+		unsigned long config_x = console->config.x;
 
 		if (y < t) {
 			while (t <= b) {
@@ -279,7 +278,7 @@ co_rc_t co_console_op(co_console_t* console, co_console_message_t* message)
 		int                x     = message->putcs.x;
 		int                y     = message->putcs.y;
 		int                count = message->putcs.count;
-		uintptr_t   config_x = console->config.x;
+		unsigned long   config_x = console->config.x;
 		co_console_cell_t* cells = (co_console_cell_t *)&message->putcs.data;
 		co_console_cell_t* dest;
 
@@ -324,14 +323,14 @@ co_rc_t co_console_op(co_console_t* console, co_console_message_t* message)
 
 void co_console_pickle(co_console_t* console)
 {
-	console->screen  = (co_console_cell_t*)(((char*)console->screen)  - (uintptr_t)console);
-	console->backlog = (co_console_cell_t*)(((char*)console->backlog) - (uintptr_t)console);
+	console->screen  = (co_console_cell_t*)(((char*)console->screen)  - (unsigned long)console);
+	console->backlog = (co_console_cell_t*)(((char*)console->backlog) - (unsigned long)console);
 }
 
 void co_console_unpickle(co_console_t* console)
 {
-	console->screen  = (co_console_cell_t*)(((char*)console->screen)  + (uintptr_t)console);
-	console->backlog = (co_console_cell_t*)(((char*)console->backlog) + (uintptr_t)console);
+	console->screen  = (co_console_cell_t*)(((char*)console->screen)  + (unsigned long)console);
+	console->backlog = (co_console_cell_t*)(((char*)console->backlog) + (unsigned long)console);
 }
 
 #endif

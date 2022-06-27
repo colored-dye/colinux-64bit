@@ -50,12 +50,12 @@ co_manager_handle_t co_os_manager_open_quite(void)
 
 co_rc_t co_os_manager_ioctl(
 	co_manager_handle_t kernel_device,
-	uintptr_t code,
+	unsigned long code,
 	void *input_buffer,
-	uintptr_t input_buffer_size,
+	unsigned long input_buffer_size,
 	void *output_buffer,
-	uintptr_t output_buffer_size,
-	uintptr_t *output_returned)
+	unsigned long output_buffer_size,
+	unsigned long *output_returned)
 {
 	int fd = (int)kernel_device, ret;
 	co_linux_io_t lio;

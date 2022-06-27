@@ -37,7 +37,7 @@ void co_debug_start(void)
 	}
 }
 
-void co_debug_buf(const char *buf, int size)
+void co_debug_buf(const char *buf, long size)
 {
 	if (handle != NULL)
 		co_manager_debug(handle, buf, size);

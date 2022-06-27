@@ -11,7 +11,7 @@
 #define NDIS50
 
 #include "ddk.h"
-#include <ntdddisk.h>
+#include <ddk/ntdddisk.h>
 #include <ddk/ndis.h>
 #include <ddk/xfilter.h>
 
@@ -23,9 +23,6 @@
 #include <colinux/os/winnt/monitor.h>
 #include <colinux/os/winnt/kernel/conet.h>
 
-#define CO_NDIS_ENABLED		/* Can be disable temporaly for testings without ndis */
-#ifndef CO_NDIS_ENABLED
-
 // #define CONET_DEBUG
 
 #ifdef CONET_DEBUG
@@ -36,13 +33,12 @@
 #define conet_err_debug(fmt, args...) co_debug_lvl(network, 3, fmt, ## args )
 
 // Forward reference
-static void NTAPI co_conet_proto_transfer_complete(
+static void DDKAPI co_conet_proto_transfer_complete(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN PNDIS_PACKET		Packet,
 	IN NDIS_STATUS		Status,
 	IN UINT			BytesTransferred);
 
-#ifndef WIN64
 // missed NDIS event API
 static inline VOID NdisInitializeEvent(
 	IN PNDIS_EVENT  	Event
@@ -72,7 +68,6 @@ static inline VOID NdisResetEvent(
 {
 	KeResetEvent(&Event->Event);
 }
-#endif /* !WIN64 */
 
 static void co_FreeBuffersAndPacket(
 	IN PNDIS_PACKET		Packet
@@ -93,7 +88,7 @@ static void co_FreeBuffersAndPacket(
 	NdisFreePacket(Packet);
 }
 
-static VOID NTAPI co_conet_transfer_message_routine(PDEVICE_OBJECT DeviceObject, PVOID Context)
+static VOID DDKAPI co_conet_transfer_message_routine(PDEVICE_OBJECT DeviceObject, PVOID Context)
 {
 	conet_message_transfer_context_t *context;
 	PIO_WORKITEM	work_item;
@@ -236,7 +231,7 @@ static void co_conet_free_adapter(conet_adapter_t *adapter)
 	conet_debug("leave: adapter = %p", adapter);
 }
 
-static void NTAPI co_conet_proto_bind_adapter(
+static void DDKAPI co_conet_proto_bind_adapter(
 	OUT PNDIS_STATUS	Status,
 	IN  NDIS_HANDLE		BindContext,
 	IN  PNDIS_STRING	DeviceName,
@@ -284,7 +279,7 @@ static void NTAPI co_conet_proto_bind_adapter(
 		*Status, adapter->binding_handle);
 }
 
-static void NTAPI co_conet_proto_unbind_adapter(
+static void DDKAPI co_conet_proto_unbind_adapter(
 	OUT PNDIS_STATUS	Status,
 	IN  NDIS_HANDLE		ProtocolBindingContext,
 	IN  NDIS_HANDLE		UnbindContext
@@ -310,7 +305,7 @@ static void NTAPI co_conet_proto_unbind_adapter(
 	conet_debug("leave: Status = %x", *Status);
 }
 
-static void NTAPI co_conet_proto_open_adapter_complete(
+static void DDKAPI co_conet_proto_open_adapter_complete(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN NDIS_STATUS		Status,
 	IN NDIS_STATUS		OpenErrorStatus
@@ -324,7 +319,7 @@ static void NTAPI co_conet_proto_open_adapter_complete(
 	NdisSetEvent(&adapter->binding_event);
 }
 
-static void NTAPI co_conet_proto_close_adapter_complete(
+static void DDKAPI co_conet_proto_close_adapter_complete(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN NDIS_STATUS		Status
 	)
@@ -376,7 +371,7 @@ static bool_t co_conet_proto_filter_packet(
 	return FALSE;
 }
 
-static NDIS_STATUS NTAPI co_conet_proto_receive(
+static NDIS_STATUS DDKAPI co_conet_proto_receive(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN NDIS_HANDLE		MacReceiveContext,
 	IN PVOID		HeaderBuffer,
@@ -511,7 +506,7 @@ static NDIS_STATUS NTAPI co_conet_proto_receive(
 	return NDIS_STATUS_SUCCESS;
 }
 
-static void NTAPI co_conet_proto_receive_complete(
+static void DDKAPI co_conet_proto_receive_complete(
 	IN NDIS_HANDLE		ProtocolBindingContext
 	)
 {
@@ -522,7 +517,7 @@ static void NTAPI co_conet_proto_receive_complete(
 	conet_debug("adapter = %p", adapter);
 }
 
-static void NTAPI co_conet_proto_request_complete(
+static void DDKAPI co_conet_proto_request_complete(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN PNDIS_REQUEST	Request,
 	IN NDIS_STATUS		Status
@@ -536,7 +531,7 @@ static void NTAPI co_conet_proto_request_complete(
 	co_os_free(Request);
 }
 
-static void NTAPI co_conet_proto_send_complete(
+static void DDKAPI co_conet_proto_send_complete(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN PNDIS_PACKET		Packet,
 	IN NDIS_STATUS		Status
@@ -554,7 +549,7 @@ static void NTAPI co_conet_proto_send_complete(
 	co_FreeBuffersAndPacket(Packet);
 }
 
-static void NTAPI co_conet_proto_reset_complete(
+static void DDKAPI co_conet_proto_reset_complete(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN NDIS_STATUS		Status
 	)
@@ -565,7 +560,7 @@ static void NTAPI co_conet_proto_reset_complete(
 	conet_debug("adapter = %p", adapter);
 }
 
-static void NTAPI co_conet_proto_status(
+static void DDKAPI co_conet_proto_status(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN NDIS_STATUS		Status,
 	IN PVOID		StatusBuffer,
@@ -578,7 +573,7 @@ static void NTAPI co_conet_proto_status(
 	adapter->general_status = Status;
 }
 
-static void NTAPI co_conet_proto_status_complete(
+static void DDKAPI co_conet_proto_status_complete(
 	IN NDIS_HANDLE		ProtocolBindingContext
 	)
 {
@@ -623,7 +618,7 @@ static void NTAPI co_conet_proto_status_complete(
 	conet_debug("leave: adapter = %p, notify message to colinux", adapter);
 }
 
-static void NTAPI co_conet_proto_transfer_complete(
+static void DDKAPI co_conet_proto_transfer_complete(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN PNDIS_PACKET		Packet,
 	IN NDIS_STATUS		Status,
@@ -688,7 +683,7 @@ static void NTAPI co_conet_proto_transfer_complete(
 	conet_debug("leave");
 }
 
-static int NTAPI co_conet_proto_receive_packet(
+static int DDKAPI co_conet_proto_receive_packet(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN PNDIS_PACKET		Packet
 	)
@@ -761,8 +756,8 @@ static int NTAPI co_conet_proto_receive_packet(
 	conet_debug("leave: return 0");
 	return 0;
 }
-   
-static NDIS_STATUS NTAPI co_conet_proto_pnp_handler(
+
+static NDIS_STATUS DDKAPI co_conet_proto_pnp_handler(
 	IN NDIS_HANDLE		ProtocolBindingContext,
 	IN PNET_PNP_EVENT	pNetPnPEvent
 	)
@@ -1149,32 +1144,3 @@ co_rc_t co_conet_inject_packet_to_adapter(co_monitor_t *monitor, int conet_unit,
 	conet_debug("leave: success");
 	return CO_RC_OK;
 }
-
-#else /* CO_NDIS_ENABLED */
-
-co_rc_t co_conet_register_protocol(co_monitor_t *monitor)
-{
-	return CO_RC(ERROR);
-}
-
-co_rc_t co_conet_unregister_protocol(co_monitor_t *monitor)
-{
-	return CO_RC(ERROR);
-}
-
-co_rc_t co_conet_bind_adapter(co_monitor_t *monitor, int conet_unit, char *netcfg_id, int promisc, char macaddr[6])
-{
-	return CO_RC(ERROR);
-}
-
-co_rc_t co_conet_unbind_adapter(co_monitor_t *monitor, int conet_unit)
-{
-	return CO_RC(ERROR);
-}
-
-co_rc_t co_conet_inject_packet_to_adapter(co_monitor_t *monitor, int conet_unit, void *packet_data, int length)
-{
-	return CO_RC(ERROR);
-}
-
-#endif /* CO_NDIS_ENABLED */

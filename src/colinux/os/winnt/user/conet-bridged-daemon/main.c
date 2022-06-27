@@ -9,8 +9,8 @@
  *
  */
 
-#include <winsock2.h>
 #include <windows.h>
+#include <winsock2.h>
 #include <pcap.h>
 
 #include <stdio.h>
@@ -68,19 +68,20 @@ co_reactor_t g_reactor = NULL;
 co_user_monitor_t *g_monitor_handle = NULL;
 start_parameters_t *daemon_parameters;
 
-static co_rc_t monitor_receive(co_reactor_user_t user, unsigned char *buffer, uintptr_t size)
+static co_rc_t monitor_receive(co_reactor_user_t user, unsigned char *buffer, unsigned long size)
 {
 	co_message_t *message;
-	uintptr_t message_size;
-	intptr_t size_left = size;
-	intptr_t position = 0;
+	unsigned long message_size;
+	long size_left = size;
+	long position = 0;
+	int pcap_rc;
 
 	while (size_left > 0) {
 		message = (typeof(message))(&buffer[position]);
 		message_size = message->size + sizeof(*message);
 		size_left -= message_size;
 		if (size_left >= 0) {
-			pcap_sendpacket(pcap_packet.adhandle,
+			pcap_rc = pcap_sendpacket(pcap_packet.adhandle,
 						  message->data, message->size);
 			/* TODO */
 		}

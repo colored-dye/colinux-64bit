@@ -21,9 +21,9 @@ EXCEPTION_DISPOSITION name##Handler(EXCEPTION_RECORD *record,		\
 				    struct _CONTEXT *ContextRecord,	\
 				    ULONG *DispatcherContext)		\
 {									\
-	(*((uintptr_t *)(EstablisherFrame[7]))) = 1;		\
-	ContextRecord->Esp = (uintptr_t)&EstablisherFrame[0];	\
-	ContextRecord->Eip = (uintptr_t)EstablisherFrame[-1-(frame_size/4)]; \
+	(*((unsigned long *)(EstablisherFrame[7]))) = 1;		\
+	ContextRecord->Esp = (unsigned long)&EstablisherFrame[0];	\
+	ContextRecord->Eip = (unsigned long)EstablisherFrame[-1-(frame_size/4)]; \
 									\
 	return ExceptionContinueExecution;				\
 }									\
