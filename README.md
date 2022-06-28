@@ -49,85 +49,6 @@ Here I choose the latest devel-64bit version of the original colinux source code
 ├── Makefile.winnt
 ├── NEWS
 ├── patch
-│   ├── audio-2.6.25.diff
-│   ├── audio-2.6.26.diff
-│   ├── audio-2.6.33.diff
-│   ├── audio-core.diff
-│   ├── base-2.6.25.diff
-│   ├── base-2.6.26.diff
-│   ├── base-2.6.33.diff
-│   ├── bin-patch
-│   │   ├── libwpcap.a
-│   │   └── README
-│   ├── cloop-2.6.25.diff
-│   ├── cloop-2.6.26.diff
-│   ├── cloop-2.6.33.diff
-│   ├── cloop-core-2.628.diff
-│   ├── cloop-core-2.631.diff
-│   ├── cobd-2.6.25.diff
-│   ├── cobd-2.6.26.diff
-│   ├── cobd-2.6.33.diff
-│   ├── cobd-core.diff
-│   ├── coconsole-2.6.25.diff
-│   ├── coconsole-2.6.26.diff
-│   ├── coconsole-2.6.33.diff
-│   ├── coconsole-core.diff
-│   ├── cofs-2.6.25.diff
-│   ├── cofs-2.6.26.diff
-│   ├── cofs-2.6.33.diff
-│   ├── cofs-core.diff
-│   ├── colinux_2.6.26-ext4-7.diff
-│   ├── conet-2.6.25.diff
-│   ├── conet-2.6.26.diff
-│   ├── conet-2.6.33.diff
-│   ├── conet-pci-core.diff
-│   ├── fix-ptrace.o-compile-error-2.6.33.diff
-│   ├── fltk-1.1.10-linux-patch.diff
-│   ├── fltk-1.1.10-win32.diff
-│   ├── frame-size-checks.diff
-│   ├── gcc412fix.diff
-│   ├── kbd-2.6.25.diff
-│   ├── kbd-2.6.26.diff
-│   ├── kbd-2.6.33.diff
-│   ├── kbd-core.diff
-│   ├── make-3.82-mkmakefile.diff
-│   ├── mingw_w64.diff
-│   ├── mouse-2.6.25.diff
-│   ├── mouse-2.6.26.diff
-│   ├── mouse-2.6.33.diff
-│   ├── mouse-core.diff
-│   ├── pci-2.6.25.diff
-│   ├── pci-2.6.26.diff
-│   ├── pci-2.6.33.diff
-│   ├── pci-core.diff
-│   ├── scsi-2.6.25.diff
-│   ├── scsi-2.6.26.diff
-│   ├── scsi-2.6.33.diff
-│   ├── scsi-core.diff
-│   ├── serial-2.6.25.diff
-│   ├── serial-2.6.26.diff
-│   ├── serial-2.6.33.diff
-│   ├── serial-core.diff
-│   ├── series-2.6.25.20
-│   ├── series-2.6.26.8
-│   ├── series-2.6.33.5
-│   ├── squashfs3.3-2.6.25.diff
-│   ├── squashfs3.3-core.diff
-│   ├── squashfs3.4-2.6.26.diff
-│   ├── timer-2.6.25.diff
-│   ├── timer-2.6.26.diff
-│   ├── timer-2.6.33.diff
-│   ├── tty-buffer-alloc-2.6.33.diff
-│   ├── types.h.diff
-│   ├── unionfs-2.5.4_for_2.6.25.20.diff
-│   ├── unionfs-2.5.4_for_2.6.26.8.diff
-│   ├── unionfs-2.5.4_for_2.6.33.diff
-│   ├── unionfs-2.6.25.20.diff
-│   ├── unionfs-2.6.26.8.diff
-│   ├── video-2.6.25.diff
-│   ├── video-2.6.26.diff
-│   ├── video-2.6.33.diff
-│   └── video-core.diff
 ├── README64
 ├── RUNNING
 ├── src
@@ -600,13 +521,12 @@ I try not to be boastful, but my plan is not at all easy:
 
 ## Tools needed
 
-1.   MinGW-w64
+1.   GCC: https://ftp.gnu.org/pub/gnu/gcc/
+1.   MinGW-w64: https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v10.0.0.tar.bz2
 2.   WinPCAP
 3.   GNU binutils
 4.   W32API
 5.   FLTK
-
-
 
 
 
