@@ -3,9 +3,11 @@
 import os
 import subprocess
 
-def check_exec_tool(name, cmd, min_ver, max_ver):
+def check_exec_tool(name, cmd, min_ver):
+  """Check mininum version requirement only.
+  """
   print(f"Checking {name} ...", end='')
-  if min_ver == "" and max_ver == "":
+  if min_ver == "":
     return True
   ver = subprocess.check_output(f"{cmd} | sed -n -e " + r"'s/^[^0-9]*\([0-9]\{1,\}\)\.\([0-9]\{1,\}\)\.\([0-9]\{1,\}\).*/i1=\1 i2=\2 i3=\3/p'", shell=True).decode()
   ver = ver[:-1].split(' ')
@@ -27,7 +29,3 @@ if __name__ == "__main__":
   target = TARGET
   prefix = None
   distdir = os.path.join(TOPDIR, "dist")
-  downloaddir = None
-  builddir = os.path.join(TOPDIR, "build")
-
-  check_exec_tool('wget', 'wget --version', '1.20.0', '')

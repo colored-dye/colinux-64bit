@@ -16,12 +16,6 @@ export COLINUX_TARGET_KERNEL_SOURCE := \
 export COLINUX_TARGET_KERNEL_BUILD := \
     $(shell . bin/build-common.sh --get-vars; \
     echo $$COLINUX_TARGET_KERNEL_BUILD)
-export COLINUX_TARGET_KERNEL_PATH := \
-    $(shell . bin/build-common.sh --get-vars; \
-    echo $$COLINUX_TARGET_KERNEL_PATH)
-export COLINUX_ENABLE_WX := \
-    $(shell . bin/build-common.sh --get-vars; \
-    echo $$COLINUX_ENABLE_WX)
 
 else
 

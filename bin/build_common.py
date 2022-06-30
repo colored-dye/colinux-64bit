@@ -2,6 +2,7 @@
 
 import os
 import configparser
+import sys
 
 # Global parameters
 BINDIR = ""
@@ -87,11 +88,9 @@ def build_common_get_vars():
   COLINUX_HOST_OS = user_config["colinux_host_os"]
   if user_config["topdir"] != "":
     TOPDIR = user_config["topdir"]
-    if TOPDIR[-1] == '/':
-      TOPDIR = TOPDIR[:-1]
-  DOWNLOAD_DIR = user_config["downloads"].replace("topdir", TOPDIR)
-  BUILD_DIR = user_config["build_dir"].replace("topdir", TOPDIR)
-  PREFIX = user_config["prefix"].replace("topdir", TOPDIR)
+  DOWNLOAD_DIR = user_config["downloads"]
+  BUILD_DIR = user_config["build_dir"]
+  PREFIX = user_config["prefix"]
   KERNEL_VERSION = user_config["kernel_version"]
   KERNEL_SOURCE = user_config["kernel_source"].replace("build_dir", BUILD_DIR)
   KERNEL_BUILD = user_config["kernel_build"].replace("build_dir", BUILD_DIR)
@@ -120,3 +119,18 @@ def build_common_get_vars():
   TARGET = "x86_64-pc-mingw32"
   TARGET_ARCH = TARGET.split('-')[0]
   BUILD = "x86_64-pc-linux"
+
+  CO_VERSION = open(os.path.join(TOPDIR, "VERSION"), 'r').read()
+  COMPLETE_KERNEL_NAME = KERNEL_VERSION + "-co-" + CO_VERSION
+
+  return
+
+def build_common_main():
+  build_common_get_vars()
+  if PREFIX == "":
+    print(f"Please speficy {PREFIX} in user-build.cfg")
+  if DOWNLOAD_DIR == "":
+    print(f"Please specify {DOWNLOAD_DIR} in user-build.cfg")
+  if BUILD_DIR == "":
+    print(f"Please specify {BUILD_DIR} in user-build.cfg")
+  sys.path()
