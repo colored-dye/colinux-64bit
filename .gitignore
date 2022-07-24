@@ -2,3 +2,6 @@ __pycache__/
 bin/__pycache__/
 download/
 mingw/
+build/
+log/
+tmp/

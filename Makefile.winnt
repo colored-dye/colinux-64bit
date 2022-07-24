@@ -17,7 +17,7 @@ all: cross libs kernel colinux
 #
 
 cross:
-	@cd bin && ./build-cross.sh
+	@cd bin && sh -x ./build-cross.sh
 
 libs:
 	@cd bin && ./build-colinux-libs.sh

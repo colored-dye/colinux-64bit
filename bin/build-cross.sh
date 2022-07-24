@@ -116,8 +116,7 @@ extract_gcc()
 {
 	echo "Extracting gcc"
 	rm -rf "$BUILD_DIR/$GCC"
-	tar_unpack_to "$GCC_ARCHIVE1" "$BUILD_DIR"
-	tar_unpack_to "$GCC_ARCHIVE2" "$BUILD_DIR"
+	tar_unpack_to "$GCC_ARCHIVE" "$BUILD_DIR"
 }
 
 patch_gcc()
@@ -320,15 +319,15 @@ build_cross()
 	echo "err: $COLINUX_BUILD_ERR"
 	mkdir -p `dirname $COLINUX_BUILD_ERR`
 
-	install_libs
+	# install_libs
 
-	extract_binutils
-	patch_binutils
-	configure_binutils
-	build_binutils
-	install_binutils
-	check_binutils_guest || build_binutils_guest
-	clean_binutils
+	# extract_binutils
+	# patch_binutils
+	# configure_binutils
+	# build_binutils
+	# install_binutils
+	# check_binutils_guest || build_binutils_guest
+	# clean_binutils
 
 	extract_gcc
 	patch_gcc
