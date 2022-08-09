@@ -308,16 +308,18 @@ final_tweaks()
 build_cross()
 {
 	# do not check files, if rebuild forced
-	test "$1" = "--rebuild" || check_installed
+	# test "$1" = "--rebuild" || check_installed
 
-	download_files
+	# download_files
 	# Only Download
-	test "$1" = "--download-only" && exit 0
+	# test "$1" = "--download-only" && exit 0
 
 	echo "log: $COLINUX_BUILD_LOG"
 	mkdir -p `dirname $COLINUX_BUILD_LOG`
 	echo "err: $COLINUX_BUILD_ERR"
 	mkdir -p `dirname $COLINUX_BUILD_ERR`
+
+	./mingw-w64-build.sh x86_64 --root=$BUILD_DIR --prefix=$PREFIX
 
 	# install_libs
 
@@ -329,15 +331,16 @@ build_cross()
 	# check_binutils_guest || build_binutils_guest
 	# clean_binutils
 
-	extract_gcc
-	patch_gcc
-	configure_gcc
-	build_gcc
-	install_gcc
-	check_gcc_guest || build_gcc_guest
-	clean_gcc
+	# extract_gcc
+	# patch_gcc
+	# configure_gcc
+	# build_gcc
+	# install_gcc
+	# check_gcc_guest || build_gcc_guest
+	# clean_gcc
 
-	final_tweaks
+	# final_tweaks
+	echo "Installation complete!"
 }
 
 build_cross $1
