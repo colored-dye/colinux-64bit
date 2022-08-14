@@ -125,7 +125,7 @@ download_sources()
     create_dir "$SRC_PATH"
     change_dir "$SRC_PATH"
 
-    test -d download || mkdir download
+    test -d $DOWNLOAD_PATH || mkdir download
 
     # execute "downloading MinGW-w64 source" "" \
     #     git clone --depth 1 -b "$MINGW_W64_BRANCH" \
@@ -133,8 +133,8 @@ download_sources()
 
     execute "downloading MinGW-w64 source" "" \
         wget https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-$MINGW_W64_BRANCH.tar.bz2 \
-            -O download/mingw-w64.tar.bz2 ; \
-        bunzip2 -dc download/mingw-w64.tar.bz2 | tar x ; \
+            -O $DOWNLOAD_PATH/mingw-w64.tar.bz2 ; \
+        bunzip2 -dc $DOWNLOAD_PATH/mingw-w64.tar.bz2 | tar x ; \
         mv mingw-w64-$MINGW_W64_BRANCH mingw-w64
 
     # execute "downloading Binutils source" "" \
@@ -142,8 +142,8 @@ download_sources()
     #         https://sourceware.org/git/binutils-gdb.git binutils
 
     execute "downloading Binutils source" "" \
-        wget https://ftp.gnu.org/pub/gnu/binutils/$BINUTILS_BRANCH.tar.xz -O download/binutils.tar.xz ; \
-        xz -dc download/binutils.tar.xz | tar x ; \
+        wget https://ftp.gnu.org/pub/gnu/binutils/$BINUTILS_BRANCH.tar.xz -O $DOWNLOAD_PATH/binutils.tar.xz ; \
+        xz -dc $DOWNLOAD_PATH/binutils.tar.xz | tar x ; \
         mv $BINUTILS_BRANCH binutils
 
     # execute "downloading GCC source" "" \
@@ -151,8 +151,8 @@ download_sources()
     #         https://gcc.gnu.org/git/gcc.git gcc
 
     execute "downloading GCC source" "" \
-        wget https://ftp.gnu.org/pub/gnu/gcc/gcc-12.1.0/$GCC_BRANCH.tar.xz -O download/gcc.tar.xz ; \
-        xz -dc download/gcc.tar.xz | tar x ; \
+        wget https://ftp.gnu.org/pub/gnu/gcc/gcc-12.1.0/$GCC_BRANCH.tar.xz -O $DOWNLOAD_PATH/gcc.tar.xz ; \
+        xz -dc $DOWNLOAD_PATH/gcc.tar.xz | tar x ; \
         mv $GCC_BRANCH gcc
 
     execute "downloading config.guess" "" \
@@ -303,6 +303,17 @@ while :; do
         --root=)
             arg_error "'--root' requires a non-empty option argument"
             ;;
+        # --download=?*)
+        #     DOWNLOAD_PATH=${1#*=}
+        #     ;;
+        # -d|--download)
+        #     if [ "$2" ]; then
+        #         DOWNLOAD_PATH="$2"
+        #         shift
+        #     else
+        #         arg_error "'--prefix' requires a non-empty option argument"
+        #     fi
+        #     ;;
         --keep-artifacts)
             KEEP_ARTIFACTS=1
             ;;
@@ -393,6 +404,7 @@ done
 
 SRC_PATH="$ROOT_PATH/src"
 BLD_PATH="$ROOT_PATH/bld"
+DOWNLOAD_PATH="$ROOT_PATH/download"
 LOG_FILE="$ROOT_PATH/build.log"
 I686_PREFIX="$ROOT_PATH/i686"
 X86_64_PREFIX="$ROOT_PATH/x86_64"

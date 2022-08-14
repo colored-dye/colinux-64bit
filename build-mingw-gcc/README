@@ -1,0 +1,2 @@
+Build MinGW cross compiler(x86_64-w64-mingw32-) and guest gcc(x86_64-co-linux-) for compiling the linux kernel.
+

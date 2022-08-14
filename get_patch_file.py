@@ -1,4 +1,4 @@
-import os
+import sys
 
 def ParseDiff(filename):
     with open(filename, 'r') as f:
@@ -15,8 +15,9 @@ def PrintList(l):
     for i in l:
         print(i)
 
-# for file in os.listdir('patch/'):
-#     print(ParseDiff(os.path.join('patch', file)))
-diff = ParseDiff('linux-2.6.33.7.diff')
-diff = sorted(diff)
-PrintList(diff)
+for f in sys.argv[1:]:
+    print(f)
+    print("===================================================================")
+    diff = ParseDiff(f)
+    diff = sorted(diff)
+    PrintList(diff)
