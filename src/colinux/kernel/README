@@ -1,0 +1,4 @@
+OS-independent kernel code driver.
+
+ * Monitor: Allocating, maintaining and running the coLinux kernel.
+ * Manager: Manages the running monitors.

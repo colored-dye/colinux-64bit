@@ -1,0 +1,6 @@
+OS-independent userspace code.
+
+ * Parsing and loading vmlinux file.
+ * Maintaining a link with kernel driver.
+ * Communicating with OS-independent kernel driver.
+ * Managing config file.

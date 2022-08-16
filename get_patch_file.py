@@ -1,3 +1,7 @@
+"""
+Get patched file names from diff outputs.
+"""
+
 import sys
 
 def ParseDiff(filename):

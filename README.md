@@ -1,8 +1,7 @@
 ## Some ideas
 
-1. Project management tool: CMake.
-2. `bin/user-build.cfg' should specify absolute paths rather than relative paths.
-3. 
+1. Project management tool: Simple Makefiles. The Python scripts by Da-x seems somehow overwhelming for me.
+2. Screw 64 bits (for now). Manage to compile a 32-bit daemon (and  driver) that can actually run on Windows 11.
 
 ## Dependencies
 

@@ -1,3 +1,3 @@
 .PHONY: all
 all:
-	make -C src
+	make -C colinux
