@@ -17,7 +17,6 @@ TOPDIR=`dirname $BINDIR`
 # Default Kernel version we are targeting, can overwrite in CFG file.
 # Remember: Please update also conf/kernel-*-config
 #
-KERNEL_VERSION="2.6.33"
 
 # Use User config, if exist
 # you probably don't need to change anything from here down
@@ -53,9 +52,9 @@ esac
 # ARCH must overwrite for builds on 64 bit (target kernel)
 TARGET_GUEST_ARCH=i386
 
-MINGW="mingw-w64-v"$MINGW_VERSION
-MINGW_ARCHIVE=$MINGW".tar.bz2"
-MINGW_URL="https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release"
+MINGW="mingw-runtime-$MINGW_VERSION"
+MINGW_ARCHIVE="$MINGW.tar.gz"
+MINGW_URL="https://sourceforge.net/projects/mingw/files/OldFiles/$MINGW"
 
 BINUTILS_RELEASE="$BINUTILS_VERSION"
 BINUTILS=binutils-$BINUTILS_RELEASE
@@ -64,8 +63,14 @@ BINUTILS_URL="https://ftp.gnu.org/pub/gnu/binutils"
 
 GCC_RELEASE="$GCC_VERSION"
 GCC=gcc-$GCC_RELEASE
-GCC_ARCHIVE=gcc-$GCC_RELEASE.tar.gz
+GCC_ARCHIVE1="gcc-core-$GCC_RELEASE.tar.bz2"
+GCC_ARCHIVE2="gcc-g++-$GCC_RELEASE.tar.bz2"
 GCC_URL=https://ftp.gnu.org/pub/gnu/gcc/gcc-$GCC_VERSION
+
+W32API_PART="w32api-$W32API_VERSION"
+W32API="$W32API_PART-mingw32"
+W32API_ARCHIVE="$W32API-dev.tar.gz"
+W32API_URL="https://sourceforge.net/projects/mingw/files/OldFiles/$W32API_PART"
 
 FLTK_URL="https://www.fltk.org/pub/fltk"
 FLTK=fltk-$FLTK_VERSION
@@ -73,7 +78,7 @@ FLTK_ARCHIVE=$FLTK-source.tar.bz2
 
 WINPCAP_SRC=WpdPack
 WINPCAP_URL=http://www.winpcap.org/archive
-WINPCAP_SRC_ARCHIVE=$WINPCAP_VERSION-WpdPack.zip
+WINPCAP_SRC_ARCHIVE="$WINPCAP_VERSION-$WINPCAP_SRC.zip"
 
 # KERNEL_VERSION: full kernel version (e.g. 2.6.11)
 # KERNEL_DIR: sub-dir in www.kernel.org for the download (e.g. v2.6)

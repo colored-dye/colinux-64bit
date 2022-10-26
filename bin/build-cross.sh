@@ -12,10 +12,11 @@ DISABLE_CHECKING=--disable-checking
 
 download_files()
 {
-	download_file "$GCC_ARCHIVE" "$GCC_URL"
+	download_file "$GCC_ARCHIVE1" "$GCC_URL"
+	download_file "$GCC_ARCHIVE2" "$GCC_URL"
 	download_file "$BINUTILS_ARCHIVE" "$BINUTILS_URL"
 	download_file "$MINGW_ARCHIVE" "$MINGW_URL"
-	# download_file "$W32API_ARCHIVE" "$MINGW_URL"
+	download_file "$W32API_ARCHIVE" "$W32API_URL"
 }
 
 check_installed()
@@ -53,7 +54,7 @@ install_libs()
 {
 	echo "Installing cross libs and includes"
 	tar_unpack_to $MINGW_ARCHIVE "$PREFIX/$TARGET"
-	# tar_unpack_to $W32API_ARCHIVE "$PREFIX/$TARGET"
+	tar_unpack_to $W32API_ARCHIVE "$PREFIX/$TARGET"
 }
 
 extract_binutils()
@@ -308,26 +309,24 @@ final_tweaks()
 build_cross()
 {
 	# do not check files, if rebuild forced
-	# test "$1" = "--rebuild" || check_installed
+	test "$1" = "--rebuild" || check_installed
 
-	# download_files
+	download_files
 	# Only Download
-	# test "$1" = "--download-only" && exit 0
+	test "$1" = "--download-only" && exit 0
 
 	echo "log: $COLINUX_BUILD_LOG"
 	mkdir -p `dirname $COLINUX_BUILD_LOG`
 	echo "err: $COLINUX_BUILD_ERR"
 	mkdir -p `dirname $COLINUX_BUILD_ERR`
 
-	./mingw-w64-build.sh x86_64 --root=$BUILD_DIR --prefix=$PREFIX
+	install_libs
 
-	# install_libs
-
-	# extract_binutils
+	extract_binutils
 	# patch_binutils
-	# configure_binutils
-	# build_binutils
-	# install_binutils
+	configure_binutils
+	build_binutils
+	install_binutils
 	# check_binutils_guest || build_binutils_guest
 	# clean_binutils
 
