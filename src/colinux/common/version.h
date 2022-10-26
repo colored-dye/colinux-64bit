@@ -1,0 +1,7 @@
+#ifndef __COLINUX_VERSION_H__
+#define __COLINUX_VERSION_H__
+
+#define COLINUX_VERSION "0.8.0"
+#define COLINUX_COMPILE_TIME "Wed Oct 26 12:50:55 2022"
+
+#endif

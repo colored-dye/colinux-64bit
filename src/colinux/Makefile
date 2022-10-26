@@ -1,7 +1,5 @@
-all: user.a
-
 user.a: user/user.a common/common.a
-	$(CC) $^ -o $@
+	$(AR) -r $@ $^
 
 user/user.a:
 	make -C user

@@ -15,9 +15,9 @@
 #include <colinux/common/messages.h>
 #include <colinux/common/console.h>
 
-// #include "elf_load.h"
-// #include "monitor.h"
-// #include "cmdline.h"
+#include "elf_load.h"
+#include "monitor.h"
+#include "cmdline.h"
 
 typedef struct co_daemon_start_parameters {
 	co_pathname_t config_path;
@@ -39,14 +39,14 @@ typedef struct co_daemon {
 	co_id_t id;
 	co_start_parameters_t *start_parameters;
 	co_config_t config;
-	// co_elf_data_t *elf_data;
-	// co_user_monitor_t *monitor;
-	// co_user_monitor_t *message_monitor;
+	co_elf_data_t *elf_data;
+	co_user_monitor_t *monitor;
+	co_user_monitor_t *message_monitor;
 	bool_t running;
 	bool_t idle;
 	char *buf;
 	bool_t send_ctrl_alt_del;
-	// co_monitor_user_kernel_shared_t *shared;
+	co_monitor_user_kernel_shared_t *shared;
 	bool_t next_reboot_will_shutdown;
 } co_daemon_t;
 
@@ -65,6 +65,6 @@ extern co_rc_t co_daemon_run(co_daemon_t *daemon);
 extern void co_daemon_end_monitor(co_daemon_t *daemon);
 extern void co_daemon_destroy(co_daemon_t *daemon);
 extern void co_daemon_send_shutdown(co_daemon_t *daemon);
-// extern co_rc_t co_daemon_parse_args(co_command_line_params_t cmdline, co_start_parameters_t *start_parameters);
+extern co_rc_t co_daemon_parse_args(co_command_line_params_t cmdline, co_start_parameters_t *start_parameters);
 
 #endif

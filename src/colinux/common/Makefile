@@ -1,12 +1,8 @@
-COMMON_TARGETS := queue.o \
-				console.o \
-				debug.o \
-				errors.o \
-				messages.o \
-				module_repr.o \
-				libc.o \
-				snprintf.o \
-				unicode.o
+SRCS := $(wildcard *.c)
+OBJS := $(patsubst %.c, %.o, $(SRCS))
 
-common.a: $(COMMON_TARGETS)
-	$(CC) -o $@ $^
+%.o: %.c
+	$(CROSS)$(CC) -c $^ $(CFLAGS)
+
+common.a: $(OBJS)
+	$(CROSS)$(AR) -r $@ $^

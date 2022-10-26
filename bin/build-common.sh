@@ -17,7 +17,7 @@ TOPDIR=`dirname $BINDIR`
 # Default Kernel version we are targeting, can overwrite in CFG file.
 # Remember: Please update also conf/kernel-*-config
 #
-KERNEL_VERSION="2.6.11"
+KERNEL_VERSION="2.6.33"
 
 # Use User config, if exist
 # you probably don't need to change anything from here down
@@ -51,7 +51,7 @@ case $OSTYPE in
 esac
 
 # ARCH must overwrite for builds on 64 bit (target kernel)
-TARGET_GUEST_ARCH=x86_64
+TARGET_GUEST_ARCH=i386
 
 MINGW="mingw-w64-v"$MINGW_VERSION
 MINGW_ARCHIVE=$MINGW".tar.bz2"

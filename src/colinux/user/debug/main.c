@@ -1,32 +1,40 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <unistd.h>
-#include <ctype.h>
+/*
+ * This source code is a part of coLinux source package.
+ *
+ * Dan Aloni <da-x@colinux.org>, 2003 (c)
+ *
+ * The code is licensed under the GPL. See the COPYING file at
+ * the root directory.
+ *
+ */
 
-#include <colinux/common/libc.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <signal.h>
 
 #include <colinux/os/alloc.h>
 #include <colinux/os/timer.h>
 #include <colinux/os/user/misc.h>
-
-#include <colinux/user/cmdline.h>
 #include <colinux/user/manager.h>
+#include <colinux/user/cmdline.h>
+#include <colinux/common/libc.h>
 
-
-#define BUFFER_SIZE (0x100000)
+#define BUFFER_SIZE   (0x100000)
 
 typedef struct co_debug_parameters {
-    bool_t download_mode;
-    bool_t parse_mode;
-    bool_t output_filename_specified;
-    char output_filename[0x100];
-    bool_t settings_change_specified;
-    char settings_change[0x100];
-    bool_t network_server_specified;
-    char network_server[0x100];
-    bool_t rc_specified;
-    char rc_str[20];
+	bool_t download_mode;
+	bool_t parse_mode;
+	bool_t output_filename_specified;
+	char output_filename[0x100];
+	bool_t settings_change_specified;
+	char settings_change[0x100];
+	bool_t network_server_specified;
+	char network_server[0x100];
+	bool_t rc_specified;
+	char rc_str[20];
 } co_debug_parameters_t;
 
 static co_debug_parameters_t parameters;
@@ -443,63 +451,64 @@ static void syntax(void)
 	printf("\n");
 }
 
-co_rc_t co_debug_main(int argc, char *argv[]) {
-    co_command_line_params_t cmdline;
-    co_rc_t rc;
+co_rc_t co_debug_main(int argc, char *argv[])
+{
+	co_command_line_params_t cmdline;
+	co_rc_t rc;
 
-    rc = co_cmdline_params_alloc(argv, argc, &cmdline);
-    if (!CO_OK(rc)) {
-        co_terminal_print("Error parsing args from `co_cmdline_params_alloc()'\n");
-        return CO_RC(ERROR);
-    }
+	output_file = stdout;
 
-    rc = co_debug_parse_args(cmdline, &parameters);
-    if (!CO_OK(rc)) {
-        co_terminal_print("Error parsing args from `co_debug_parse_args()'\n");
-        return CO_RC(ERROR);
-    }
+	rc = co_cmdline_params_alloc(argv, argc, &cmdline);
+	if (!CO_OK(rc)) {
+		co_terminal_print("error parsing args\n");
+		return CO_RC(ERROR);
+	}
 
-    if (parameters.rc_specified) {
-        char buf[0x100];
-        unsigned long exitcode;
+	rc = co_debug_parse_args(cmdline, &parameters);
+	if (!CO_OK(rc)) {
+		co_terminal_print("error parsing args\n");
+		return CO_RC(ERROR);
+	}
 
-        exitcode = strtoul(parameters.rc_str, NULL, 16);
-        co_rc_format_error((co_rc_t)exitcode, buf, sizeof(buf));
+	if (parameters.rc_specified) {
+		char buf[0x100];
+		unsigned long exitcode;
 
-        printf(" Translate error code %lx\n", exitcode);
-        printf(" %s\n", buf);
-        return CO_RC(OK);
-    }
+		exitcode = strtoul(parameters.rc_str, NULL, 16);
+		co_rc_format_error((co_rc_t)exitcode, buf, sizeof(buf));
 
-#ifdef COLINUX_DEBUG
-    fprintf(stderr, "Warning: COLINUX_DEBUG not upn\n");
+		printf(" Translate error code %lx\n", exitcode);
+		printf(" %s\n", buf);
+		return CO_RC(OK);
+	}
+
+#ifndef COLINUX_DEBUG
+	fprintf(stderr, "Warning: Some informations are not available, COLINUX_DEBUG was not compiled in.\n");
 #endif
 
-    if (parameters.output_filename_specified) {
-        output_file = fopen(parameters.output_filename, "ab");
-        if (!output_file) {
-            return CO_RC(ERROR);
-        }
-    }
+	if (parameters.output_filename_specified) {
+		output_file = fopen(parameters.output_filename, "ab");
+		if (!output_file)
+			return CO_RC(ERROR);
+	}
 
-    if (parameters.settings_change_specified) {
-        co_update_settings();
-    }
+	if (parameters.settings_change_specified)
+		co_update_settings();
 
-    if (parameters.download_mode && parameters.network_server_specified) {
-        co_debug_download_to_network();
-    } else if (parameters.download_mode && parameters.parse_mode) {
-        co_debug_download_and_parse();
-    } else if (parameters.download_mode) {
-        co_debug_download();
-    } else if (parameters.parse_mode) {
-        co_debug_parse(STDIN_FILENO);
-    } else {
-        syntax();
-    }
+	if (parameters.download_mode  &&  parameters.network_server_specified) {
+		co_debug_download_to_network();
+	} else if (parameters.download_mode  &&  parameters.parse_mode) {
+		co_debug_download_and_parse();
+	} else if (parameters.download_mode) {
+		co_debug_download();
+	} else if (parameters.parse_mode) {
+		co_debug_parse(STDIN_FILENO);
+	} else {
+		syntax();
+	}
 
-    if (output_file != stdout)
-        fclose(output_file);
+	if (output_file != stdout)
+		fclose(output_file);
 
-    return CO_RC(OK);
+	return CO_RC(OK);
 }

@@ -1,4 +1,5 @@
-OS-independent kernel code driver.
+The code in this directory is the OS independent kernel code driver.
 
- * Monitor: Allocating, maintaining and running the coLinux kernel.
- * Manager: Manages the running monitors.
+It is responsible for the following:
+ * Monitor - allocating, maintaining and running the coLinux kernel.
+ * Manager - manages the running monitors.

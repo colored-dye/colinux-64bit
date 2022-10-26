@@ -1,15 +1,15 @@
+SRCS := $(wildcard *.c)
+OBJS := $(patsubst %.c, %.o, $(SRCS))
+
 user-osdep.a: user-osdep.o
-	$(AR) rc $@ $^
+	$(CROSS)$(AR) rc $@ $^
 
-user-all.a: user-all.o
-	$(AR) rc $@ $^
+user-all.a: user-osdep.a ../../../user.a
+	$(CROSS)$(AR) rc $@ $^
 
-user-osdep.o: *.c
-	$(CC) -o $@ $^
-
-user-all.o: user-osdep.a ../../../user.a
-	$(CC) -o $@ $^
+user-osdep.o: $(OBJS)
+	$(CROSS)$(LD) -r -o $@ $^
 
 .PHONY: clean
 clean:
-	rm -f user-osdep.a user-osdep.o user-all.o user-all.a
+	rm *.o *.a

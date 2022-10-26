@@ -1,2 +1,2 @@
 build.o: main.c
-	$(CC) -o $@ -c $^
+	$(CROSS)$(CC) -o $@ -c $^ $(CFLAGS)
