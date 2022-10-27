@@ -14,11 +14,11 @@ download_files()
 {
 	download_file "$GCC_ARCHIVE1" "$GCC_URL"
 	download_file "$GCC_ARCHIVE2" "$GCC_URL"
-	download_file "$GMP_ARCHIVE" "$GMP_URL"
-	download_file "$MPFR_ARCHIVE" "$MPFR_URL"
+	# download_file "$GMP_ARCHIVE" "$GMP_URL"
+	# download_file "$MPFR_ARCHIVE" "$MPFR_URL"
 	download_file "$BINUTILS_ARCHIVE" "$BINUTILS_URL"
 	download_file "$MINGW_ARCHIVE" "$MINGW_URL"
-	download_file "$W32API_ARCHIVE" "$W32API_URL"
+	# download_file "$W32API_ARCHIVE" "$W32API_URL"
 }
 
 check_installed()
@@ -57,6 +57,13 @@ install_libs()
 	echo "Installing cross libs and includes"
 	tar_unpack_to $MINGW_ARCHIVE "$PREFIX/$TARGET"
 	tar_unpack_to $W32API_ARCHIVE "$PREFIX/$TARGET"
+}
+
+extract_mingw()
+{
+	echo "Extracting MinGW"
+	tar_unpack_to $MINGW_ARCHIVE $BUILD_DIR
+	return 0
 }
 
 #
@@ -119,7 +126,7 @@ configure_binutils()
 	cd "binutils-$TARGET"
 	"../$BINUTILS/configure" \
 		--prefix="$PREFIX" --target=$TARGET \
-		--disable-nls \
+		--disable-nls --disable-multilib \
 		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "configure binutils failed"
 	return 0
@@ -241,19 +248,41 @@ configure_gcc()
 	rm -rf "gcc-$TARGET"
 	mkdir "gcc-$TARGET"
 	cd "gcc-$TARGET"
-	build_gmp
-	build_mpfr
+	# build_gmp
+	# build_mpfr
+	# "../$GCC/configure" -v \
+	# 	--prefix="$PREFIX" --target=$TARGET \
+	# 	--with-headers="$PREFIX/$TARGET/include" \
+	# 	--with-gnu-as --with-gnu-ld \
+	# 	--with-gmp=$PREFIX/gmp --with-mpfr=$PREFIX/mpfr \
+	# 	--disable-nls \
+	# 	--without-newlib --disable-multilib \
+	# 	--enable-languages="c,c++" \
+	# 	$DISABLE_CHECKING \
+	# 	>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	"../$GCC/configure" -v \
-		--prefix="$PREFIX" --target=$TARGET \
-		--with-headers="$PREFIX/$TARGET/include" \
-		--with-gnu-as --with-gnu-ld \
-		--with-gmp=$PREFIX/gmp --with-mpfr=$PREFIX/mpfr \
-		--disable-nls \
-		--without-newlib --disable-multilib \
-		--enable-languages="c,c++" \
+		--prefix=$PREFIX --target=$TARGET \
+		--disable-nls --disable-multilib \
+		--enable-languages="c,c++"
 		$DISABLE_CHECKING \
 		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "configure gcc failed"
+	return 0
+}
+
+build_header()
+{
+	echo "Building MinGW headers"
+	cd "$BUILD_DIR/$MINGW/mingw-w64-headers"
+	rm -rf build
+	mkdir build
+	cd build
+	../configure --prefix=$PREFIX \
+		--host=$TARGET --build=$BUILD \
+		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "configure MinGW header failed"
+	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "build MinGW header failed"
 	return 0
 }
 
@@ -261,15 +290,39 @@ build_gcc()
 {
 	echo "Building gcc"
 	cd "$BUILD_DIR/gcc-$TARGET"
+	make all-gcc $BUILD_FLAGS >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "make gcc base failed"
+	make install-gcc $BUILD_FLAGS >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "install gcc base failed"
+	return 0
+}
+
+build_crt()
+{
+	echo "Building MinGW C-Runtime"
+	cd $BUILD_DIR/$MINGW/mingw-w64-crt
+	rm -rf build
+	mkdir build
+	cd build
+	../configure --prefix=$PREFIX \
+		--host=$TARGET --enable-lib32 --disable-lib64 \
+		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "configure crt failed"
+
 	make $BUILD_FLAGS >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
-	test $? -ne 0 && error_exit 1 "make gcc failed"
+	test $? -ne 0 && error_exit 1 "make crt failed"
+	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "install crt failed"
+
 	return 0
 }
 
 install_gcc()
 {
-	echo "Installing gcc"
+	echo "Installing gcc (final stage)"
 	cd "$BUILD_DIR/gcc-$TARGET"
+	make $BUILD_FLAGS >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "make gcc failed"
 	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "install gcc failed"
 	return 0
@@ -432,7 +485,8 @@ build_cross()
 	echo "err: $COLINUX_BUILD_ERR"
 	mkdir -p `dirname $COLINUX_BUILD_ERR`
 
-	install_libs
+	# Build cross binutils
+	# install_libs
 
 	check_binutils
 	test $? -eq 0 || \
@@ -440,16 +494,27 @@ build_cross()
 		configure_binutils && \
 		build_binutils && \
 		install_binutils)
+	
+	# Build binutils for kernel
 	check_binutils_guest || (extract_binutils && build_binutils_guest)
+	
 	clean_binutils
 
+	# Build cross MinGW gcc
 	check_gcc
 	test $? -eq 0 || \
-		(extract_gcc && \
+		(extract_mingw && \
+		build_header && \
+		ln -sf $PREFIX/TARGET $PREFIX/mingw && \
+		extract_gcc && \
 		configure_gcc && \
 		build_gcc && \
+		build_crt && \
 		install_gcc)
+	
+	# Build GCC for kernel
 	check_gcc_guest || (extract_gcc && build_gcc_guest)
+	
 	clean_gcc
 
 	final_tweaks
