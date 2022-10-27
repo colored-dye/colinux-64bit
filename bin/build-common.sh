@@ -54,30 +54,30 @@ TARGET_GUEST_ARCH=i386
 
 MINGW="mingw-runtime-$MINGW_VERSION"
 MINGW_ARCHIVE="$MINGW.tar.gz"
-MINGW_URL="https://sourceforge.net/projects/mingw/files/OldFiles/$MINGW"
+MINGW_URL="http://sourceforge.net/projects/mingw/files/OldFiles/$MINGW"
 
 BINUTILS_RELEASE="$BINUTILS_VERSION"
 BINUTILS=binutils-$BINUTILS_RELEASE
 BINUTILS_ARCHIVE=$BINUTILS.tar.bz2
-BINUTILS_URL="https://ftp.gnu.org/pub/gnu/binutils"
+BINUTILS_URL="http://ftp.gnu.org/pub/gnu/binutils"
 
 GCC_RELEASE="$GCC_VERSION"
 GCC=gcc-$GCC_RELEASE
 GCC_ARCHIVE1="gcc-core-$GCC_RELEASE.tar.bz2"
 GCC_ARCHIVE2="gcc-g++-$GCC_RELEASE.tar.bz2"
-GCC_URL=https://ftp.gnu.org/pub/gnu/gcc/gcc-$GCC_VERSION
+GCC_URL="http://ftp.gnu.org/pub/gnu/gcc/gcc-$GCC_VERSION"
 
 W32API_PART="w32api-$W32API_VERSION"
 W32API="$W32API_PART-mingw32"
 W32API_ARCHIVE="$W32API-dev.tar.gz"
-W32API_URL="https://sourceforge.net/projects/mingw/files/OldFiles/$W32API_PART"
+W32API_URL="http://sourceforge.net/projects/mingw/files/OldFiles/$W32API_PART"
 
-FLTK_URL="https://www.fltk.org/pub/fltk"
+FLTK_URL="http://www.fltk.org/pub/fltk"
 FLTK=fltk-$FLTK_VERSION
 FLTK_ARCHIVE=$FLTK-source.tar.bz2
 
 WINPCAP_SRC=WpdPack
-WINPCAP_URL=http://www.winpcap.org/archive
+WINPCAP_URL="http://www.winpcap.org/archive"
 WINPCAP_SRC_ARCHIVE="$WINPCAP_VERSION-$WINPCAP_SRC.zip"
 
 # KERNEL_VERSION: full kernel version (e.g. 2.6.11)
@@ -85,7 +85,7 @@ WINPCAP_SRC_ARCHIVE="$WINPCAP_VERSION-$WINPCAP_SRC.zip"
 KERNEL_DIR=`echo $KERNEL_VERSION | sed -e 's/^\([0-9]*\.[0-9]*\)\..*$/v\1/'`
 
 KERNEL=linux-$KERNEL_VERSION
-KERNEL_URL=http://www.kernel.org/pub/linux/kernel/$KERNEL_DIR
+KERNEL_URL="http://www.kernel.org/pub/linux/kernel/$KERNEL_DIR"
 KERNEL_ARCHIVE=$KERNEL.tar.bz2
 
 CO_VERSION=`cat $TOPDIR/VERSION`
@@ -158,7 +158,7 @@ download_file()
 		mkdir -p "$DOWNLOADS"
 		cd "$DOWNLOADS"
 		echo "Downloading $1"
-		if ! wget "$2/$1"
+		if ! wget "$2/$1" --no-check-certificate
 		then
 			echo "Could not download $1"
 			# move broken download

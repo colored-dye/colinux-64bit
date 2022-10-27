@@ -57,6 +57,35 @@ install_libs()
 	tar_unpack_to $W32API_ARCHIVE "$PREFIX/$TARGET"
 }
 
+###
+# Cross binutils
+
+check_binutils()
+{
+	echo -n "Check cross binutils $BINUTILS_VERSION: "
+	local PATH="$PATH:$PREFIX/bin"
+	ver=`${TARGET}-as --version 2>/dev/null || \
+		as --version 2>/dev/null | \
+		sed -n -e 's/^[^0-9]*\([0-9]\{1,\}\.[0-9]]\{1,\}\.[0-9]]\{1,\}\).*$/\1/p'`
+
+	if [ -z "$ver" ]
+	then
+		echo "No executables, build now"
+		return 1
+	fi
+
+	# Verify version of installed AS
+	if [ $ver != $BINUTILS_VERSION ]
+	then
+		echo "Wrong version ($ver), build now"
+		return 1
+	fi
+
+	echo "found"
+
+	return 0
+}
+
 extract_binutils()
 {
 	echo "Extracting binutils"
@@ -111,6 +140,34 @@ clean_binutils()
 	echo "Clean binutils"
 	cd $BUILD_DIR
 	rm -rf "$BINUTILS" binutils-$TARGET binutils-$COLINUX_GCC_GUEST_TARGET
+}
+
+###
+# Cross GCC
+
+check_gcc()
+{
+	echo -n "Check cross compiler $GCC_VERSION: "
+
+	# Get version number
+	local PATH="$PATH:$PREFIX/bin"
+	ver=`${TARGET}-gcc -dumpversion 2>/dev/null`
+
+	if [ -z "$ver" ]
+	then
+		echo "No executables, build now"
+		return 1
+	fi
+
+	# Verify version of installed GCC
+	if [ $ver != $GCC_VERSION ]
+	then
+		echo "Wrong version ($ver), build now"
+		return 1
+	fi
+
+	echo "found"
+	return 0
 }
 
 extract_gcc()
@@ -322,23 +379,29 @@ build_cross()
 
 	install_libs
 
-	extract_binutils
-	# patch_binutils
-	configure_binutils
-	build_binutils
-	install_binutils
-	# check_binutils_guest || build_binutils_guest
-	# clean_binutils
+	if [ ! check_binutils ]
+	then
+		extract_binutils
+		# patch_binutils
+		configure_binutils
+		build_binutils
+		install_binutils
+	fi
+	check_binutils_guest || build_binutils_guest
+	clean_binutils
 
-	# extract_gcc
-	# patch_gcc
-	# configure_gcc
-	# build_gcc
-	# install_gcc
-	# check_gcc_guest || build_gcc_guest
-	# clean_gcc
+	if [ ! check_gcc ]
+	then
+		extract_gcc
+		patch_gcc
+		configure_gcc
+		build_gcc
+		install_gcc
+	fi
+	check_gcc_guest || build_gcc_guest
+	clean_gcc
 
-	# final_tweaks
+	final_tweaks
 	echo "Installation complete!"
 }
 
