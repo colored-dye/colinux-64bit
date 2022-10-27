@@ -1,7 +1,9 @@
 ## Some ideas
 
 1. Project management tool: CMake/Makefile. The Python scripts by Da-x seems somehow overwhelming for me.
-2. Screw 64 bits (for now). Manage to compile a 32-bit daemon (and  driver) that can actually run on Windows 11.
+2. Compile a 32-bit daemon (and  driver) that can actually run on Windows 11.
+3. The MinGW originally used (MinGW 3.1.4) can only be integrated with gcc-4.1.2 but not gcc-4.4.x and above(not thoroughly tested). Switch to MinGW-w64, which would result in some changes not limited to header configuration.
+4. Next step: Compile coLinux.
 
 ## Dependencies
 
