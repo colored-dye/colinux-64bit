@@ -14,6 +14,8 @@ download_files()
 {
 	download_file "$GCC_ARCHIVE1" "$GCC_URL"
 	download_file "$GCC_ARCHIVE2" "$GCC_URL"
+	download_file "$GMP_ARCHIVE" "$GMP_URL"
+	download_file "$MPFR_ARCHIVE" "$MPFR_URL"
 	download_file "$BINUTILS_ARCHIVE" "$BINUTILS_URL"
 	download_file "$MINGW_ARCHIVE" "$MINGW_URL"
 	download_file "$W32API_ARCHIVE" "$W32API_URL"
@@ -57,25 +59,27 @@ install_libs()
 	tar_unpack_to $W32API_ARCHIVE "$PREFIX/$TARGET"
 }
 
-###
+#
 # Cross binutils
+#
 
 check_binutils()
 {
 	echo -n "Check cross binutils $BINUTILS_VERSION: "
 	local PATH="$PATH:$PREFIX/bin"
-	ver=`${TARGET}-as --version 2>/dev/null || \
-		as --version 2>/dev/null | \
-		sed -n -e 's/^[^0-9]*\([0-9]\{1,\}\.[0-9]]\{1,\}\.[0-9]]\{1,\}\).*$/\1/p'`
-
-	if [ -z "$ver" ]
+	${TARGET}-ld -v 2>/dev/null 1>2
+	if [ $? -ne 0 ]
 	then
 		echo "No executables, build now"
 		return 1
 	fi
+	
+	regex="^gnu ld \(.*\) (${BINUTILS_VERSION})"
+	ver=`${TARGET}-ld -v 2>/dev/null | \
+		egrep -i -c "${regex}"`
 
 	# Verify version of installed AS
-	if [ $ver != $BINUTILS_VERSION ]
+	if [ $ver -ne 1 ]
 	then
 		echo "Wrong version ($ver), build now"
 		return 1
@@ -91,6 +95,7 @@ extract_binutils()
 	echo "Extracting binutils"
 	rm -rf "$BUILD_DIR/$BINUTILS"
 	tar_unpack_to "$BINUTILS_ARCHIVE" "$BUILD_DIR"
+	return 0
 }
 
 patch_binutils()
@@ -117,6 +122,7 @@ configure_binutils()
 		--disable-nls \
 		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "configure binutils failed"
+	return 0
 }
 
 build_binutils()
@@ -125,6 +131,7 @@ build_binutils()
 	cd "$BUILD_DIR/binutils-$TARGET"
 	make $BUILD_FLAGS >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "make binutils failed"
+	return 0
 }
 
 install_binutils()
@@ -133,6 +140,7 @@ install_binutils()
 	cd "$BUILD_DIR/binutils-$TARGET"
 	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "install binutils failed"
+	return 0
 }
 
 clean_binutils()
@@ -142,8 +150,9 @@ clean_binutils()
 	rm -rf "$BINUTILS" binutils-$TARGET binutils-$COLINUX_GCC_GUEST_TARGET
 }
 
-###
+#
 # Cross GCC
+#
 
 check_gcc()
 {
@@ -174,7 +183,10 @@ extract_gcc()
 {
 	echo "Extracting gcc"
 	rm -rf "$BUILD_DIR/$GCC"
-	tar_unpack_to "$GCC_ARCHIVE" "$BUILD_DIR"
+	tar_unpack_to "$GCC_ARCHIVE1" "$BUILD_DIR"
+	tar_unpack_to "$GCC_ARCHIVE2" "$BUILD_DIR"
+
+	return 0
 }
 
 patch_gcc()
@@ -187,6 +199,41 @@ patch_gcc()
 	fi
 }
 
+build_gmp()
+{
+	echo "Building GMP"
+	tar_unpack_to "$GMP_ARCHIVE" "$BUILD_DIR"
+	cd "$BUILD_DIR"
+	rm -rf gmp-build
+	mkdir gmp-build
+	cd gmp-build
+	"../$GMP/configure" -v \
+		--prefix="$PREFIX/gmp" \
+		--disable-shared --enable-static \
+		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	make >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	make check >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+}
+
+build_mpfr()
+{
+	echo "Building MPFR"
+	tar_unpack_to "$MPFR_ARCHIVE" "$BUILD_DIR"
+	cd $BUILD_DIR
+	rm -rf mpfr-build
+	mkdir mpfr-build
+	cd mpfr-build
+	"../$MPFR/configure" -v \
+		--prefix="$PREFIX/mpfr" \
+		--disable-shared --enable-static \
+		--with-gmp="$PREFIX/gmp" \
+		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	make >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	make check >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+}
+
 configure_gcc()
 {
 	echo "Configuring gcc"
@@ -194,16 +241,20 @@ configure_gcc()
 	rm -rf "gcc-$TARGET"
 	mkdir "gcc-$TARGET"
 	cd "gcc-$TARGET"
+	build_gmp
+	build_mpfr
 	"../$GCC/configure" -v \
 		--prefix="$PREFIX" --target=$TARGET \
 		--with-headers="$PREFIX/$TARGET/include" \
 		--with-gnu-as --with-gnu-ld \
+		--with-gmp=$PREFIX/gmp --with-mpfr=$PREFIX/mpfr \
 		--disable-nls \
 		--without-newlib --disable-multilib \
 		--enable-languages="c,c++" \
 		$DISABLE_CHECKING \
 		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "configure gcc failed"
+	return 0
 }
 
 build_gcc()
@@ -212,6 +263,7 @@ build_gcc()
 	cd "$BUILD_DIR/gcc-$TARGET"
 	make $BUILD_FLAGS >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "make gcc failed"
+	return 0
 }
 
 install_gcc()
@@ -220,6 +272,7 @@ install_gcc()
 	cd "$BUILD_DIR/gcc-$TARGET"
 	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "install gcc failed"
+	return 0
 }
 
 clean_gcc()
@@ -240,18 +293,20 @@ check_binutils_guest()
 
 	# Get version number
 	local PATH="$PATH:$COLINUX_GCC_GUEST_PATH"
-	ver=`${COLINUX_GCC_GUEST_TARGET}-as --version 2>/dev/null || \
-		as --version 2>/dev/null | \
-		sed -n -e 's/^[^0-9]*\([0-9]\{1,\}\.[0-9]]\{1,\}\.[0-9]]\{1,\}\).*$/\1/p'`
 
-	if [ -z "$ver" ]
+	${COLINUX_GCC_GUEST_TARGET}-ld -v 2>/dev/null 1>2
+	if [ $? -ne 0 ]
 	then
 		echo "No executables, build now"
 		return 1
 	fi
 
+	regex="^gnu ld \(.*\) (${BINUTILS_VERSION})"
+	ver=`${COLINUX_GCC_GUEST_TARGET}-ld -v 2>/dev/null | \
+		egrep -i -c "${regex}"`
+
 	# Verify version of installed AS
-	if [ $ver != $BINUTILS_VERSION ]
+	if [ $ver -ne 1 ]
 	then
 		echo "Wrong version ($ver), build now"
 		return 1
@@ -379,26 +434,22 @@ build_cross()
 
 	install_libs
 
-	if [ ! check_binutils ]
-	then
-		extract_binutils
-		# patch_binutils
-		configure_binutils
-		build_binutils
-		install_binutils
-	fi
-	check_binutils_guest || build_binutils_guest
+	check_binutils
+	test $? -eq 0 || \
+		(extract_binutils && \
+		configure_binutils && \
+		build_binutils && \
+		install_binutils)
+	check_binutils_guest || (extract_binutils && build_binutils_guest)
 	clean_binutils
 
-	if [ ! check_gcc ]
-	then
-		extract_gcc
-		patch_gcc
-		configure_gcc
-		build_gcc
-		install_gcc
-	fi
-	check_gcc_guest || build_gcc_guest
+	check_gcc
+	test $? -eq 0 || \
+		(extract_gcc && \
+		configure_gcc && \
+		build_gcc && \
+		install_gcc)
+	check_gcc_guest || (extract_gcc && build_gcc_guest)
 	clean_gcc
 
 	final_tweaks

@@ -1,8 +1,8 @@
-__pycache__/
-bin/__pycache__/
-download/
-mingw/
-build/
-log/
-tmp/
-linux-2.6.33.7-source*
+/__pycache__/
+/bin/__pycache__/
+/download/
+/mingw/
+/build/
+/log/
+/tmp/
+/linux-2.6.33.7-source*
