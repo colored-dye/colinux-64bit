@@ -37,15 +37,15 @@ check_installed()
 			return
 		fi
 
-		if $TARGET-ld --version | egrep -q "$BINUTILS_VERSION"
-		then
-			echo "Skip $TARGET-gcc, $TARGET-ld"
-			echo " - already installed on $PREFIX/bin"
-			exit 0
-		else
-			echo "$TARGET-ld $BINUTILS_VERSION not installed"
-			return
-		fi
+		# if $TARGET-ld --version | egrep -q "$BINUTILS_VERSION"
+		# then
+		# 	echo "Skip $TARGET-gcc, $TARGET-ld"
+		# 	echo " - already installed on $PREFIX/bin"
+		# 	exit 0
+		# else
+		# 	echo "$TARGET-ld $BINUTILS_VERSION not installed"
+		# 	return
+		# fi
 
 	fi
 	echo "No executable, rebuilding"
@@ -260,10 +260,12 @@ configure_gcc()
 	# 	--enable-languages="c,c++" \
 	# 	$DISABLE_CHECKING \
 	# 	>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+
+	# GMP and MPFR are needed. Here I use libgmp-dev and libmpfr-dev in Ubuntu 14.04
 	"../$GCC/configure" -v \
 		--prefix=$PREFIX --target=$TARGET \
 		--disable-nls --disable-multilib \
-		--enable-languages="c,c++"
+		--enable-languages="c,c++" \
 		$DISABLE_CHECKING \
 		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "configure gcc failed"
@@ -447,11 +449,11 @@ build_gcc_guest()
 	test $? -ne 0 && error_exit 1 "configure gcc failed"
 
 	echo "Building guest gcc"
-	make $BUILD_FLAGS >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	make all-gcc $BUILD_FLAGS >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "make guest gcc failed"
 
 	echo "Installing guest gcc"
-	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	make install-gcc >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "install guest gcc failed"
 
 	# remove info and man pages
