@@ -14,8 +14,8 @@ download_files()
 {
 	download_file "$GCC_ARCHIVE1" "$GCC_URL"
 	download_file "$GCC_ARCHIVE2" "$GCC_URL"
-	# download_file "$GMP_ARCHIVE" "$GMP_URL"
-	# download_file "$MPFR_ARCHIVE" "$MPFR_URL"
+	download_file "$GMP_ARCHIVE" "$GMP_URL"
+	download_file "$MPFR_ARCHIVE" "$MPFR_URL"
 	download_file "$BINUTILS_ARCHIVE" "$BINUTILS_URL"
 	download_file "$MINGW_ARCHIVE" "$MINGW_URL"
 	# download_file "$W32API_ARCHIVE" "$W32API_URL"
@@ -206,6 +206,17 @@ patch_gcc()
 	fi
 }
 
+check_gmp_mpfr()
+{
+	echo "Checking GMP and MPFR"
+	if test ! -f $PREFIX/gmp/include/gmp.h || test -f $PREFIX/mpfr/include/mpfr.h
+	then
+		echo "No GMP or MPFR, rebuild"
+		return 1
+	fi
+	return 0
+}
+
 build_gmp()
 {
 	echo "Building GMP"
@@ -218,9 +229,14 @@ build_gmp()
 		--prefix="$PREFIX/gmp" \
 		--disable-shared --enable-static \
 		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "configure gmp failed"
 	make >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "make gmp failed"
 	make check >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "check gmp failed"
 	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "install gmp failed"
+	return 0
 }
 
 build_mpfr()
@@ -236,9 +252,14 @@ build_mpfr()
 		--disable-shared --enable-static \
 		--with-gmp="$PREFIX/gmp" \
 		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "configure mpfr failed"
 	make >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "make mpfr failed"
 	make check >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "check mpfr failed"
 	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+	test $? -ne 0 && error_exit 1 "install mpfr failed"
+	return 0
 }
 
 configure_gcc()
@@ -248,26 +269,22 @@ configure_gcc()
 	rm -rf "gcc-$TARGET"
 	mkdir "gcc-$TARGET"
 	cd "gcc-$TARGET"
-	# build_gmp
-	# build_mpfr
-	# "../$GCC/configure" -v \
-	# 	--prefix="$PREFIX" --target=$TARGET \
-	# 	--with-headers="$PREFIX/$TARGET/include" \
-	# 	--with-gnu-as --with-gnu-ld \
-	# 	--with-gmp=$PREFIX/gmp --with-mpfr=$PREFIX/mpfr \
-	# 	--disable-nls \
-	# 	--without-newlib --disable-multilib \
-	# 	--enable-languages="c,c++" \
-	# 	$DISABLE_CHECKING \
-	# 	>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
-
-	# GMP and MPFR are needed. Here I use libgmp-dev and libmpfr-dev in Ubuntu 14.04
 	"../$GCC/configure" -v \
-		--prefix=$PREFIX --target=$TARGET \
+		--prefix="$PREFIX" --target=$TARGET \
+		--with-gmp=$PREFIX/gmp --with-gmp-include=$PREFIX/gmp/include --with-gmp-lib=$PREFIX/gmp/lib \
+		--with-mpfr=$PREFIX/mpfr --with-mpfr-include=$PREFIX/mpfr/include --with-mpfr-lib=$PREFIX/mpfr/lib \
 		--disable-nls --disable-multilib \
 		--enable-languages="c,c++" \
 		$DISABLE_CHECKING \
 		>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
+
+	# GMP and MPFR are needed. Here I use libgmp-dev and libmpfr-dev in Ubuntu 14.04
+	# "../$GCC/configure" -v \
+	# 	--prefix=$PREFIX --target=$TARGET \
+	# 	--disable-nls --disable-multilib \
+	# 	--enable-languages="c,c++" \
+	# 	$DISABLE_CHECKING \
+	# 	>>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "configure gcc failed"
 	return 0
 }
@@ -404,6 +421,7 @@ build_binutils_guest()
 	echo "Installing guest binutils"
 	make install >>$COLINUX_BUILD_LOG 2>>$COLINUX_BUILD_ERR
 	test $? -ne 0 && error_exit 1 "install guest binutils failed"
+	return 0
 }
 
 check_gcc_guest()
@@ -442,6 +460,8 @@ build_gcc_guest()
 	"../$GCC/configure" -v \
 		--program-prefix="${COLINUX_GCC_GUEST_TARGET}-" \
 		--prefix="$PREFIX/$COLINUX_GCC_GUEST_TARGET" \
+		--with-gmp=$PREFIX/gmp --with-gmp-include=$PREFIX/gmp/include --with-gmp-lib=$PREFIX/gmp/lib \
+		--with-mpfr=$PREFIX/mpfr --with-mpfr-include=$PREFIX/mpfr/include --with-mpfr-lib=$PREFIX/mpfr/lib \
 		--disable-nls \
 		--enable-languages="c,c++" \
 		$DISABLE_CHECKING \
@@ -458,6 +478,7 @@ build_gcc_guest()
 
 	# remove info and man pages
 	rm -rf "$PREFIX/$COLINUX_GCC_GUEST_TARGET/info" "$PREFIX/$COLINUX_GCC_GUEST_TARGET/man"
+	return 0
 }
 
 final_tweaks()
@@ -509,13 +530,14 @@ build_cross()
 		build_header && \
 		ln -sf $PREFIX/TARGET $PREFIX/mingw && \
 		extract_gcc && \
+		(check_gmp_mpfr || (build_gmp && build_mpfr) ) && \
 		configure_gcc && \
 		build_gcc && \
 		build_crt && \
 		install_gcc)
 	
 	# Build GCC for kernel
-	check_gcc_guest || (extract_gcc && build_gcc_guest)
+	check_gcc_guest || ( (check_gmp_mpfr || (build_gmp && build_mpfr) ) && extract_gcc && build_gcc_guest)
 	
 	clean_gcc
 
