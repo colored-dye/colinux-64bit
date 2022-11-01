@@ -6,3 +6,5 @@
 /log/
 /tmp/
 /linux-*
+*.o
+*.a
