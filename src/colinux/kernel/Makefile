@@ -15,4 +15,4 @@ TARGETS := block.o \
 	$(CROSS)$(CC) -c $^ $(CFLAGS)
 
 build.o: $(TARGETS)
-	$(CROSS)$(CC) -o $@ $^ $(CFLAGS)
+	$(CROSS)$(LD) -r -o $@ $^

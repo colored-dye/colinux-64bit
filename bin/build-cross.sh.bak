@@ -517,10 +517,10 @@ build_cross()
 		configure_binutils && \
 		build_binutils && \
 		install_binutils)
-	
+
 	# Build binutils for kernel
 	check_binutils_guest || (extract_binutils && build_binutils_guest)
-	
+
 	clean_binutils
 
 	# Build cross MinGW gcc
@@ -537,7 +537,10 @@ build_cross()
 		install_gcc)
 	
 	# Build GCC for kernel
-	check_gcc_guest || ( (check_gmp_mpfr || (build_gmp && build_mpfr) ) && extract_gcc && build_gcc_guest)
+	check_gcc_guest
+	test $? -eq 0 || ( \
+		(check_gmp_mpfr || (build_gmp && build_mpfr) ) && extract_gcc && build_gcc_guest
+	)
 	
 	clean_gcc
 
