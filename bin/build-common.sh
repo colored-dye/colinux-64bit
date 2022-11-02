@@ -101,7 +101,7 @@ KERNEL=linux-$KERNEL_VERSION
 KERNEL_URL="http://www.kernel.org/pub/linux/kernel/$KERNEL_DIR"
 KERNEL_ARCHIVE=$KERNEL.tar.bz2
 
-CO_VERSION=`cat $TOPDIR/VERSION`
+CO_VERSION=`cat $TOPDIR/src/colinux/VERSION`
 COMPLETE_KERNEL_NAME=$KERNEL_VERSION-co-$CO_VERSION
 
 # Get variables only? Then end here.
