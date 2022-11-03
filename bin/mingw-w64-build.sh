@@ -125,39 +125,59 @@ download_sources()
     create_dir "$SRC_PATH"
     change_dir "$SRC_PATH"
 
-    test -d $DOWNLOAD_PATH || mkdir download
+    mkdir -p $DOWNLOAD_PATH
 
     # execute "downloading MinGW-w64 source" "" \
     #     git clone --depth 1 -b "$MINGW_W64_BRANCH" \
     #         https://git.code.sf.net/p/mingw-w64/mingw-w64 mingw-w64
 
-    execute "downloading MinGW-w64 source" "" \
-        wget https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-$MINGW_W64_BRANCH.tar.bz2 \
-            -O $DOWNLOAD_PATH/mingw-w64.tar.bz2 ; \
-        bunzip2 -dc $DOWNLOAD_PATH/mingw-w64.tar.bz2 | tar x ; \
-        mv mingw-w64-$MINGW_W64_BRANCH mingw-w64
+    if test -f $DOWNLOAD_PATH/mingw-w64.tar.bz2
+    then
+        execute "skipping MinGW-w64 source" "" echo skip
+    else
+        execute "downloading MinGW-w64 source" "" \
+            wget https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-$MINGW_W64_BRANCH.tar.bz2 \
+                -O $DOWNLOAD_PATH/mingw-w64.tar.bz2 ; \
+            bunzip2 -dc $DOWNLOAD_PATH/mingw-w64.tar.bz2 | tar x ; \
+            mv mingw-w64-$MINGW_W64_BRANCH mingw-w64
+    fi
 
     # execute "downloading Binutils source" "" \
     #     git clone --depth 1 -b "$BINUTILS_BRANCH" \
     #         https://sourceware.org/git/binutils-gdb.git binutils
 
-    execute "downloading Binutils source" "" \
-        wget https://ftp.gnu.org/pub/gnu/binutils/$BINUTILS_BRANCH.tar.xz -O $DOWNLOAD_PATH/binutils.tar.xz ; \
-        xz -dc $DOWNLOAD_PATH/binutils.tar.xz | tar x ; \
-        mv $BINUTILS_BRANCH binutils
+    if test -f $DOWNLOAD_PATH/binutils.tar.xz
+    then
+        execute "downloading Binutils source" "" echo skip
+    else
+        execute "downloading Binutils source" "" \
+            wget https://ftp.gnu.org/pub/gnu/binutils/$BINUTILS_BRANCH.tar.xz -O $DOWNLOAD_PATH/binutils.tar.xz ; \
+            xz -dc $DOWNLOAD_PATH/binutils.tar.xz | tar x ; \
+            mv $BINUTILS_BRANCH binutils
+    fi
 
     # execute "downloading GCC source" "" \
     #     git clone --depth 1 -b "$GCC_BRANCH" \
     #         https://gcc.gnu.org/git/gcc.git gcc
 
-    execute "downloading GCC source" "" \
-        wget https://ftp.gnu.org/pub/gnu/gcc/gcc-12.1.0/$GCC_BRANCH.tar.xz -O $DOWNLOAD_PATH/gcc.tar.xz ; \
-        xz -dc $DOWNLOAD_PATH/gcc.tar.xz | tar x ; \
-        mv $GCC_BRANCH gcc
+    if test -f $DOWNLOAD_PATH/gcc.tar.xz
+    then
+        execute "downloading GCC source" "" echo skip
+    else
+        execute "downloading GCC source" "" \
+            wget https://ftp.gnu.org/pub/gnu/gcc/gcc-12.1.0/$GCC_BRANCH.tar.xz -O $DOWNLOAD_PATH/gcc.tar.xz ; \
+            xz -dc $DOWNLOAD_PATH/gcc.tar.xz | tar x ; \
+            mv $GCC_BRANCH gcc
+    fi
 
-    execute "downloading config.guess" "" \
-        curl -o config.guess \
-            "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
+    if test -f config.guess
+    then
+        execute "downloading config.guess" "" echo skip
+    else
+        execute "downloading config.guess" "" \
+            curl -o config.guess \
+                "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
+    fi
 }
 
 build()
