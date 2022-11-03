@@ -12,6 +12,6 @@
 #define __NESTED_WINNT_DDK_H__
 
 #include <ddk/ntddk.h>
-#include <ddk/ntapi.h>
+// #include <ddk/ntapi.h>
 
 #endif

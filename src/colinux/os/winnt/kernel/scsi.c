@@ -11,8 +11,8 @@
 
 #include "ddk.h"
 #include <ddk/ntifs.h>
-#include <ddk/ntdddisk.h>
-#include <ddk/ntddscsi.h>
+#include <ntdddisk.h>
+#include <ntddscsi.h>
 
 #include <colinux/kernel/scsi.h>
 #include <colinux/kernel/transfer.h>
@@ -33,7 +33,7 @@ typedef /*NTOSAPI*/ NTSTATUS DDKAPI (*xfer_func_t)( /*IN*/ HANDLE  FileHandle, /
 
 extern PDEVICE_OBJECT coLinux_DeviceObject;
 
-#include <asm/scatterlist.h>
+#include <linux/scatterlist.h>
 
 struct _io_req {
 	int in_use;

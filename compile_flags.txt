@@ -1,4 +1,4 @@
 --include-directory=src
---include-directory=/usr/i686-w64-mingw32/include
+--include-directory=mingw/i686/i686-w64-mingw32/include
 --include-directory=./linux-2.6.33.7-source/include
 --include-directory=./linux-2.6.33.7-source/arch/x86/include

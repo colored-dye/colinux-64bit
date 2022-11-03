@@ -35,6 +35,8 @@ typedef unsigned long linux_pgd_t;
 # define NULL 	(void*)0
 #endif
 
+#define DDKAPI NTAPI
+
 /*
  * Following is taken from Linux's linux-2.6.33.5-source/lib/div64.c
  */

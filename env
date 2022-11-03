@@ -4,7 +4,9 @@ export CROSS=i686-w64-mingw32-
 export CC=gcc
 export LD=ld
 export CFLAGS="-I../../ \
-            -I../../../linux-2.6.33.7-source/include \
-            -I../../../linux-2.6.33.7-source/arch/x86/include \
+            -I../../../linux-4.9.325/include \
+            -I../../../linux-4.9.325/arch/x86/include \
+            -I../../../linux-4.9.325/arch/x86/include/generated/uapi \
             -I../../../mingw/i686/i686-w64-mingw32/include \
+            -I../../../mingw/i686/i686-w64-mingw32/include/ddk \
             -DCO_KERNEL"

@@ -11,9 +11,9 @@
 #define NDIS50
 
 #include "ddk.h"
-#include <ddk/ntdddisk.h>
 #include <ddk/ndis.h>
 #include <ddk/xfilter.h>
+#include <ntdddisk.h>
 
 #include <colinux/os/alloc.h>
 #include <colinux/common/libc.h>
@@ -40,34 +40,34 @@ static void DDKAPI co_conet_proto_transfer_complete(
 	IN UINT			BytesTransferred);
 
 // missed NDIS event API
-static inline VOID NdisInitializeEvent(
-	IN PNDIS_EVENT  	Event
-	)
-{
-	KeInitializeEvent(&Event->Event, NotificationEvent , FALSE);
-}
+// static inline VOID NdisInitializeEvent(
+// 	IN PNDIS_EVENT  	Event
+// 	)
+// {
+// 	KeInitializeEvent(&Event->Event, NotificationEvent , FALSE);
+// }
 
-static inline BOOLEAN NdisWaitEvent(
-	IN PNDIS_EVENT  	Event,
-	IN UINT  		MsToWait
-	)
-{
-	return KeWaitForSingleObject(&Event->Event, Executive, KernelMode, TRUE, NULL) == STATUS_SUCCESS ;
-}
+// static inline BOOLEAN NdisWaitEvent(
+// 	IN PNDIS_EVENT  	Event,
+// 	IN UINT  		MsToWait
+// 	)
+// {
+// 	return KeWaitForSingleObject(&Event->Event, Executive, KernelMode, TRUE, NULL) == STATUS_SUCCESS ;
+// }
 
-static inline VOID NdisSetEvent(
-	IN PNDIS_EVENT  	Event
-	)
-{
-	KeSetEvent(&Event->Event, 1, FALSE);
-}
+// static inline VOID NdisSetEvent(
+// 	IN PNDIS_EVENT  	Event
+// 	)
+// {
+// 	KeSetEvent(&Event->Event, 1, FALSE);
+// }
 
-static inline VOID NdisResetEvent(
-	IN PNDIS_EVENT  	Event
-	)
-{
-	KeResetEvent(&Event->Event);
-}
+// static inline VOID NdisResetEvent(
+// 	IN PNDIS_EVENT  	Event
+// 	)
+// {
+// 	KeResetEvent(&Event->Event);
+// }
 
 static void co_FreeBuffersAndPacket(
 	IN PNDIS_PACKET		Packet
@@ -88,7 +88,7 @@ static void co_FreeBuffersAndPacket(
 	NdisFreePacket(Packet);
 }
 
-static VOID DDKAPI co_conet_transfer_message_routine(PDEVICE_OBJECT DeviceObject, PVOID Context)
+static VOID NTAPI co_conet_transfer_message_routine(PDEVICE_OBJECT DeviceObject, PVOID Context)
 {
 	conet_message_transfer_context_t *context;
 	PIO_WORKITEM	work_item;
