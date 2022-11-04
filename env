@@ -1,4 +1,4 @@
-export PATH="$PATH:`pwd`/mingw/i686/bin:`pwd`/mingw/i686/i686-co-linux/bin"
+export PATH="`pwd`/mingw/i686/bin:`pwd`/mingw/i686/i686-co-linux/bin:$PATH"
 # colinux/kernel
 export CROSS=i686-w64-mingw32-
 export CC=gcc
