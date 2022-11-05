@@ -8,3 +8,4 @@
 /linux-*
 *.o
 *.a
+*.exe
