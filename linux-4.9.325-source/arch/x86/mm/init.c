@@ -172,6 +172,7 @@ static void __init probe_page_size_mask(void)
 		page_size_mask |= 1 << PG_LEVEL_2M;
 #endif
 
+#ifndef CONFIG_COOPERATIVE
 	/* Enable PSE if available */
 	if (boot_cpu_has(X86_FEATURE_PSE))
 		cr4_set_bits_and_update_boot(X86_CR4_PSE);
@@ -190,6 +191,7 @@ static void __init probe_page_size_mask(void)
 	} else {
 		direct_gbpages = 0;
 	}
+#endif /* !CONFIG_COOPERATIVE */
 }
 
 #ifdef CONFIG_X86_32
@@ -419,11 +421,15 @@ unsigned long __ref init_memory_mapping(unsigned long start,
 	memset(mr, 0, sizeof(mr));
 	nr_range = split_mem_range(mr, 0, start, end);
 
+#ifdef CONFIG_COOPERATIVE
+	ret = end;
+#else /* CONFIG_COOPERATIVE */
 	for (i = 0; i < nr_range; i++)
 		ret = kernel_physical_mapping_init(mr[i].start, mr[i].end,
 						   mr[i].page_size_mask);
 
 	add_pfn_range_mapped(start >> PAGE_SHIFT, ret >> PAGE_SHIFT);
+#endif /* CONFIG_COOPERATIVE */
 
 	return ret >> PAGE_SHIFT;
 }
@@ -703,17 +709,21 @@ void free_init_pages(char *what, unsigned long begin, unsigned long end)
 	 * create a kernel page fault:
 	 */
 	if (debug_pagealloc_enabled()) {
+#ifndef CONFIG_COOPERATIVE
 		pr_info("debug: unmapping init [mem %#010lx-%#010lx]\n",
 			begin, end - 1);
 		set_memory_np(begin, (end - begin) >> PAGE_SHIFT);
+#endif /* !CONFIG_COOPERATIVE */
 	} else {
 		/*
 		 * We just marked the kernel text read only above, now that
 		 * we are going to free part of that, we need to make that
 		 * writeable and non-executable first.
 		 */
+#ifndef CONFIG_COOPERATIVE
 		set_memory_nx(begin, (end - begin) >> PAGE_SHIFT);
 		set_memory_rw(begin, (end - begin) >> PAGE_SHIFT);
+#endif /* !CONFIG_COOPERATIVE */
 
 		free_reserved_area((void *)begin, (void *)end,
 				   POISON_FREE_INITMEM, what);
@@ -751,9 +761,11 @@ void __init zone_sizes_init(void)
 
 	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
 
+#ifndef CONFIG_COOPERATIVE
 #ifdef CONFIG_ZONE_DMA
 	max_zone_pfns[ZONE_DMA]		= min(MAX_DMA_PFN, max_low_pfn);
 #endif
+#endif /* !CONFIG_COOPERATIVE */
 #ifdef CONFIG_ZONE_DMA32
 	max_zone_pfns[ZONE_DMA32]	= min(MAX_DMA32_PFN, max_low_pfn);
 #endif

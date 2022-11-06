@@ -409,7 +409,7 @@ static void dump_pagetable(unsigned long address)
 		goto out;
 
 	pte = pte_offset_kernel(pmd, address);
-	printk("*pte = %0*Lx ", sizeof(*pte) * 2, (u64)pte_val(*pte));
+	printk("*pte = %0*Lx ", sizeof(*pte) * 2, (u64)CO_P_TO_PP(pte_val(*pte)));
 out:
 	printk("\n");
 }

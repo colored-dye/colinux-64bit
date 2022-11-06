@@ -26,6 +26,7 @@
 #include <linux/bootmem.h>
 #include <linux/memblock.h>
 #include <linux/proc_fs.h>
+#include <linux/cooperative_internal.h>
 #include <linux/memory_hotplug.h>
 #include <linux/initrd.h>
 #include <linux/cpumask.h>
@@ -56,9 +57,14 @@
 
 unsigned long highstart_pfn, highend_pfn;
 
+#ifndef CONFIG_COOPERATIVE
 static noinline int do_test_wp_bit(void);
+#endif
 
 bool __read_mostly __vmalloc_start_set = false;
+
+/* colinux start_va */
+static long co_start_va = 0;
 
 /*
  * Creates a middle page table and puts a pointer to it in the
@@ -97,7 +103,7 @@ static pte_t * __init one_page_table_init(pmd_t *pmd)
 		pte_t *page_table = (pte_t *)alloc_low_page();
 
 		paravirt_alloc_pte(&init_mm, __pa(page_table) >> PAGE_SHIFT);
-		set_pmd(pmd, __pmd(__pa(page_table) | _PAGE_TABLE));
+		set_pmd(pmd, __pmd(CO_PP_TO_P(__pa(page_table)) | _PAGE_TABLE));
 		BUG_ON(page_table != pte_offset_kernel(pmd, 0));
 	}
 
@@ -235,6 +241,7 @@ page_table_range_init(unsigned long start, unsigned long end, pgd_t *pgd_base)
 	}
 }
 
+#ifndef CONFIG_COOPERATIVE
 static inline int is_kernel_text(unsigned long addr)
 {
 	if (addr >= (unsigned long)_text && addr <= (unsigned long)__init_end)
@@ -385,6 +392,7 @@ repeat:
 	}
 	return last_map_addr;
 }
+#endif /* !CONFIG_COOPERATIVE */
 
 pte_t *kmap_pte;
 
@@ -448,6 +456,7 @@ static inline void permanent_kmaps_init(pgd_t *pgd_base)
 
 void __init native_pagetable_init(void)
 {
+#ifdef CONFIG_COOPERATIVE
 	unsigned long pfn, va;
 	pgd_t *pgd, *base = swapper_pg_dir;
 	pud_t *pud;
@@ -491,6 +500,7 @@ void __init native_pagetable_init(void)
 	}
 	paravirt_alloc_pmd(&init_mm, __pa(base) >> PAGE_SHIFT);
 	paging_init();
+#endif /* CONFIG_COOPERATIVE */
 }
 
 /*
@@ -659,12 +669,22 @@ void __init initmem_init(void)
 		pages_to_mb(highend_pfn - highstart_pfn));
 	high_memory = (void *) __va(highstart_pfn * PAGE_SIZE - 1) + 1;
 #else
+#ifdef CONFIG_COOPERATIVE
+	/* Allocate boot memory from host */
+	max_low_pfn = max_pfn = co_boot_params.co_memory_size >> PAGE_SHIFT;
+	min_low_pfn = PFN_UP(__pa((unsigned long)&_end)) + 0x10;
+	co_start_va = (unsigned long)__va(min_low_pfn << PAGE_SHIFT);
+	co_alloc_pages(co_start_va, 0x20);
+
+	/* Add single region without check via e820_find_active_region */
+	add_active_range(0, 0, max_low_pfn);
+#endif /* CONFIG_COOPERATIVE */
+
 	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE - 1) + 1;
 #endif
 
 	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
 	sparse_memory_present_with_active_regions(0);
-
 #ifdef CONFIG_FLATMEM
 	max_mapnr = IS_ENABLED(CONFIG_HIGHMEM) ? highend_pfn : max_low_pfn;
 #endif
@@ -714,6 +734,7 @@ void __init paging_init(void)
  * black magic jumps to work around some nasty CPU bugs, but fortunately the
  * switch to using exceptions got rid of all that.
  */
+#ifndef CONFIG_COOPERATIVE
 static void __init test_wp_bit(void)
 {
 	printk(KERN_INFO
@@ -731,10 +752,13 @@ static void __init test_wp_bit(void)
 		printk(KERN_CONT "Ok.\n");
 	}
 }
+#endif
 
 void __init mem_init(void)
 {
+#ifndef CONFIG_COOPERATIVE
 	pci_iommu_alloc();
+#endif
 
 #ifdef CONFIG_FLATMEM
 	BUG_ON(!mem_map);
@@ -761,11 +785,10 @@ void __init mem_init(void)
 #ifdef CONFIG_HIGHMEM
 		"    pkmap   : 0x%08lx - 0x%08lx   (%4ld kB)\n"
 #endif
-		"    vmalloc : 0x%08lx - 0x%08lx   (%4ld MB)\n"
-		"    lowmem  : 0x%08lx - 0x%08lx   (%4ld MB)\n"
-		"      .init : 0x%08lx - 0x%08lx   (%4ld kB)\n"
-		"      .data : 0x%08lx - 0x%08lx   (%4ld kB)\n"
-		"      .text : 0x%08lx - 0x%08lx   (%4ld kB)\n",
+#ifdef CONFIG_COOPERATIVE
+		"    colinux : 0x%08lx - 0x%08lx   (%4ld MB)\n"
+#endif
+
 		FIXADDR_START, FIXADDR_TOP,
 		(FIXADDR_TOP - FIXADDR_START) >> 10,
 
@@ -773,9 +796,19 @@ void __init mem_init(void)
 		PKMAP_BASE, PKMAP_BASE+LAST_PKMAP*PAGE_SIZE,
 		(LAST_PKMAP*PAGE_SIZE) >> 10,
 #endif
+#ifdef CONFIG_COOPERATIVE
+	CO_VPTR_BASE_START, CO_VPTR_BASE_END,
+	(CO_VPTR_BASE_END - CO_VPTR_BASE_START) >> 20,
+#endif
 
 		VMALLOC_START, VMALLOC_END,
-		(VMALLOC_END - VMALLOC_START) >> 20,
+		(VMALLOC_END - VMALLOC_START) >> 20);
+
+	printk(KERN_INFO
+		"   lowmem  : 0x%08lx - 0x%08lx  (%4ld MB)\n"
+		"     .init : 0x%08lx - 0x%08lx  (%4ld kB)\n"
+		"     .data : 0x%08lx - 0x%08lx  (%4ld kB)\n"
+		"     .text : 0x%08lx - 0x%08lx  (%4ld kB)\n",
 
 		(unsigned long)__va(0), (unsigned long)high_memory,
 		((unsigned long)high_memory - (unsigned long)__va(0)) >> 20,
@@ -808,11 +841,19 @@ void __init mem_init(void)
 	BUG_ON(PKMAP_BASE + LAST_PKMAP*PAGE_SIZE	> FIXADDR_START);
 	BUG_ON(VMALLOC_END				> PKMAP_BASE);
 #endif
+#ifdef CONFIG_COOPERATIVE
+	BUG_ON(CO_VPTR_BASE_END				> FIXADDR_START);
+	BUG_ON(VMALLOC_END				> CO_VPTR_BASE_START);
+	if (VMALLOC_START > VMALLOC_END)
+		panic("LOWMEM overlaps vmalloc. Decrease total memory with 'mem=...'!");
+#endif
 	BUG_ON(VMALLOC_START				>= VMALLOC_END);
 	BUG_ON((unsigned long)high_memory		> VMALLOC_START);
 
+#ifndef CONFIG_COOPERATIVE
 	if (boot_cpu_data.wp_works_ok < 0)
 		test_wp_bit();
+#endif
 }
 
 #ifdef CONFIG_MEMORY_HOTPLUG
@@ -844,6 +885,7 @@ int arch_remove_memory(u64 start, u64 size)
  * This function cannot be __init, since exceptions don't work in that
  * section.  Put this after the callers, so that it cannot be inlined.
  */
+#ifndef CONFIG_COOPERATIVE
 static noinline int do_test_wp_bit(void)
 {
 	char tmp_reg;
@@ -863,6 +905,7 @@ static noinline int do_test_wp_bit(void)
 
 	return flag;
 }
+#endif
 
 const int rodata_test_data = 0xC3;
 EXPORT_SYMBOL_GPL(rodata_test_data);
