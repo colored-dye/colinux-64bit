@@ -5,6 +5,5 @@
 /build/
 /log/
 /tmp/
-/linux-*
 *.o
 *.a

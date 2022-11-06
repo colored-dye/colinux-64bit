@@ -1,0 +1,13 @@
+config COFUSE_FS
+	tristate "Cooperative Host file system support (COFUSE)"
+	depends on COOPERATIVE
+	default y
+	help
+	  In Cooperative mode, this file system allows you to mount an host
+	  directory structure to a local mountpoint.
+	  COFUSE (Cooperative FUSE) is based on the original FUSE
+	  (File System in User Space).
+
+	  To compile the cofuse support as a module, choose M here: the
+	  module will be called cofusefs.
+
