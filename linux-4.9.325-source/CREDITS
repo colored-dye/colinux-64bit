@@ -20,6 +20,13 @@ D: One of assisting postmasters for vger.kernel.org's lists
 S: (ask for current address)
 S: Finland
 
+N: Dan Aloni
+E: da-x@colinux.org
+W: http://www.colinux.org
+D: Cooperative Linux
+D: Various kernel patches
+S: Israel
+
 N: Thomas Abraham
 E: thomas.ab@samsung.com
 D: Samsung pin controller driver

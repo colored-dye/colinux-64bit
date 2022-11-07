@@ -54,6 +54,7 @@
 #include <linux/debugobjects.h>
 #include <linux/kmemleak.h>
 #include <linux/compaction.h>
+#include <linux/cooperative_internal.h>
 #include <trace/events/kmem.h>
 #include <linux/prefetch.h>
 #include <linux/mm_inline.h>
@@ -813,6 +814,11 @@ static inline void __free_one_page(struct page *page,
 	unsigned long uninitialized_var(buddy_idx);
 	struct page *buddy;
 	unsigned int max_order;
+
+#ifdef CONFIG_COOPERATIVE
+	co_free_pages((unsigned long)page_address(page), 1 << order);
+	ClearPageCoHostMapped(page);
+#endif /* CONFIG_COOPERATIVE */
 
 	max_order = min_t(unsigned int, MAX_ORDER - 1, pageblock_order);
 
@@ -1779,6 +1785,34 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
 	set_page_owner(page, order, gfp_flags);
 }
 
+#ifdef CONFIG_COOPERATIVE
+static int co_persistent_alloc_pages(unsigned long address, int size)
+{
+	int result, retries_left;
+
+	for (retries_left = 10; retries_left > 0; retries_left--) {
+		result = co_alloc_pages(address, size);
+		if (result) {
+			unsigned long cache_size;
+			/*
+			 * Whoops, we have allocated too much of the
+			 * host OS's memory, time to free some cache.
+			 */
+			cache_size = global_page_state(NR_FILE_PAGES)-total_swapcache_pages;
+			cache_size /= 2;
+			if (cache_size < size*2)
+				cache_size = size*2;
+			shrink_all_memory(cache_size);
+		} else {
+			return 0;
+		}
+	}
+
+	WARN_ON(result != 0);
+	return result;
+}
+#endif /* CONFIG_COOPERATIVE */
+
 static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags,
 							unsigned int alloc_flags)
 {
@@ -1790,6 +1824,12 @@ static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags
 		if (poisoned)
 			poisoned &= page_is_poisoned(p);
 	}
+
+#ifdef CONFIG_COOPERATIVE
+	if (!TestSetPageCoHostMapped(page))
+		if (co_persistent_alloc_pages((unsigned long)page_address(page), 1 << order))
+			return 1;
+#endif /* CONFIG_COOPERATIVE */
 
 	post_alloc_hook(page, order, gfp_flags);
 
@@ -3756,6 +3796,7 @@ nopage:
 
 	warn_alloc(gfp_mask,
 			"page allocation failure: order:%u", order);
+	return NULL;
 got_pg:
 	return page;
 }

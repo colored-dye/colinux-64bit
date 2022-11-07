@@ -58,6 +58,7 @@ static void bad_io_access(unsigned long port, const char *access)
 		bad_io_access(port, #is_pio );			\
 } while (0)
 
+#ifndef CONFIG_COOPERATIVE
 #ifndef pio_read16be
 #define pio_read16be(port) swab16(inw(port))
 #define pio_read32be(port) swab32(inl(port))
@@ -223,6 +224,7 @@ void iowrite32_rep(void __iomem *addr, const void *src, unsigned long count)
 EXPORT_SYMBOL(iowrite8_rep);
 EXPORT_SYMBOL(iowrite16_rep);
 EXPORT_SYMBOL(iowrite32_rep);
+#endif /* !CONFIG_COOPERATIVE */
 
 #ifdef CONFIG_HAS_IOPORT_MAP
 /* Create a virtual mapping cookie for an IO port range */

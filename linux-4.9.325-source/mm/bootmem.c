@@ -17,6 +17,7 @@
 #include <linux/bug.h>
 #include <linux/io.h>
 #include <linux/bootmem.h>
+#include <linux/cooperative_internal.h>
 
 #include "internal.h"
 
@@ -583,6 +584,20 @@ find_block:
 
 		region = phys_to_virt(PFN_PHYS(bdata->node_min_pfn) +
 				start_off);
+			
+		if (cooperative_mode_enabled()) {
+			unsigned long alloc_address = (unsigned long)region;
+			unsigned long alloc_size = size;
+			alloc_size += (alloc_address & (~PAGE_MASK));
+			alloc_address &= PAGE_MASK;
+			alloc_size = (alloc_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
+
+			if(co_alloc_pages(alloc_address, alloc_size)) {
+				free_bootmem((unsigned long)region, size);
+				return NULL;
+			}
+		}
+
 		memset(region, 0, size);
 		/*
 		 * The min_count is set to 0 so that bootmem allocated blocks

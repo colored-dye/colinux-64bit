@@ -28,6 +28,8 @@ snd-sonicvibes-objs := sonicvibes.o
 snd-via82xx-objs := via82xx.o
 snd-via82xx-modem-objs := via82xx_modem.o
 
+obj-$(CONFIG_COOPERATIVE_AUDIO) += coaudio.o
+
 # Toplevel Module Dependency
 obj-$(CONFIG_SND_AD1889) += snd-ad1889.o
 obj-$(CONFIG_SND_ALS300) += snd-als300.o

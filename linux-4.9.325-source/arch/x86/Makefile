@@ -249,7 +249,10 @@ endif
 # Kernel objects
 
 head-y := arch/x86/kernel/head_$(BITS).o
+ifndef CONFIG_COOPERATIVE
 head-y += arch/x86/kernel/head$(BITS).o
+head-y += arch/x86/kernel/head.o
+endif
 head-y += arch/x86/kernel/ebda.o
 head-y += arch/x86/kernel/platform-quirks.o
 

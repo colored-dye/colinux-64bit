@@ -4842,3 +4842,16 @@ const struct inode_operations page_symlink_inode_operations = {
 	.get_link	= page_get_link,
 };
 EXPORT_SYMBOL(page_symlink_inode_operations);
+
+/**
+ * release_open_intent - free up open intent resources
+ * @nd: pointer to nameidata
+ */
+void release_open_intent(struct nameidata *nd)
+{
+	if (nd->intent.open.file->f_path.dentry == NULL)
+		put_filp(nd->intent.open.file);
+	else
+		fput(nd->intent.open.file);
+}
+EXPORT_SYMBOL_GPL(release_open_intent);

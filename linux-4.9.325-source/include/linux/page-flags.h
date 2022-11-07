@@ -107,6 +107,11 @@ enum pageflags {
 #endif
 	__NR_PAGEFLAGS,
 
+/* coLinux flag should not be cleared by PAGE_FLAGS_CHECK_AT_PREP */
+#ifdef CONFIG_COOPERATIVE
+	PG_co_host_mapped, /* Page is mapped on coLinux host */
+#endif
+
 	/* Filesystems */
 	PG_checked = PG_owner_priv_1,
 
@@ -411,6 +416,11 @@ TESTPAGEFLAG_FALSE(Ksm)
 #endif
 
 u64 stable_page_flags(struct page *page);
+
+#ifdef CONFIG_COOPERATIVE
+CLEARPAGEFLAG(CoHostMapped, co_host_mapped)
+TESTSETFLAG(CoHostMapped, co_host_mapped)
+#endif
 
 static inline int PageUptodate(struct page *page)
 {

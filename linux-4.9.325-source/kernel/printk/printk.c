@@ -45,6 +45,7 @@
 #include <linux/utsname.h>
 #include <linux/ctype.h>
 #include <linux/uio.h>
+#include <linux/cooperative_internal.h>
 
 #include <asm/uaccess.h>
 #include <asm/sections.h>
@@ -1834,6 +1835,8 @@ asmlinkage int vprintk_emit(int facility, int level,
 			text += 2;
 		}
 	}
+
+	co_printk(textbuf, text_len);
 
 	if (level == LOGLEVEL_DEFAULT)
 		level = default_message_loglevel;

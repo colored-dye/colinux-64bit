@@ -608,6 +608,7 @@ int security_inode_permission(struct inode *inode, int mask)
 		return 0;
 	return call_int_hook(inode_permission, 0, inode, mask);
 }
+EXPORT_SYMBOL(security_inode_permission);
 
 int security_inode_setattr(struct dentry *dentry, struct iattr *attr)
 {

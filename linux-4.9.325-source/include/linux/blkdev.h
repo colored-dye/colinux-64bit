@@ -1205,7 +1205,11 @@ static inline int sb_issue_zeroout(struct super_block *sb, sector_t block,
 extern int blk_verify_command(unsigned char *cmd, fmode_t has_write_perm);
 
 enum blk_default_limits {
+#ifdef CONFIG_COOPERATIVE
+	BLK_MAX_SEGMENTS	= 256,
+#else
 	BLK_MAX_SEGMENTS	= 128,
+#endif
 	BLK_SAFE_MAX_SECTORS	= 255,
 	BLK_DEF_MAX_SECTORS	= 2560,
 	BLK_MAX_SEGMENT_SIZE	= 65536,

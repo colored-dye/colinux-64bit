@@ -9,6 +9,14 @@ menuconfig SND_PCI
 
 if SND_PCI
 
+config COOPERATIVE_AUDIO
+	bool "Cooperative audio support"
+	default n
+	depends on COOPERATIVE
+	select SND_PCM
+	help
+	  Say Y here if you are compiling in Cooperative mode.
+
 config SND_AD1889
 	tristate "Analog Devices AD1889"
 	select SND_AC97_CODEC

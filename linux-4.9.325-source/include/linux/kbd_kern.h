@@ -62,6 +62,7 @@ struct kbd_struct {
 #define VC_META		4	/* 0 - meta, 1 - meta=prefix with ESC */
 };
 
+extern void keyboard_inject_utf8(unsigned int c);
 extern int kbd_init(void);
 
 extern void setledstate(struct kbd_struct *kbd, unsigned int led);

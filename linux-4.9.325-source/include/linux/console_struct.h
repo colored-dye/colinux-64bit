@@ -166,7 +166,11 @@ extern void vc_SAK(struct work_struct *work);
 #define CUR_HWMASK	0x0f
 #define CUR_SWMASK	0xfff0
 
-#define CUR_DEFAULT CUR_UNDERLINE
+#ifdef CONFIG_COOPERATIVE
+# define CUR_DEFAULT CUR_DEF
+#else
+# define CUR_DEFAULT CUR_UNDERLINE
+#endif
 
 static inline bool con_is_visible(const struct vc_data *vc)
 {
