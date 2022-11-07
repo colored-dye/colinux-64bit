@@ -287,6 +287,12 @@ config BLK_DEV_CRYPTOLOOP
 	  instead, which can be configured to be on-disk compatible with the
 	  cryptoloop device.  cryptoloop support will be removed in Linux 5.16.
 
+config BLK_DEV_CLOOOP
+	tristate "Compressed Loopback device support (from Knoppix)"
+	default m
+	help
+	  Adds an compressed loopback device.
+
 source "drivers/block/drbd/Kconfig"
 
 config BLK_DEV_NBD
@@ -398,6 +404,15 @@ config BLK_DEV_RAM_DAX
 	  to the block device.  Answering Y will slightly enlarge the kernel,
 	  and will prevent RAM block device backing store memory from being
 	  allocated from highmem (only a problem for highmem systems).
+
+config BLK_DEV_COBD
+	tristate 'Cooperative block device support'
+	default y
+	depends on COOPERATIVE
+	help
+	  Virtual block device support for cooperative kernels.
+
+	  If unsure, say Y.
 
 config CDROM_PKTCDVD
 	tristate "Packet writing on CD/DVD media"

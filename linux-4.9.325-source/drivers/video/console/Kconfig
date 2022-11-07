@@ -6,7 +6,7 @@ menu "Console display driver support"
 
 config VGA_CONSOLE
 	bool "VGA text console" if EXPERT || !X86
-	depends on !4xx && !8xx && !SPARC && !M68K && !PARISC && !FRV && \
+	depends on !COOPERATIVE && !4xx && !8xx && !SPARC && !M68K && !PARISC && !FRV && \
 		!SUPERH && !BLACKFIN && !AVR32 && !MN10300 && !CRIS && \
 		(!ARM || ARCH_FOOTBRIDGE || ARCH_INTEGRATOR || ARCH_NETWINDER) && \
 		!ARM64 && !ARC && !MICROBLAZE
@@ -21,6 +21,14 @@ config VGA_CONSOLE
 	  <ftp://ibiblio.org/pub/Linux/utils/console/>.
 
 	  Say Y.
+
+config COOPERATIVE_CONSOLE
+	bool 'coLinux Pseudo-VGA text console' if COOPERATIVE
+	depends on !VGA_CONSOLE && COOPERATIVE
+	default y
+	help
+	  You need to say Y here if you compile a Linux kernel in cooperative
+	  mode.
 
 config MDA_CONSOLE
 	depends on !M68K && !PARISC && ISA
@@ -47,7 +55,7 @@ config SGI_NEWPORT_CONSOLE
 
 config DUMMY_CONSOLE
 	bool
-	depends on VGA_CONSOLE!=y || SGI_NEWPORT_CONSOLE!=y 
+	depends on COOPERATIVE_CONSOL!=y || VGA_CONSOLE!=y || SGI_NEWPORT_CONSOLE!=y 
 	default y
 
 config DUMMY_CONSOLE_COLUMNS

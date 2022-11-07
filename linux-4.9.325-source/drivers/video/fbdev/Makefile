@@ -9,6 +9,8 @@ obj-y				+= core/
 obj-$(CONFIG_FB_MACMODES)      += macmodes.o
 obj-$(CONFIG_FB_WMT_GE_ROPS)   += wmt_ge_rops.o
 
+obj-$(CONFIG_COOPERATIVE_VIDEO) += covideo.o
+
 # Hardware specific drivers go first
 obj-$(CONFIG_FB_AMIGA)            += amifb.o c2p_planar.o
 obj-$(CONFIG_FB_ARC)              += arcfb.o

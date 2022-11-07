@@ -342,7 +342,9 @@ int pci_assign_resource(struct pci_dev *dev, int resno)
 
 	return 0;
 }
+#ifndef CONFIG_COOPERATIVE
 EXPORT_SYMBOL(pci_assign_resource);
+#endif
 
 int pci_reassign_resource(struct pci_dev *dev, int resno, resource_size_t addsize,
 			resource_size_t min_align)

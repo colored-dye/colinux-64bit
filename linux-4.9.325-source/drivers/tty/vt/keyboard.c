@@ -362,6 +362,14 @@ static void to_utf8(struct vc_data *vc, uint c)
 	}
 }
 
+#ifdef CONFIG_COOPERATIVE
+void keyboard_inject_utf8(uint c)
+{
+	to_utf8(vc_cons[fg_console].d, c);
+}
+EXPORT_SYMBOL_GPL(keyboard_inject_utf8);
+#endif
+
 /*
  * Called after returning from RAW mode or when changing consoles - recompute
  * shift_down[] and shift_state from key_down[] maybe called when keymap is

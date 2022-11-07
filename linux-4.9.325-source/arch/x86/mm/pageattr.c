@@ -1741,6 +1741,8 @@ int set_memory_nx(unsigned long addr, int numpages)
 }
 EXPORT_SYMBOL(set_memory_nx);
 
+// FIXME: Make is usable. Flags must change on host too
+#ifndef CONFIG_COOPERATIVE
 int set_memory_ro(unsigned long addr, int numpages)
 {
 	return change_page_attr_clear(&addr, numpages, __pgprot(_PAGE_RW), 0);
@@ -1755,6 +1757,7 @@ int set_memory_np(unsigned long addr, int numpages)
 {
 	return change_page_attr_clear(&addr, numpages, __pgprot(_PAGE_PRESENT), 0);
 }
+#endif /* !CONFIG_COOPERATIVE */
 
 int set_memory_4k(unsigned long addr, int numpages)
 {
@@ -1883,6 +1886,7 @@ int set_pages_nx(struct page *page, int numpages)
 }
 EXPORT_SYMBOL(set_pages_nx);
 
+#ifndef CONFIG_COOPERATIVE
 int set_pages_ro(struct page *page, int numpages)
 {
 	unsigned long addr = (unsigned long)page_address(page);
@@ -1896,6 +1900,7 @@ int set_pages_rw(struct page *page, int numpages)
 
 	return set_memory_rw(addr, numpages);
 }
+#endif /* !CONFIG_COOPERATIVE */
 
 #ifdef CONFIG_DEBUG_PAGEALLOC
 

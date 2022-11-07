@@ -305,6 +305,11 @@ config VETH
 	  When one end receives the packet it appears on its pair and vice
 	  versa.
 
+config CONET_COOPERATIVE
+	bool "Cooperative Virtual Ethernet driver support"
+	depends on COOPERATIVE
+	select MII
+
 config VIRTIO_NET
 	tristate "Virtio network driver"
 	depends on VIRTIO

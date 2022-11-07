@@ -2,6 +2,7 @@
  * Tty buffer allocation management
  */
 
+#include "linux/gfp.h"
 #include <linux/types.h>
 #include <linux/errno.h>
 #include <linux/tty.h>
@@ -150,6 +151,7 @@ static struct tty_buffer *tty_buffer_alloc(struct tty_port *port, size_t size)
 {
 	struct llist_node *free;
 	struct tty_buffer *p;
+	size_t bytes;
 
 	/* Round the buffer size out */
 	size = __ALIGN_MASK(size, TTYB_ALIGN_MASK);
@@ -166,10 +168,22 @@ static struct tty_buffer *tty_buffer_alloc(struct tty_port *port, size_t size)
 	   have queued and recycle that ? */
 	if (atomic_read(&port->buf.mem_used) > port->buf.mem_limit)
 		return NULL;
-	p = kmalloc(sizeof(struct tty_buffer) + 2 * size,
-		    GFP_ATOMIC | __GFP_NOWARN);
-	if (p == NULL)
-		return NULL;
+	bytes = sizeof(struct tty_buffer) + 2 * size;
+	p = kmalloc(bytes, GFP_ATOMIC | __GFP_NOWARN);
+	if (p == NULL) {
+		if (bytes <= PAGE_SIZE) {
+			printk(KERN_WARNING "tty_buffer_alloc: kmalloc failed for size:%d (%d) used:%d\n", size, bytes, tty->buf.memory_used);
+			return NULL;
+		}
+
+		/* Try single page */
+		size = (PAGE_SIZE - sizeof(struct tty_buffer)) / 2;
+		p = kmalloc(PAGE_SIZE, GFP_ATOMIC);
+		if (p == NULL) {
+			printk(KERN_WARNING "tty_buffer_alloc: kmalloc second try failed size:%d (%lu) used:%d\n", size, PAGE_SIZE, tty->buf.memory_used);
+			return NULL;
+		}
+	}
 
 found:
 	tty_buffer_reset(p, size);
@@ -278,10 +292,14 @@ static int __tty_buffer_request_room(struct tty_port *port, size_t size,
 			 * advanced to the next buffer
 			 */
 			smp_store_release(&b->next, n);
+			if (n->size < size)
+				size = n->size
 		} else if (change)
 			size = 0;
-		else
+		else {
+			printk(KERN_WARNING "tty_buffer_find failed for size:%d left:%d used:%d\n", size, left, tty->buf.memory_used);
 			size = left;
+		}
 	}
 	return size;
 }

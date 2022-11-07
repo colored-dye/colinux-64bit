@@ -398,7 +398,9 @@ void __init pcibios_resource_survey(void)
 	list_for_each_entry(bus, &pci_root_buses, node)
 		pcibios_allocate_resources(bus, 1);
 
+#ifndef CONFIG_COOPERATIVE
 	e820_reserve_resources_late();
+#endif
 	/*
 	 * Insert the IO APIC resources after PCI initialization has
 	 * occurred to handle IO APICS that are mapped in on a BAR in

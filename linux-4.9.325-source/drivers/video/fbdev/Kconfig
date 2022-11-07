@@ -228,6 +228,23 @@ config FB_TILEBLITTING
 comment "Frame buffer hardware drivers"
 	depends on FB
 
+config COOPERATIVE_VIDEO
+	bool "Cooperative Video"
+	default n
+	depends on COOPERATIVE
+	select FB
+        select FB_SYS_FILLRECT
+        select FB_SYS_COPYAREA
+        select FB_SYS_IMAGEBLIT
+        select FB_SYS_FOPS
+	select FRAMEBUFFER_CONSOLE if !COOPERATIVE_CONSOLE
+	select LOGO if !COOPERATIVE_CONSOLE
+	select LOGO_LINUX_CLUT224 if !COOPERATIVE_CONSOLE
+	---help---
+	  This enables the Cooperative Framebuffer Video driver.
+
+	  Say N unless you are compiling a Cooperative kernel.
+
 config FB_GRVGA
 	tristate "Aeroflex Gaisler framebuffer support"
 	depends on FB && SPARC

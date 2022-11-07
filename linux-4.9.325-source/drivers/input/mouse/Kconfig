@@ -12,9 +12,19 @@ menuconfig INPUT_MOUSE
 
 if INPUT_MOUSE
 
+config MOUSE_COOPERATIVE
+	bool "Cooperative Mouse driver"
+			default n
+		depends on COOPERATIVE
+		---help---
+		  Virtual mouse driver for cooperative kernels.
+
+		  If unsure, say N
+
 config MOUSE_PS2
 	tristate "PS/2 mouse"
 	default y
+	depends on !COOPERATIVE
 	select SERIO
 	select SERIO_LIBPS2
 	select SERIO_I8042 if ARCH_MIGHT_HAVE_PC_SERIO
@@ -173,6 +183,7 @@ config MOUSE_PS2_VMMOUSE
 
 config MOUSE_SERIAL
 	tristate "Serial mouse"
+	depends on !COOPERATIVE
 	select SERIO
 	help
 	  Say Y here if you have a serial (RS-232, COM port) mouse connected
@@ -340,6 +351,7 @@ config MOUSE_RISCPC
 
 config MOUSE_VSXXXAA
 	tristate "DEC VSXXX-AA/GA mouse and VSXXX-AB tablet"
+	depends on !COOPERATIVE
 	select SERIO
 	help
 	  Say Y (or M) if you want to use a DEC VSXXX-AA (hockey

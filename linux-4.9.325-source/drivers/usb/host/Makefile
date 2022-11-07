@@ -28,7 +28,9 @@ endif
 obj-$(CONFIG_USB_WHCI_HCD)	+= whci/
 
 ifneq ($(CONFIG_USB), )
+ifndef CONFIG_COOPERATIVE
 	obj-$(CONFIG_PCI)	+= pci-quirks.o
+endif
 endif
 
 obj-$(CONFIG_USB_EHCI_HCD)	+= ehci-hcd.o

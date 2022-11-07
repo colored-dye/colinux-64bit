@@ -21,6 +21,7 @@
 #include <linux/ptrace.h>
 #include <linux/device.h>
 #include <linux/highmem.h>
+#include <linux/cooperative_internal.h>
 #include <linux/backing-dev.h>
 #include <linux/shmem_fs.h>
 #include <linux/splice.h>
@@ -114,6 +115,9 @@ static ssize_t read_mem(struct file *file, char __user *buf,
 	ssize_t read, sz;
 	void *ptr;
 
+	if (cooperative_mode_enabled())
+		return -ENOMEM;
+
 	if (p != *ppos)
 		return 0;
 
@@ -184,6 +188,9 @@ static ssize_t write_mem(struct file *file, const char __user *buf,
 	ssize_t written, sz;
 	unsigned long copied;
 	void *ptr;
+
+	if (cooperative_mode_enabled())
+		return -ENOMEM;
 
 	if (p != *ppos)
 		return -EFBIG;
@@ -353,6 +360,9 @@ static int mmap_mem(struct file *file, struct vm_area_struct *vma)
 	size_t size = vma->vm_end - vma->vm_start;
 	phys_addr_t offset = (phys_addr_t)vma->vm_pgoff << PAGE_SHIFT;
 
+	if (cooperative_mode_enabled())
+		return -EFAULT;
+
 	/* It's illegal to wrap around the end of the physical address space. */
 	if (offset + (phys_addr_t)size - 1 < offset)
 		return -EINVAL;
@@ -391,6 +401,9 @@ static int mmap_kmem(struct file *file, struct vm_area_struct *vma)
 {
 	unsigned long pfn;
 
+	if (cooperative_mode_enabled())
+		return -EFAULT;
+
 	/* Turn a kernel-virtual address into a physical page frame */
 	pfn = __pa((u64)vma->vm_pgoff << PAGE_SHIFT) >> PAGE_SHIFT;
 
@@ -418,6 +431,9 @@ static ssize_t read_kmem(struct file *file, char __user *buf,
 	ssize_t low_count, read, sz;
 	char *kbuf; /* k-addr because vread() takes vmlist_lock rwlock */
 	int err = 0;
+
+	if (cooperative_mode_enabled())
+		return -ENOMEM;
 
 	read = 0;
 	if (p < (unsigned long) high_memory) {
@@ -502,6 +518,10 @@ static ssize_t do_write_kmem(unsigned long p, const char __user *buf,
 	unsigned long copied;
 
 	written = 0;
+
+	if (cooperative_mode_enabled())
+		return -ENOMEM;
+
 #ifdef __ARCH_HAS_NO_PAGE_ZERO_MAPPED
 	/* we don't have page 0 mapped on sparc and m68k.. */
 	if (p < PAGE_SIZE) {

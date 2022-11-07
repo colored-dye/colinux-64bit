@@ -63,7 +63,7 @@ static pte_t *resume_one_page_table_init(pmd_t *pmd)
 		if (!page_table)
 			return NULL;
 
-		set_pmd(pmd, __pmd(__pa(page_table) | _PAGE_TABLE));
+		set_pmd(pmd, __pmd(CO_PP_TO_P(__pa(page_table)) | _PAGE_TABLE));
 
 		BUG_ON(page_table != pte_offset_kernel(pmd, 0));
 

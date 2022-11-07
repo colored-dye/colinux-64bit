@@ -12,6 +12,9 @@ static __init int pci_arch_init(void)
 
 	type = pci_direct_probe();
 #endif
+#ifdef CONFIG_PCI_COOPERATIVE
+	pci_cooperative_init();
+#endif
 
 	if (!(pci_probe & PCI_PROBE_NOEARLY))
 		pci_mmcfg_early_init();

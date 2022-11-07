@@ -28,7 +28,7 @@ if SERIO
 config SERIO_I8042
 	tristate "i8042 PC Keyboard controller"
 	default y
-	depends on ARCH_MIGHT_HAVE_PC_SERIO
+	depends on ARCH_MIGHT_HAVE_PC_SERIO && !COOPERATIVE
 	help
 	  i8042 is the chip over which the standard AT keyboard and PS/2
 	  mouse are connected to the computer. If you use these devices,
@@ -177,6 +177,7 @@ config SERIO_MACEPS2
 config SERIO_LIBPS2
 	tristate "PS/2 driver library"
 	depends on SERIO_I8042 || SERIO_I8042=n
+	depends on !COOPERATIVE
 	help
 	  Say Y here if you are using a driver for device connected
 	  to a PS/2 port, such as PS/2 mouse or standard AT keyboard.
@@ -217,6 +218,11 @@ config SERIO_ALTERA_PS2
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called altera_ps2.
+
+config SERIO_COKBD
+	tristate "Cooperative Linux virtua keyboard controlled driver"
+	depends on COOPERATIVE
+	default y
 
 config SERIO_AMS_DELTA
 	tristate "Amstrad Delta (E3) mailboard support"

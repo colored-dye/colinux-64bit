@@ -166,7 +166,7 @@ config BFIN_JTAG_COMM_CONSOLE
 
 config SERIAL_NONSTANDARD
 	bool "Non-standard serial port support"
-	depends on HAS_IOMEM
+	depends on HAS_IOMEM && !COOPERATIVE
 	---help---
 	  Say Y here if you have any non-standard serial boards -- boards
 	  which aren't supported using the standard "dumb" serial driver.

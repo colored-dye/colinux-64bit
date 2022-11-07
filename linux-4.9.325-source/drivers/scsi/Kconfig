@@ -304,6 +304,12 @@ menuconfig SCSI_LOWLEVEL
 
 if SCSI_LOWLEVEL && SCSI
 
+config SCSI_COOPERATIVE
+	bool "Cooperative Linux support"
+	depends on COOPERATIVE
+	help
+	  SCSI Driver for Cooperative Linux
+
 config ISCSI_TCP
 	tristate "iSCSI Initiator over TCP/IP"
 	depends on SCSI && INET

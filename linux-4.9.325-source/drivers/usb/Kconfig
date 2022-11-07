@@ -41,7 +41,9 @@ config USB_COMMON
 	tristate
 
 config USB_ARCH_HAS_HCD
-	def_bool y
+	boolean
+	depends on !COOPERATIVE
+	default y
 
 # ARM SA1111 chips have a non-PCI based "OHCI-compatible" USB host interface.
 config USB

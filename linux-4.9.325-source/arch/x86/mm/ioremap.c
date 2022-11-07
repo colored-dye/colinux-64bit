@@ -12,6 +12,7 @@
 #include <linux/slab.h>
 #include <linux/vmalloc.h>
 #include <linux/mmiotrace.h>
+#include <linux/cooperative_internal.h>
 
 #include <asm/cacheflush.h>
 #include <asm/e820.h>
@@ -65,6 +66,7 @@ static int __ioremap_check_ram(unsigned long start_pfn, unsigned long nr_pages,
 	return 0;
 }
 
+#ifndef CONFIG_COOPERATIVE
 /*
  * Remap an arbitrary physical address space into the kernel virtual
  * address space. It transparently creates kernel huge I/O mapping when
@@ -203,6 +205,7 @@ err_free_memtype:
 	free_memtype(phys_addr, phys_addr + size);
 	return NULL;
 }
+#endif /* !CONFIG_COOPERATIVE */
 
 /**
  * ioremap_nocache     -   map bus memory into CPU space
@@ -227,6 +230,10 @@ err_free_memtype:
  */
 void __iomem *ioremap_nocache(resource_size_t phys_addr, unsigned long size)
 {
+#ifdef CONFIG_COOPERATIVE
+	panic("ioremap_nocache %zu:%lu\n", phys_addr, size);
+	return NULL;
+#else /* CONFIG_COOPERATIVE */
 	/*
 	 * Ideally, this should be:
 	 *	pat_enabled() ? _PAGE_CACHE_MODE_UC : _PAGE_CACHE_MODE_UC_MINUS;
@@ -239,6 +246,7 @@ void __iomem *ioremap_nocache(resource_size_t phys_addr, unsigned long size)
 
 	return __ioremap_caller(phys_addr, size, pcm,
 				__builtin_return_address(0));
+#endif /* CONFIG_COOPERATIVE */
 }
 EXPORT_SYMBOL(ioremap_nocache);
 
@@ -287,8 +295,13 @@ EXPORT_SYMBOL_GPL(ioremap_uc);
  */
 void __iomem *ioremap_wc(resource_size_t phys_addr, unsigned long size)
 {
+#ifdef CONFIG_COOPERATIVE
+	panic("ioremap_wc %zu:%lu\n", phys_addr, size);
+	return NULL;
+#else /* CONFIG_COOPERATIVE */
 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WC,
 					__builtin_return_address(0));
+#endif /* CONFIG_COOPERATIVE */
 }
 EXPORT_SYMBOL(ioremap_wc);
 
@@ -311,17 +324,27 @@ EXPORT_SYMBOL(ioremap_wt);
 
 void __iomem *ioremap_cache(resource_size_t phys_addr, unsigned long size)
 {
+#ifdef CONFIG_COOPERATIVE
+	panic("ioremap_cache %zu:%lu\n", phys_addr, size);
+	return NULL;
+#else /* CONFIG_COOPERATIVE */
 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
 				__builtin_return_address(0));
+#endif /* CONFIG_COOPERATIVE */
 }
 EXPORT_SYMBOL(ioremap_cache);
 
 void __iomem *ioremap_prot(resource_size_t phys_addr, unsigned long size,
 				unsigned long prot_val)
 {
+#ifdef CONFIG_COOPERATIVE
+	panic("ioremap_prot %zu:%lu\n", phys_addr, size);
+	return NULL;
+#else /* CONFIG_COOPERATIVE */
 	return __ioremap_caller(phys_addr, size,
 				pgprot2cachemode(__pgprot(prot_val)),
 				__builtin_return_address(0));
+#endif /* CONFIG_COOPERATIVE */
 }
 EXPORT_SYMBOL(ioremap_prot);
 
