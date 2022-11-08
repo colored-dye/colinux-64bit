@@ -1,6 +1,8 @@
 ## Some ideas
 
-0. *Next step*: Compile 2.6.33.7 kernel on Ubuntu 14.04 32-bit.
+0. *Next step*: Build MinGW with GCC-4.1.2 on Ubuntu 10.04 32-bit.
+	Build GCC-4.1.2 with GCC(Ubuntu 4.1.2-27ubuntu1), but use system built-in binutils.
+	Can be used to build 2.6.33.7 kernel with i386_defconfig.
 1. Project management tool: CMake/Makefile. The Python scripts by Da-x seems somehow overwhelming for me.
 2. Compile a 32-bit driver that can actually run on Windows 11.
 3. The MinGW originally used (MinGW 3.1.4) can only be integrated with gcc-4.1.2 but not gcc-4.4.x and above(not thoroughly tested). Switch to MinGW-w64, which would result in some changes not limited to driver-related header configuration.
