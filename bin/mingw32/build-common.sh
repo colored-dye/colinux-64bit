@@ -20,13 +20,14 @@ TOPDIR=`dirname $BINDIR`
 
 # Use User config, if exist
 # you probably don't need to change anything from here down
-if [ -f $BINDIR/user-build.cfg ] ; then
-	# Users directories
-	. $BINDIR/user-build.cfg
-else
-	# fall back to default config
-	. $BINDIR/sample.user-build.cfg
-fi
+#if [ -f $BINDIR/user-build.cfg ] ; then
+#	# Users directories
+#	. $BINDIR/user-build.cfg
+#else
+#	# fall back to default config
+#	. $BINDIR/sample.user-build.cfg
+#fi
+. ../user-build.cfg
 
 case $OSTYPE in
     darwin*)
