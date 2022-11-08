@@ -20,14 +20,13 @@ TOPDIR=`dirname $BINDIR`
 
 # Use User config, if exist
 # you probably don't need to change anything from here down
-#if [ -f $BINDIR/user-build.cfg ] ; then
-#	# Users directories
-#	. $BINDIR/user-build.cfg
-#else
-#	# fall back to default config
-#	. $BINDIR/sample.user-build.cfg
-#fi
-. ../user-build.cfg
+if [ -f $BINDIR/user-build.cfg ] ; then
+	# Users directories
+	. $BINDIR/user-build.cfg
+else
+	# fall back to default config
+	. $BINDIR/sample.user-build.cfg
+fi
 
 case $OSTYPE in
     darwin*)
@@ -55,9 +54,10 @@ esac
 TARGET_GUEST_ARCH=i386
 
 # MINGW="mingw-runtime-$MINGW_VERSION"
-MINGW="mingw-runtime-$MINGW_VERSION"
+MINGW="mingw-w64-v$MINGW_VERSION"
 MINGW_ARCHIVE="$MINGW.tar.gz"
-MINGW_URL="http://sourceforge.net/projects/mingw/files/OldFiles/$MINGW"
+# MINGW_URL="http://sourceforge.net/projects/mingw/files/OldFiles/$MINGW"
+MINGW_URL="http://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release"
 
 BINUTILS_RELEASE="$BINUTILS_VERSION"
 BINUTILS=binutils-$BINUTILS_RELEASE
@@ -69,6 +69,16 @@ GCC=gcc-$GCC_RELEASE
 GCC_ARCHIVE1="gcc-core-$GCC_RELEASE.tar.bz2"
 GCC_ARCHIVE2="gcc-g++-$GCC_RELEASE.tar.bz2"
 GCC_URL="http://ftp.gnu.org/pub/gnu/gcc/gcc-$GCC_VERSION"
+
+GMP_VERSION="5.1.3"
+GMP="gmp-$GMP_VERSION"
+GMP_ARCHIVE="$GMP.tar.bz2"
+GMP_URL="https://ftp.gnu.org/gnu/gmp"
+
+MPFR_VERSION="3.1.2"
+MPFR="mpfr-$MPFR_VERSION"
+MPFR_ARCHIVE="$MPFR.tar.bz2"
+MPFR_URL="https://ftp.gnu.org/gnu/mpfr"
 
 W32API_PART="w32api-$W32API_VERSION"
 W32API="$W32API_PART-mingw32"
