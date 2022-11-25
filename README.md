@@ -3,12 +3,15 @@
 0. *Next step*: Build MinGW with GCC-4.1.2 on Ubuntu 10.04 32-bit.
 	Build GCC-4.1.2 with GCC(Ubuntu 4.1.2-27ubuntu1), but use system built-in binutils.
 	Can be used to build 2.6.33.7 kernel with i386_defconfig.
-1. Project management tool: CMake/Makefile. The Python scripts by Da-x seems somehow overwhelming for me.
-2. Compile a 32-bit driver that can actually run on Windows 11.
-3. The MinGW originally used (MinGW 3.1.4) can only be integrated with gcc-4.1.2 but not gcc-4.4.x and above(not thoroughly tested). Switch to MinGW-w64, which would result in some changes not limited to driver-related header configuration.
-4. About Linux kernel: Try v4.x kernel, e.g. 4.9.325 LTS. Better compatibility for more up-to-date compilers.
-5. Patch kernel 4.9.325. (Finished 1st pass)
-6. Build coLinux AFTER building kernel.
+	OR: review newly cooperative 4.9.325 kernel and build 32-bit coLinux running on 64-bit Windows systems like Windows 10.
+
+1. About MinGW: The MinGW originally used (MinGW 3.1.4) can only be integrated with gcc-4.1.2 but not gcc-4.4.x and above(not thoroughly tested). Switch to MinGW-w64, which would result in some changes not limited to driver-related header configuration.
+
+2. About Linux kernel: Try v4.x kernel, e.g. 4.9.325 LTS. Better compatibility for more up-to-date compilers.
+
+3. Kernel code: Modify kernel 4.9.325. (Finished 1st pass)
+
+4. Building: Build coLinux AFTER building kernel.
 
 ## Dependencies
 
