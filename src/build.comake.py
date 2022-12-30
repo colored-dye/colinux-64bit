@@ -62,7 +62,7 @@ if not settings.target_kernel_source:
     settings.target_kernel_source = getenv('COLINUX_TARGET_KERNEL_PATH')
 
 if not settings.target_kernel_source:
-    LOGGER.info("\nCOLINUX_TARGET_KERNEL_PATH not set. Please set this environment variable to the")
+    LOGGER.info("COLINUX_TARGET_KERNEL_PATH not set. Please set this environment variable to the")
     LOGGER.info("pathname of a coLinux-enabled kernel source tree, i.e, a Linux kernel tree that")
     LOGGER.info("is patched with the patch file which is under the patch/ directory.")
     raise BuildCancelError()

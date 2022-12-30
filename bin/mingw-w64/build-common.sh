@@ -14,10 +14,6 @@ fi
 # TOPDIR is the directory ./configure is in.
 TOPDIR=`dirname $BINDIR`
 
-# Default Kernel version we are targeting, can overwrite in CFG file.
-# Remember: Please update also conf/kernel-*-config
-#
-
 # Use User config, if exist
 # you probably don't need to change anything from here down
 if [ -f $BINDIR/user-build.cfg ] ; then
@@ -27,6 +23,17 @@ else
 	# fall back to default config
 	. $BINDIR/sample.user-build.cfg
 fi
+
+DOWNLOADS="$TOPDIR/download"
+BUILD_DIR="$TOPDIR/build"
+PREFIX="$TOPDIR/mingw"
+COLINUX_TARGET_KERNEL_SOURCE="$TOPDIR/linux-$KERNEL_VERSION-source"
+COLINUX_TARGET_KERNEL_BUILD="$TOPDIR/build/linux-$KERNEL_VERSION-build"
+MODULE_PATH="$TOPDIR/build/$KERNEL_VERSION-build/_install"
+COLINUX_INSTALL_DIR="$TOPDIR/dist"
+COLINUX_BUILD_LOG="$TOPDIR/log/build-colinux.log"
+COLINUX_BUILD_ERR="$TOPDIR/log/build-colinux.err"
+COLINUX_GCC_GUEST_PATH="$PREFIX/$COLINUX_GCC_GUEST_TARGET/bin"
 
 case $OSTYPE in
     darwin*)

@@ -1,14 +1,15 @@
-CROSS := i686-w64-mingw32-
-CC := gcc
-CXX := g++
-AR := ar
-LD := ld
-TARGET_KERNEL_BUILD := linux-2.5.33.7-build
-CFLAGS := -Isrc \
-		-I$(TARGET_KERNEL_BUILD)/include \
-		-I$(TARGET_KERNEL_BUILD)/arch/x86/include
-export CROSS CC CXX AR LD CFLAGS
+.phony: FORCE
 
-.PHONY: build
-build:
-	make -C colinux/os/winnt/build executables
+FORCE:
+
+colinux: FORCE
+        python ../bin/make.py colinux
+
+installer:
+        python ../bin/make.py installer
+
+clean:
+        python ../bin/make.py clean
+        rm -f colinux/arch/current colinux/os/current
+        rm -f src/colinux/os/darwin/kernel/build
+        rm -f src/colinux/os/darwin/linuxheaders
