@@ -1,16 +1,15 @@
 import os, copy, sys
+from comake import LOGGER
 
-if sys.version_info[1]>=5:
+if sys.version_info[0] == 3 or sys.version_info[1]>=5:
     # md5 is deprecated since Python version 2.5
     # this will not work in version 3.x of Python but there's some time until then
-    import hashlib
     use_hashlib = True
 else:
     # for compatability reasons for those still using ver <= Python 2.4
-    import md5
     use_hashlib = False
 
-from lib import normal_path
+from comake.lib import normal_path
 
 class RawTarget(object):
     def __init__(self, inputs=None, tool=None, options=None, mono_options=None, settings_options=None):
@@ -79,16 +78,18 @@ class Target(object):
         self.options = options
 
         if not self.tool:
-            from defaults import get_default_tool
+            from comake.defaults import get_default_tool
             self.tool = get_default_tool(self)
             if not self.tool:
-                from tools import Empty
+                from comake.tools import Empty
                 self.tool = Empty()
 
     def cache(self):
         if use_hashlib:
+            import hashlib
             hasho = hashlib.md5()
         else:
+            import md5
             hasho = md5.md5()
         for inputo in self.inputs:
             hasho.update(inputo.hash)
@@ -148,7 +149,7 @@ class Target(object):
             statistics.targets += 1
 
         if reporter is None:
-            from report import Report
+            from comake.report import Report
             reporter = Report()
 
         reporter.title(self.pathname)
@@ -200,22 +201,22 @@ class Target(object):
         return builds
 
     def dump(self, indent=0):
-        print indent*"  " + self.pathname + " { "
-        print indent*"  " + "  Built: %r" % (self.built, )
-        print indent*"  " + "  %x" % (id(self), )
-        print indent*"  " + "  " + self.hash.encode('hex')
-        print indent*"  " + "  %r" % (self.tool.cache(self), )
+        LOGGER.info(indent*"  " + self.pathname + " { ")
+        LOGGER.info(indent*"  " + "  Built: %r" % self.built)
+        LOGGER.info(indent*"  " + "  %x" % id(self))
+        LOGGER.info(indent*"  " + "  " + self.hash.encode('hex'))
+        LOGGER.info(indent*"  " + "  %r" % self.tool.cache(self))
         count = 1
         if len(self.inputs) != 0:
-            print indent*"  " + "  Inputs#: %d" % (len(self.inputs), )
+            LOGGER.info(indent*"  " + "  Inputs#: %d" % len(self.inputs))
             if not self.built:
                 for tinput in self.inputs:
                     count += tinput.dump(indent+1)
             else:
-                print indent*"  " + "  [..]"
+                LOGGER.info(indent*"  " + "  [..]")
 
-            print indent*"  " + "  %d" % (count, )
-        print indent*"  " + "} "
+            LOGGER.info(indent*"  " + "  %d" % count)
+        LOGGER.info(indent*"  " + "} ")
         self.built = True
         return count
 
@@ -278,7 +279,9 @@ def get_per_directory_comake_file(dirname):
     globals_dict['target_pathname'] = target_pathname
     globals_dict['deftarget'] = deftarget
     globals_dict['current_dirname'] = dirname
-    execfile(build_name, globals_dict, vars(comake_file))
+    # execfile(build_name, globals_dict, vars(comake_file)) # execfile() deprecated in Python3
+    with open(build_name, "rb") as fp:
+        exec(compile(fp.read(), build_name, 'exec'), globals_dict, vars(comake_file))
     _per_directory_comake_file[dirname] = comake_file
     return comake_file
 
@@ -295,7 +298,7 @@ def get_raw_target(pathname):
             if not os.path.islink(pathname):
                 return RawTarget()
             else:
-                print os.readlink(pathname)
+                LOGGER.info(os.readlink(pathname))
     return raw_target
 
 class TargetNotFoundError(Exception):
@@ -305,7 +308,7 @@ def create_target_tree(pathname):
     def _recur(pathname, original_tinput, options):
         raw_target = get_raw_target(pathname)
         if not raw_target:
-            print "Error, target %s not found" % (pathname, )
+            LOGGER.error("Error, target %s not found" % pathname, stack_info=True)
             raise TargetNotFoundError()
 
         options = copy.deepcopy(options)
@@ -313,7 +316,7 @@ def create_target_tree(pathname):
             raw_target.options.affect(options)
 
         if raw_target.settings_options:
-            from settings import settings
+            from comake.settings import settings
             raw_target.settings_options.affect(vars(settings))
 
         inputs = []
@@ -326,7 +329,7 @@ def create_target_tree(pathname):
             try:
                 inputs.append(_recur(abs_name, tinput, options))
             except TargetNotFoundError:
-                print "Included from: %s [%d]" % (pathname, index+1)
+                LOGGER.error("Included from: %s [%d]" % (pathname, index+1))
                 raise
 
         if raw_target.mono_options:
@@ -344,12 +347,12 @@ def clean():
 
     def unlink(pathname):
         pathname_display = pathname[len(build_root)+1:]
-        print "removing file %s" % (pathname_display, )
+        LOGGER.info("removing file %s" % pathname_display)
         os.unlink(pathname)
 
     def rmdir(pathname):
         pathname_display = pathname[len(build_root)+1:]
-        print "removing dir %s" % (pathname_display, )
+        LOGGER.info("removing dir %s" % pathname_display)
         os.rmdir(pathname)
 
     def _recur(pathname):

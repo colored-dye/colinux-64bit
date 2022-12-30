@@ -1,5 +1,4 @@
-/__pycache__/
-/bin/__pycache__/
+__pycache__/
 /download/
 /mingw/
 /build/

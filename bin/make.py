@@ -1,4 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
+#
+# colored-dye, 2022
+# Use Python3.
+#
 
 import sys
 

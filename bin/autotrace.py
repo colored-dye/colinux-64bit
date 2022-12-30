@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 #
 # Dan Aloni (c), 2003
 #
@@ -10,6 +10,11 @@
 #
 # Optionally, we could improve this to be able to output a complete
 # trace of the kernel (not including inline functions).
+#
+# ####
+#
+# colored-dye. 2022
+# Use Python3.
 #
 
 import re, os, sys
@@ -165,7 +170,7 @@ class CTracer(CParser):
 
     def error(self):
         for debug in self.debug_tokens:
-            print debug
+            print(debug)
 
     def token(self, token, type=None):
         self.debug_tokens.append((token, type))

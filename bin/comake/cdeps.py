@@ -1,13 +1,12 @@
 import re, os, sys
-from target import RawInput
-from lib import normal_path
+from comake.target import RawInput
+from comake.lib import normal_path
 
 old_set = False
-if not (sys.version_info[1]>=6):
+if sys.version_info[0] == 2 and sys.version_info[1] < 6:
     # sets are deprecated since Python version 2.6
     # this will not work in version 3.x of Python but there's some time until then
     old_set = True
-    from sets import Set as set
 
 cdeps_cache = {}
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 import sys, os, re
 
@@ -11,6 +11,12 @@ import sys, os, re
 #    it to output a processed C file instead.
 #  * Execute autotrace.py to add traces to the preprocessed output.
 #  * Compile the preprocessed output with the added traces.
+#
+#
+# ####
+#
+# colored-dye, 2022
+# Use Python3.
 #
 
 def reexec(params):
