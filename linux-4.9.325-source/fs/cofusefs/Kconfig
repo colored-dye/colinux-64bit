@@ -1,5 +1,5 @@
 config COFUSE_FS
-    tristste "Cooperative Host file system support (COFUSE)"
+    tristate "Cooperative Host file system support (COFUSE)"
     depends on COOPERATIVE
     default y
     help

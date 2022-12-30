@@ -2,6 +2,7 @@ __pycache__/
 /download/
 /mingw/
 /build/
+/*-build
 /log/
 /tmp/
 *.o
