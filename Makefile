@@ -37,7 +37,7 @@ endif
 
 # Include host OS specific makefile
 ifneq ($(HOSTOS),)
-include Makefile.$(HOSTOS)
+include Makefile.$(HOSTOS).mk
 
 # Compile daemons
 colinux:
