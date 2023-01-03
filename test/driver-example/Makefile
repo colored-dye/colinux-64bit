@@ -1,5 +1,4 @@
-.PHONY: all
-.DEFAULT_GOAL = all
+.PHONY: all clean
 
 include Makefile.inc
 
@@ -12,8 +11,8 @@ all: $(target)
 %.o: %.c
 	$(call BUILD_C_OBJECT,$<,$@)
 
-$(target):
-	$(call LINK_C_KERNEL_OBJECT,$<,$@)
+$(target): $(objs)
+	$(call LINK_C_KERNEL_TARGET,$<,$@)
 
 clean:
-	rm *.o *.sys
+	rm -f *.o *.sys

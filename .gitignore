@@ -8,3 +8,5 @@ __pycache__/
 *.o
 *.a
 *.exe
+*.log
+*.err

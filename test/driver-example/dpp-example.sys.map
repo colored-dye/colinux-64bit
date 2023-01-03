@@ -1,0 +1,317 @@
+Archive member included to satisfy reference by file (symbol)
+
+/home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhs00063.o)
+                              dpp-example.o (DbgPrint)
+/home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhh.o)
+                              /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhs00063.o) (_head_lib32_libntoskrnl_a)
+/home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhht.o)
+                              /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhh.o) (_lib32_libntoskrnl_a_iname)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000010000                __image_base__ = 0x10000
+                0x0000000000000000                __dll__ = 0x0
+                0x0000000000010000                ___ImageBase = 0x10000
+                0x0000000000001000                __section_alignment__ = 0x1000
+                0x0000000000001000                __file_alignment__ = 0x1000
+                0x0000000000000004                __major_os_version__ = 0x4
+                0x0000000000000000                __minor_os_version__ = 0x0
+                0x0000000000000001                __major_image_version__ = 0x1
+                0x0000000000000000                __minor_image_version__ = 0x0
+                0x0000000000000004                __major_subsystem_version__ = 0x4
+                0x0000000000000000                __minor_subsystem_version__ = 0x0
+                0x0000000000000001                __subsystem__ = 0x1
+                0x0000000000200000                __size_of_stack_reserve__ = 0x200000
+                0x0000000000001000                __size_of_stack_commit__ = 0x1000
+                0x0000000000100000                __size_of_heap_reserve__ = 0x100000
+                0x0000000000001000                __size_of_heap_commit__ = 0x1000
+                0x0000000000000000                __loader_flags__ = 0x0
+                0x0000000000000140                __dll_characteristics__ = 0x140
+LOAD dpp-example.o
+LOAD /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a
+LOAD /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libhal.a
+                0x0000000000000268                . = SIZEOF_HEADERS
+                0x0000000000001000                . = ALIGN (__section_alignment__)
+
+.text           0x0000000000011000     0x1000
+ *(SORT_NONE(.init))
+ *(.text)
+ .text          0x0000000000011000        0x0 dpp-example.o
+ .text          0x0000000000011000        0x8 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhs00063.o)
+                0x0000000000011000                DbgPrint
+ .text          0x0000000000011008        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhh.o)
+ .text          0x0000000000011008        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhht.o)
+ *(SORT_BY_NAME(.text$*))
+ .text$DriverEntry
+                0x0000000000011008       0x30 dpp-example.o
+                0x0000000000011008                DriverEntry@8
+ .text$DriverUnload
+                0x0000000000011038       0x20 dpp-example.o
+                0x0000000000011038                DriverUnload@4
+ *(.text.*)
+ *(.gnu.linkonce.t.*)
+ *(.glue_7t)
+ *(.glue_7)
+                0x0000000000011058                ___CTOR_LIST__ = .
+                0x0000000000011058                __CTOR_LIST__ = .
+                0x0000000000011058        0x4 LONG 0xffffffffffffffff
+ *(.ctors)
+ *(.ctor)
+ *(SORT_BY_NAME(.ctors.*))
+                0x000000000001105c        0x4 LONG 0x0
+                0x0000000000011060                ___DTOR_LIST__ = .
+                0x0000000000011060                __DTOR_LIST__ = .
+                0x0000000000011060        0x4 LONG 0xffffffffffffffff
+ *(.dtors)
+ *(.dtor)
+ *(SORT_BY_NAME(.dtors.*))
+                0x0000000000011064        0x4 LONG 0x0
+ *(SORT_NONE(.fini))
+ *(.gcc_exc)
+                [!provide]                        PROVIDE (etext = .)
+                [!provide]                        PROVIDE (_etext = .)
+ *(.gcc_except_table)
+
+.data           0x0000000000012000        0x0
+                0x0000000000012000                __data_start__ = .
+ *(.data)
+ .data          0x0000000000012000        0x0 dpp-example.o
+ .data          0x0000000000012000        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhs00063.o)
+ .data          0x0000000000012000        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhh.o)
+ .data          0x0000000000012000        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhht.o)
+ *(.data2)
+ *(SORT_BY_NAME(.data$*))
+ *(.jcr)
+                0x0000000000012000                __data_end__ = .
+ *(.data_cygwin_nocopy)
+
+.rdata          0x0000000000012000     0x1000
+ *(.rdata)
+ .rdata         0x0000000000012000       0x1c dpp-example.o
+ *(SORT_BY_NAME(.rdata$*))
+ .rdata$zzz     0x000000000001201c       0x14 dpp-example.o
+                0x0000000000012030                . = ALIGN (0x4)
+                0x0000000000012030                __rt_psrelocs_start = .
+ *(.rdata_runtime_pseudo_reloc)
+                0x0000000000012030                __rt_psrelocs_end = .
+                0x0000000000000000                __rt_psrelocs_size = (__rt_psrelocs_end - __rt_psrelocs_start)
+                0x0000000000012030                ___RUNTIME_PSEUDO_RELOC_LIST_END__ = .
+                0x0000000000012030                __RUNTIME_PSEUDO_RELOC_LIST_END__ = .
+                0x0000000000012030                ___RUNTIME_PSEUDO_RELOC_LIST__ = (. - __rt_psrelocs_size)
+                0x0000000000012030                __RUNTIME_PSEUDO_RELOC_LIST__ = (. - __rt_psrelocs_size)
+
+.eh_frame       0x0000000000013000     0x1000
+ *(.eh_frame*)
+ .eh_frame      0x0000000000013000       0x58 dpp-example.o
+
+.pdata
+ *(.pdata*)
+
+.bss            0x0000000000014000        0x0
+                0x0000000000014000                __bss_start__ = .
+ *(.bss)
+ .bss           0x0000000000014000        0x0 dpp-example.o
+ .bss           0x0000000000014000        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhs00063.o)
+ .bss           0x0000000000014000        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhh.o)
+ .bss           0x0000000000014000        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhht.o)
+ *(COMMON)
+                0x0000000000014000                __bss_end__ = .
+
+.edata          0x0000000000014000     0x1000
+ *(.edata)
+ .edata         0x0000000000014000       0x69 dll stuff
+
+/DISCARD/
+ *(.debug$S)
+ *(.debug$T)
+ *(.debug$F)
+ *(.drectve)
+ *(.note.GNU-stack)
+ *(.gnu.lto_*)
+
+.idata          0x0000000000015000     0x1000
+ SORT_BY_NAME(*)(.idata$2)
+ .idata$2       0x0000000000015000       0x14 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhh.o)
+                0x0000000000015000                _head_lib32_libntoskrnl_a
+ SORT_BY_NAME(*)(.idata$3)
+                0x0000000000015014        0x4 LONG 0x0
+                0x0000000000015018        0x4 LONG 0x0
+                0x000000000001501c        0x4 LONG 0x0
+                0x0000000000015020        0x4 LONG 0x0
+                0x0000000000015024        0x4 LONG 0x0
+ SORT_BY_NAME(*)(.idata$4)
+ .idata$4       0x0000000000015028        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhh.o)
+ .idata$4       0x0000000000015028        0x4 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhs00063.o)
+ .idata$4       0x000000000001502c        0x4 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhht.o)
+                0x0000000000015030                __IAT_start__ = .
+ SORT_BY_NAME(*)(.idata$5)
+ .idata$5       0x0000000000015030        0x0 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhh.o)
+ .idata$5       0x0000000000015030        0x4 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhs00063.o)
+                0x0000000000015030                _imp__DbgPrint
+ .idata$5       0x0000000000015034        0x4 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhht.o)
+                0x0000000000015038                __IAT_end__ = .
+ SORT_BY_NAME(*)(.idata$6)
+ .idata$6       0x0000000000015038        0xc /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhs00063.o)
+ SORT_BY_NAME(*)(.idata$7)
+ .idata$7       0x0000000000015044        0x4 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhhs00063.o)
+ .idata$7       0x0000000000015048       0x10 /home/colored-dye/Code/colinux-64bit/mingw/i686/lib/gcc/i686-w64-mingw32/12.1.0/../../../../i686-w64-mingw32/lib/../lib/libntoskrnl.a(dzlhht.o)
+                0x0000000000015048                _lib32_libntoskrnl_a_iname
+
+.CRT            0x0000000000016000        0x0
+                0x0000000000016000                ___crt_xc_start__ = .
+ *(SORT_BY_NAME(.CRT$XC*))
+                0x0000000000016000                ___crt_xc_end__ = .
+                0x0000000000016000                ___crt_xi_start__ = .
+ *(SORT_BY_NAME(.CRT$XI*))
+                0x0000000000016000                ___crt_xi_end__ = .
+                0x0000000000016000                ___crt_xl_start__ = .
+ *(SORT_BY_NAME(.CRT$XL*))
+                0x0000000000016000                ___crt_xp_start__ = .
+ *(SORT_BY_NAME(.CRT$XP*))
+                0x0000000000016000                ___crt_xp_end__ = .
+                0x0000000000016000                ___crt_xt_start__ = .
+ *(SORT_BY_NAME(.CRT$XT*))
+                0x0000000000016000                ___crt_xt_end__ = .
+
+.tls            0x0000000000016000        0x0
+                0x0000000000016000                ___tls_start__ = .
+ *(.tls$AAA)
+ *(.tls)
+ *(.tls$)
+ *(SORT_BY_NAME(.tls$*))
+ *(.tls$ZZZ)
+                0x0000000000016000                ___tls_end__ = .
+
+.endjunk        0x0000000000016000        0x0
+                [!provide]                        PROVIDE (end = .)
+                [!provide]                        PROVIDE (_end = .)
+                0x0000000000016000                __end__ = .
+
+.rsrc
+ *(.rsrc)
+ *(.rsrc$*)
+
+.reloc          0x0000000000016000     0x1000
+ *(.reloc)
+ .reloc         0x0000000000016000       0x14 dll stuff
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.zdebug_aranges
+ *(.zdebug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.zdebug_pubnames
+ *(.zdebug_pubnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.zdebug_pubtypes
+ *(.zdebug_pubtypes)
+
+.debug_info
+ *(.debug_info .gnu.linkonce.wi.*)
+
+.zdebug_info
+ *(.zdebug_info .zdebug.gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.zdebug_abbrev
+ *(.zdebug_abbrev)
+
+.debug_line
+ *(.debug_line)
+
+.zdebug_line
+ *(.zdebug_line)
+
+.debug_frame
+ *(.debug_frame*)
+
+.zdebug_frame
+ *(.zdebug_frame*)
+
+.debug_str
+ *(.debug_str)
+
+.zdebug_str
+ *(.zdebug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.zdebug_loc
+ *(.zdebug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.zdebug_macinfo
+ *(.zdebug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.zdebug_weaknames
+ *(.zdebug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.zdebug_funcnames
+ *(.zdebug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.zdebug_typenames
+ *(.zdebug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.zdebug_varnames
+ *(.zdebug_varnames)
+
+.debug_macro
+ *(.debug_macro)
+
+.zdebug_macro
+ *(.zdebug_macro)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.zdebug_ranges
+ *(.zdebug_ranges)
+
+.debug_types
+ *(.debug_types .gnu.linkonce.wt.*)
+
+.zdebug_types
+ *(.zdebug_types .gnu.linkonce.wt.*)
+
+.debug_gdb_scripts
+ *(.debug_gdb_scripts)
+
+.zdebug_gdb_scripts
+ *(.zdebug_gdb_scripts)
+OUTPUT(dpp-example.sys pei-i386)
+LOAD dll stuff

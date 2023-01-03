@@ -7,9 +7,9 @@
 
 1. About MinGW: The MinGW originally used (MinGW 3.1.4) can only be integrated with gcc-4.1.2, not gcc-4.4.x and above(not thoroughly tested). Switch to MinGW-w64, which would result in some changes not limited to driver-related structs and APIs.
 
-2. About Linux kernel: Try v4.x kernel, e.g. 4.9.325 LTS. Better compatibility for more up-to-date compilers.
+2. About Linux kernel: Try v4.x kernel, e.g. 4.9.325 LTS. Better compatibility for newer compilers. (**Finished 1st pass**)
 
-3. Kernel code: Modify kernel 4.9.325. (**Finished 1st pass**)
+3. About Windows kernel mode driver: 32-bit drivers can only be loaded by 32-bit systems. Test on 32-bit Windows XP first for functionality correctness.
 
 4. Building: Build coLinux AFTER building kernel.
 
