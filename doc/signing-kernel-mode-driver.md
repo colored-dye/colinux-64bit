@@ -1,4 +1,4 @@
-It is heard of that signing kernel mode drivers on Windows 10 and above is becoming increasingly hard. In the good old days, a kernel mode driver does not require signing to be loaded by a system like 32-bit Windows 7, XP and Vista.
+It is heard of that signing kernel mode drivers on Windows 10 and above is becoming increasingly hard. In the good old days, a kernel mode driver does not require signing to be loaded by a system like 32-bit Windows 7, 32/64-bit XP and 32/64-bit Vista.
 
 So I decided to use Windows 7/XP first, and leave the signing problem behind. The first option is XP.
 
