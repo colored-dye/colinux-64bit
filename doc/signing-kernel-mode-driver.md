@@ -24,6 +24,12 @@ So I decided to use Windows 7/XP first, focus on functionality and leave the sig
     Product key: CCMWP-99T99-KCY96-FGKBW-F9WJT (From: https://archive.org/details/WinXPProSP3x86 with credit to @WNEWBERRYtcs)
 
     Network adapter driver: https://drivers.softpedia.com/get/NETWORK-CARD/INTEL/Intel-Network-Adapter-Driver-183-for-XP-Server-2003.shtml (On VirtualBox, use the default Intel Pro/1000 network adapter; VMWare chooses for you automatically)
+
+    Windows SDK for Debugging tools: https://www.microsoft.com/download/details.aspx?id=8279
+
+    Windows SDK requires .NET 2.0 x86: https://www.microsoft.com/en-US/Download/confirmation.aspx?id=16614
+
+    TO enable kernel debugging: append "/debug /debugport=COM1 /baudrate=115200" to C:\boot.ini. Then go to VirtualBox settings, and add a serial port with port mode "Host Pipe". Then create a second VM and connect through a serial port via the host pipe.
  
 
 # Kernel mode code signing policy
