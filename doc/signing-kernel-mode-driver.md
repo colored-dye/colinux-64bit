@@ -14,7 +14,7 @@ So I decided to use Windows 7/XP first, focus on functionality and leave the sig
     
     Product Key: FVMK4-6DD4B-26MB4-74JB2-R4XWM (From: "https://georgia.forumotion.net/t12-microsoft-windows-xp-professional-x64-edition-cd-key").
 
-    Network adapter driver: https://drivers.softpedia.com/get/NETWORK-CARD/INTEL/Intel-Network-Adapter-Driver-182-for-XP64.shtml (Use the default Intel Pro/1000 network adapter)
+    Network adapter driver: https://drivers.softpedia.com/get/NETWORK-CARD/INTEL/Intel-Network-Adapter-Driver-182-for-XP64.shtml (On VirtualBox, use the default Intel Pro/1000 network adapter; VMWare chooses for you automatically)
 
     DebugView: https://download.sysinternals.com/files/DebugView.zip
 
@@ -22,6 +22,8 @@ So I decided to use Windows 7/XP first, focus on functionality and leave the sig
     "https://archive.org/download/WinXPProSP3x86/en_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-73974.iso"
 
     Product key: CCMWP-99T99-KCY96-FGKBW-F9WJT (From: https://archive.org/details/WinXPProSP3x86 with credit to @WNEWBERRYtcs)
+
+    Network adapter driver: https://drivers.softpedia.com/get/NETWORK-CARD/INTEL/Intel-Network-Adapter-Driver-183-for-XP-Server-2003.shtml (On VirtualBox, use the default Intel Pro/1000 network adapter; VMWare chooses for you automatically)
  
 
 # Kernel mode code signing policy
