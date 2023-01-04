@@ -57,27 +57,27 @@ loader.exe test_app.exe: err_helpers.o err_helpers.h
 # Oh wait, maybe you can... try adding your .o after the last $(CC) in the rule...
 .o.sys:
 	$(CC)	-Wl,--base-file,$*.base \
-	-Wl,--entry,_DriverEntry@8 \
-	-nostartfiles -nostdlib \
-	-o junk.tmp \
-	$*.o \
-	$(KRNLIBS)
+		-Wl,--entry,_DriverEntry@8 \
+		-nostartfiles -nostdlib \
+		-o junk.tmp \
+		$*.o \
+		$(KRNLIBS)
 
 	-rm -f junk.tmp
 
 	$(DLLTOOL) --dllname $*.sys \
-	--base-file $*.base --output-exp $*.exp
+		--base-file $*.base --output-exp $*.exp
 
 	$(CC) -Wl,--subsystem,native \
-	-Wl,--image-base,0x10000 \
-	-Wl,--file-alignment,0x1000 \
-	-Wl,--section-alignment,0x1000 \
-	-Wl,--entry,_DriverEntry@8 \
-	-Wl,$*.exp \
-	-mdll -nostartfiles -nostdlib \
-	-o $*.sys \
-	$*.o \
-	$(KRNLIBS)
+		-Wl,--image-base,0x10000 \
+		-Wl,--file-alignment,0x1000 \
+		-Wl,--section-alignment,0x1000 \
+		-Wl,--entry,_DriverEntry@8 \
+		-Wl,$*.exp \
+		-mdll -nostartfiles -nostdlib \
+		-o $*.sys \
+		$*.o \
+		$(KRNLIBS)
 
 #	$(STRIP) $*.sys
 
