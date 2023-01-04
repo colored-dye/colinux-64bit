@@ -72,6 +72,8 @@ In `test/` directory, which includes a minimal driver example, and a rather comp
 
 `drvtest' credit to "http://support.fccps.cz/download/adv/frr/win32_ddk_mingw/win32_ddk_mingw.html", with minor modification.
 
+To view `DbgPrint()` output, remember to enable "Capture kernel" in DbgView, or use WinDBG.
+
 
 ## Kernel mode code signing policy
 

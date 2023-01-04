@@ -8,12 +8,13 @@
   published by Toby Opferman at CodeProject.com
 */
 
-#include <ddk/ntddk.h>
+#include <ntddk.h>
 #include "my_ioctl.h"
 #include "my_names.h"
 
 #define IOCTL_KDPRINT(...) \
-	DbgPrint("
+	DbgPrint("drvtest [%s:%04d]: ", __FILE__, __LINE__);\
+	DbgPrint(__VA_ARGS__);
 
 /* undocumented functions */
 /* Used by Telka's ioperm - may come in handy [*** grin ***]
@@ -36,7 +37,7 @@ my_unload( IN PDRIVER_OBJECT DriverObject )
 	ANSI_STRING SymbolicLinkNameA;	
 	UNICODE_STRING SymbolicLinkNameW;	
 
-   DbgPrint("DriverUnload called\r\n");  // catch this using DBGVIEW from www.sysinternals.com
+   IOCTL_KDPRINT("DriverUnload called\r\n");  // catch this using DBGVIEW from www.sysinternals.com
 
 	/*RtlInitUnicodeString( &SymbolicLinkName, MY_DOSDEVICE_NAME );*/
 	/* If I want to use normal string combining logic in my_names.h, I need to mess with ANSI vs. Unicode */
@@ -117,7 +118,7 @@ my_dispatch_device_control( IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp )
          } 
 
          /* else okay, ready to go */
-         DbgPrint("ioctl(IOCTL_EXAMPLE) called, arg = %d\r\n", my_data->code );  // catch this using DBGVIEW from www.sysinternals.com
+         IOCTL_KDPRINT("ioctl(IOCTL_EXAMPLE) called, arg = %d\r\n", my_data->code );  // catch this using DBGVIEW from www.sysinternals.com
          Irp->IoStatus.Status = STATUS_SUCCESS;
          Irp->IoStatus.Information = 0; /* !!! No data to copy_to_user()... */
       }
@@ -150,7 +151,7 @@ DriverEntry( IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING RegistryPath )
 	ANSI_STRING DeviceNameA;
 	ANSI_STRING SymbolicLinkNameA;
 
-   DbgPrint("DriverEntry called\r\n");  // catch this using DBGVIEW from www.sysinternals.com
+   IOCTL_KDPRINT("DriverEntry called\r\n");  // catch this using DBGVIEW from www.sysinternals.com
 
 	/* support for service stopping */
 	DriverObject->DriverUnload = my_unload;

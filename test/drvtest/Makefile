@@ -13,13 +13,13 @@ DRVNAME = drvtest
 PREFIX = ../../mingw/i686
 
 #INCLUDES = -I/usr/include/w32api/ddk
-INCLUDES = -I$(PREFIX)/i686-w64-mingw32/include -I$(PREFIX)/i686-w64-mingw32/include/ddk
+INCLUDES = -I$(PREFIX)/i686-w64-mingw32/include/ddk
 
 # We could in fact just add -DMY_DRIVER_NAME=\"$(DRVNAME)\" to CFLAGS,
 # but we'd have to be careful to "make clean" after changing 
 # the driver name here in the makefile...
 #CFLAGS = -Wall $(INCLUDES) -DMY_DRIVER_NAME=\"$(DRVNAME)\"
-CFLAGS = -Wall $(INCLUDES)
+CFLAGS = -Wall $(INCLUDES) -g -O0
 
 # Kernel-mode libs: 
 #   libntoskrnl = basic kernel-mode environment
@@ -79,7 +79,7 @@ loader.exe test_app.exe: err_helpers.o err_helpers.h
 	$*.o \
 	$(KRNLIBS)
 
-	$(STRIP) $*.sys
+#	$(STRIP) $*.sys
 
 JUNK = *.base *.exp *.o *~ junk.tmp
 
