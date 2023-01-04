@@ -10,5 +10,7 @@ __pycache__/
 *.exe
 *.sys
 *.map
+*.base
+*.exp
 *.log
 *.err

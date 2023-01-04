@@ -7,7 +7,8 @@ CFLAGS := -Wall -Wextra -Wno-sign-compare -Wno-strict-aliasing \
         -fPIC -fvisibility=hidden \
         -ffunction-sections -fdata-sections -fno-builtin -ffreestanding \
         -fno-stack-protector -mno-stack-arg-probe \
-        -I$(PREFIX)/i686-w64-mingw32/include/ddk
+        -I$(PREFIX)/i686-w64-mingw32/include/ddk \
+	-g
 
 DRIVER_LDFLAGS := -shared \
 	-Wl,--subsystem,native \
