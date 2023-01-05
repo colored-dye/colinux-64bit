@@ -19,7 +19,7 @@ INCLUDES = -I$(PREFIX)/i686-w64-mingw32/include/ddk
 # but we'd have to be careful to "make clean" after changing 
 # the driver name here in the makefile...
 #CFLAGS = -Wall $(INCLUDES) -DMY_DRIVER_NAME=\"$(DRVNAME)\"
-CFLAGS = -Wall $(INCLUDES) -g -O0
+CFLAGS = -Wall $(INCLUDES)
 
 # Kernel-mode libs: 
 #   libntoskrnl = basic kernel-mode environment
@@ -79,7 +79,7 @@ loader.exe test_app.exe: err_helpers.o err_helpers.h
 		$*.o \
 		$(KRNLIBS)
 
-#	$(STRIP) $*.sys
+	$(STRIP) $*.sys
 
 JUNK = *.base *.exp *.o *~ junk.tmp
 
