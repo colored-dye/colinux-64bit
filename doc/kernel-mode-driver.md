@@ -19,6 +19,9 @@ In `test/` directory, which includes a minimal driver example, and a rather comp
 
 To view `DbgPrint()` output, remember to enable "Capture kernel" in DbgView, or use WinDBG.
 
+### Visual Studio example
+
+Workable example: [SIoctl](https://github.com/microsoft/Windows-driver-samples/tree/main/general/ioctl). Remember to comfigure platform and static linking. Can be debugged through WinDBG. This example can be installed without associating to a device or an *.INF file, and managed through SCManager.
 
 ## Kernel mode code signing policy
 

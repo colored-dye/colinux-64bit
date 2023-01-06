@@ -36,8 +36,6 @@ Old setup:
 
     Network adapter driver: https://drivers.softpedia.com/get/NETWORK-CARD/INTEL/Intel-Network-Adapter-Driver-182-for-XP64.shtml (On VirtualBox, use the default Intel Pro/1000 network adapter; VMWare chooses for you automatically)
 
-    DebugView: https://download.sysinternals.com/files/DebugView.zip
-
 - Windows XP 32-bit:
     "https://archive.org/download/WinXPProSP3x86/en_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-73974.iso"
 
@@ -58,6 +56,10 @@ Possible combination: Visual Studio 2019 Community + WDK for Windows 10 (version
 
 
 ## Debugging
+
+DebugView: https://download.sysinternals.com/files/DebugView.zip
+
+Winobj: https://download.sysinternals.com/files/WinObj.zip
 
 ### Debugging setup
 

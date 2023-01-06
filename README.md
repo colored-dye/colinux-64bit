@@ -1,13 +1,14 @@
 ## Some ideas
 
-0. *Next step*: Build MinGW with GCC-4.1.2 on Ubuntu 10.04 32-bit.
-	Build GCC-4.1.2 with GCC(Ubuntu 4.1.2-27ubuntu1), but use system built-in binutils.
-	Can be used to build 2.6.33.7 kernel with i386_defconfig.
-	OR: review newer cooperative 4.9.325 kernel and build 32-bit coLinux running on 64-bit Windows systems like Windows 10.
+0. **Next step**: 
+
+Setup development environment on Windows with WSL/VM; most importantly -- kernel driver debugging. Remote debug from build machine to test machine.
 
 1. About MinGW: The MinGW originally used (MinGW 3.1.4) can only be integrated with gcc-4.1.2, not gcc-4.4.x and above(not thoroughly tested). Switch to MinGW-w64, which would result in some changes not limited to driver-related structs and APIs.
 
-2. About Linux kernel: Try v4.x kernel, e.g. 4.9.325 LTS. Better compatibility for newer compilers. (**Finished 1st pass**)
+    Now (1/6/2023): No more MinGW. Use MSVC on Visual Studio for better debugging support.
+
+2. About Linux kernel: Try v4/v5 kernel, e.g. 4.9.325 LTS. Better compatibility for newer compilers. (**Finished 1st pass**)
 
 3. About Windows kernel mode driver: 32-bit drivers can only be loaded by 32-bit systems. Test on 32-bit Windows XP first for functionality correctness.
 
