@@ -54,6 +54,7 @@ Possible combination: Visual Studio 2019 Community + WDK for Windows 10 (version
 1. Visual Studio, SDK and WDK version:
     https://learn.microsoft.com/en-us/windows-hardware/drivers/other-wdk-downloads
 
+2. WDK Repository: https://networchestration.wordpress.com/2017/12/10/wdk-download/
 
 ## Debugging
 
