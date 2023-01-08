@@ -2,7 +2,7 @@
 
 - Build (Debugger): Windows 10 (for kernel driver and user-end app) with WSL2 (Linux kernel) on ESXi.
 
-- Test (Debuggee): Windows (7 32/64-bit, 10 64-bit) VM on ESXi 7.0 on another laptop.
+- Test (Debuggee): Windows (7 32/64-bit, 10 64-bit) VM on another laptop.
 
 Old setup:
 
@@ -51,7 +51,7 @@ Old setup:
 
 Possible combination: Visual Studio 2019 Community + WDK for Windows 10 (version 2004). (Worked fine for `vs-minimal')
 
-1. Visual Studio, SDK and WDK version:
+1. Visual Studio, SDK and WDK previous editions::
     https://learn.microsoft.com/en-us/windows-hardware/drivers/other-wdk-downloads
 
 2. WDK Repository: https://networchestration.wordpress.com/2017/12/10/wdk-download/
@@ -89,4 +89,12 @@ Debugger VM and debuggee VM setting on a Linux host: (Credit to: https://www.mat
 First, connect to debug port via WinDBG in debugger VM, then boot debuggee with debug boot entry.
 
 If on a Windows host, replace serial0.fileName with `\\.\pipe\com_1`.
+
+### WinDBG usage
+
+First select "Kernel Debugging", then load symbol path and source path.
+
+To set break points, open a source file, and press F9 to set a break point at cursor line. Kernel debugging supports at most 32 breakpoints.
+
+Another idea: insert "int 3" into code to set hard-coded breakpoints. (NOT tested)
 

@@ -4,7 +4,7 @@
 
 It is heard of that signing kernel mode drivers on Windows 10 and above is becoming increasingly hard. In the "good old days", a kernel mode driver does not require signing to be loaded by 32-bit systems like Windows 7, XP and Vista.
 
-So I decided to use Windows 7/XP first, focus on functionality and leave the signing problem behind. At the first stage, I choose Windows 7 x86 SP1, to test if the newer Linux kernel has been patched the right way.
+So I decided to use Windows 8/7/XP first, focus on functionality and leave the signing problem behind. At the first stage, I choose Windows 7 x86 SP1, to test if the newer Linux kernel has been patched the right way.
 
 Then Windows 7 x64 would be used for testing, to see if the 64-bit version of coLinux works correctly.
 
@@ -25,5 +25,5 @@ Workable example: [SIoctl](https://github.com/microsoft/Windows-driver-samples/t
 
 ## Kernel mode code signing policy
 
-https://learn.microsoft.com/en-us/windows-hardware/drivers/install/kernel-mode-code-signing-policy--windows-vista-and-later-
+"https://learn.microsoft.com/en-us/windows-hardware/drivers/install/kernel-mode-code-signing-policy--windows-vista-and-later-"
 
