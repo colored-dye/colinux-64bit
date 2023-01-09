@@ -15,4 +15,4 @@ $(target): $(objs)
 	$(call LINK_C_KERNEL_TARGET,$<,$@)
 
 clean:
-	rm -f *.o *.sys
+	rm -f *.o *.sys *.map

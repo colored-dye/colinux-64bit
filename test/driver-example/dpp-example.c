@@ -8,7 +8,7 @@ DRIVER_INITIALIZE DriverEntry;
 DRIVER_UNLOAD DriverUnload;
 
 
-NTAPI NTSTATUS
+NTSTATUS NTAPI
 DriverEntry(
 		IN PDRIVER_OBJECT DriverObject,
 		IN PUNICODE_STRING RegistryPath
@@ -18,14 +18,14 @@ DriverEntry(
 
 	KDPRINT("%s\n", "Hello ring0!");
 
-	asm ("int3");
+//	asm ("int3");
 
 	DriverObject->DriverUnload = DriverUnload;
 
 	return STATUS_SUCCESS;
 }
 
-NTAPI VOID
+VOID NTAPI
 DriverUnload(
 		IN PDRIVER_OBJECT DriverObject
         )

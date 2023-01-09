@@ -1,6 +1,10 @@
 # Development setup
 
-- Build (Debugger): Windows 10 (for kernel driver and user-end app) with WSL2 (Linux kernel) on ESXi.
+Use **OLD** setup. Visual Studio sucks.
+
+Imaginary setup:
+
+- Build (Debugger): Windows 10 (for kernel driver and user-end app) with WSL2 (Linux kernel).
 
 - Test (Debuggee): Windows (7 32/64-bit, 10 64-bit) VM on another laptop.
 
@@ -8,7 +12,15 @@ Old setup:
 
 - Build: Linux.
 
+- Debugger: Windows on VirtualBox.
+
 - Test: Windows on VirtualBox.
+
+2023/01/09: Use clang to generate PDB debug symbols!
+
+Dependencies: LLVM-MinGW(https://github.com/mstorsjo/llvm-mingw)
+
+Problem: Only works for user programs. Failed to produce correct driver.
 
 
 ## System setup resources
@@ -62,7 +74,7 @@ Possible combination: Visual Studio 2012 Ultimate + WDK 8.0 (Worked fine for `si
 
 DebugView: https://download.sysinternals.com/files/DebugView.zip
 
-Winobj: https://download.sysinternals.com/files/WinObj.zip
+WinObj: https://download.sysinternals.com/files/WinObj.zip
 
 ### Debugging setup
 
