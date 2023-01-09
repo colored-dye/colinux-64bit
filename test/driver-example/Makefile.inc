@@ -7,11 +7,13 @@ CFLAGS := -Wall -Wextra -Wno-sign-compare -Wno-strict-aliasing \
         -fPIC -fvisibility=hidden \
         -ffunction-sections -fdata-sections -fno-builtin -ffreestanding \
         -fno-stack-protector -mno-stack-arg-probe \
-        -I$(PREFIX)/i686-w64-mingw32/include/ddk
+        -I$(PREFIX)/i686-w64-mingw32/include/ddk \
+	-gstrict-dwarf -O0 -fno-omit-frame-pointer
 
 DRIVER_LDFLAGS := -shared \
         -Wl,--subsystem,native \
-        -Wl,--dynamicbase -Wl,--nxcompat \
+        -Wl,--dynamicbase \
+	-Wl,--nxcompat \
         -Wl,--image-base,0x10000 \
         -Wl,--file-alignment,0x1000 \
         -Wl,--section-alignment,0x1000 \

@@ -16,12 +16,6 @@ Old setup:
 
 - Test: Windows on VirtualBox.
 
-2023/01/09: Use clang to generate PDB debug symbols!
-
-Dependencies: LLVM-MinGW(https://github.com/mstorsjo/llvm-mingw)
-
-Problem: Only works for user programs. Failed to produce correct driver.
-
 
 ## System setup resources
 
