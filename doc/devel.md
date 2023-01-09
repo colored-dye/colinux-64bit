@@ -49,12 +49,14 @@ Old setup:
 
 ### Visual Studio and WDK
 
-Possible combination: Visual Studio 2019 Community + WDK for Windows 10 (version 2004). (Worked fine for `vs-minimal')
+Possible combination: Visual Studio 2012 Ultimate + WDK 8.0 (Worked fine for `sioctl')
 
 1. Visual Studio, SDK and WDK previous editions::
     https://learn.microsoft.com/en-us/windows-hardware/drivers/other-wdk-downloads
 
 2. WDK Repository: https://networchestration.wordpress.com/2017/12/10/wdk-download/
+
+3. Visual Studio 2012 Ultimate & Product key: https://downloaddevtools.com/en/product/22/free-download-microsoft-visual-studio-ultimate-2012
 
 ## Debugging
 
@@ -96,5 +98,5 @@ First select "Kernel Debugging", then load symbol path and source path.
 
 To set break points, open a source file, and press F9 to set a break point at cursor line. Kernel debugging supports at most 32 breakpoints.
 
-Another idea: insert "int 3" into code to set hard-coded breakpoints. (NOT tested)
+Another idea: insert "int 3" into code to set hard-coded breakpoints. (Works in `dpp-example')
 

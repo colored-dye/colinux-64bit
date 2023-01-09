@@ -18,6 +18,8 @@ DriverEntry(
 
 	KDPRINT("%s\n", "Hello ring0!");
 
+	asm ("int3");
+
 	DriverObject->DriverUnload = DriverUnload;
 
 	return STATUS_SUCCESS;

@@ -5,6 +5,7 @@ __pycache__/
 /*-build
 /log/
 /tmp/
+*Debug/
 *.o
 *.a
 *.exe
