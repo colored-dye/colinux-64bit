@@ -8,7 +8,7 @@ CFLAGS := -Wall -Wextra -Wno-sign-compare -Wno-strict-aliasing \
         -ffunction-sections -fdata-sections -fno-builtin -ffreestanding \
         -fno-stack-protector -mno-stack-arg-probe \
         -I$(PREFIX)/i686-w64-mingw32/include/ddk \
-	-gstrict-dwarf -O0 -fno-omit-frame-pointer
+        -g -O0
 
 DRIVER_LDFLAGS := -shared \
         -Wl,--subsystem,native \

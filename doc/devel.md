@@ -98,6 +98,10 @@ First, connect to debug port via WinDBG in debugger VM, then boot debuggee with 
 
 If on a Windows host, replace serial0.fileName with `\\.\pipe\com_1`.
 
+### Convert PDB debug symbols
+
+First, install cv2pdb from GitHub rainers/cv2pdb. Then add `-g` flag to `CFLAGS`. Run `cv2pdb xxx.sys`, then `xxx.pdb` would be generated. At last, strip `xxx.sys` to remove debug symbols.
+
 ### WinDBG usage
 
 First select "Kernel Debugging", then load symbol path and source path.

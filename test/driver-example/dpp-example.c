@@ -7,7 +7,6 @@
 DRIVER_INITIALIZE DriverEntry;
 DRIVER_UNLOAD DriverUnload;
 
-
 NTSTATUS NTAPI
 DriverEntry(
 		IN PDRIVER_OBJECT DriverObject,
