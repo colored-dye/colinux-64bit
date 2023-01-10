@@ -10,9 +10,9 @@ LLVM-MinGW version: llvm-mingw-20220906-msvcrt-ubuntu-18.04-x86_64.tar.xz
 
 *Maybe* because of `checksum=0', which can be examined with objdump with -x option.
 
-Possible fix: Manually compile LLVM-MinGW.
+Possible fix: Manually compile LLVM-MinGW. => Doesn't work.
 
-TODO: LLVM ABI compatibility between MinGW and Linux.
+TODO: Try modifying clang source code?
 
 ====
 
