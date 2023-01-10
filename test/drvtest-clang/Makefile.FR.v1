@@ -1,0 +1,54 @@
+#
+# by Frank Rysanek <rysanek@fccps.cz>
+#
+# Based on the source code of ioperm.c by Marcel Telka <marcel@telka.sk> 
+#   - thanks a million :-)
+#
+
+DRVNAME = drvtest
+#INCLUDES = -I/usr/include/w32api/ddk
+INCLUDES =
+CC = gcc
+CFLAGS = -Wall $(INCLUDES)
+DLLTOOL = dlltool
+STRIP = strip
+
+all: $(DRVNAME).sys
+
+# This is implicit, no need to define this explicitly:
+#.c.o:
+#	$(CC) $(CFLAGS) -c -o $@ $<
+
+$(DRVNAME).base: $(DRVNAME).o
+	$(CC)	-Wl,--base-file,$(DRVNAME).base \
+	-Wl,--entry,_DriverEntry@8 \
+	-nostartfiles -nostdlib \
+	-o junk.tmp \
+	$(DRVNAME).o \
+	-lntoskrnl
+	-rm -f junk.tmp
+
+$(DRVNAME).exp: $(DRVNAME).base
+	$(DLLTOOL) --dllname $(DRVNAME).sys \
+	--base-file $(DRVNAME).base --output-exp $(DRVNAME).exp
+
+# If you need to link further object files to your driver,
+# such as some ASM routines, you can probably do it by 
+# listing the .o file after drvname.o in the following
+# linker command (starting with $(CC)):
+$(DRVNAME).sys: $(DRVNAME).o $(DRVNAME).exp
+	$(CC) -Wl,--subsystem,native \
+	-Wl,--image-base,0x10000 \
+	-Wl,--file-alignment,0x1000 \
+	-Wl,--section-alignment,0x1000 \
+	-Wl,--entry,_DriverEntry@8 \
+	-Wl,$(DRVNAME).exp \
+	-mdll -nostartfiles -nostdlib \
+	-o $(DRVNAME).sys \
+	$(DRVNAME).o \
+	-lntoskrnl
+	$(STRIP) $(DRVNAME).sys
+
+clean:
+	rm -f  *.sys *.base *.exp *.o *~
+

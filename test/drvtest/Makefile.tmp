@@ -1,0 +1,15 @@
+include ../driver-example/Makefile.inc
+
+DRV = drvtest
+
+.PHONY: all clean
+all: $(DRV).sys
+
+$(DRV).o: $(DRV).c
+	$(call BUILD_C_OBJECT,$<,$@)
+
+$(DRV).sys: $(DRV).o
+	$(call LINK_C_KERNEL_TARGET,$<,$@)
+
+clean:
+	rm -f *.o *.exe *.map
