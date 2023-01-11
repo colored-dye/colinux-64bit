@@ -62,9 +62,9 @@ $(DRVNAME).sys: $(DRVNAME).o
 		-Wl,/dynamicbase \
 		-Wl,--nxcompat \
 		-Wl,/DRIVER \
-		-Wl,/kernel \
+		-WL,/kernel \
 		-Wl,--subsystem,native \
-		-Wl,--image-base,0x10000 \
+		-Wl,--image-base,0x10000000 \
 		-Wl,--file-alignment,0x1000 \
 		-Wl,--section-alignment,0x1000 \
 		-Wl,--entry,_DriverEntry@8 \
@@ -74,7 +74,8 @@ $(DRVNAME).sys: $(DRVNAME).o
 		$(CFLAGS) \
 		$(DRVNAME).o \
 		$(KRNLIBS)
-	$(STRIP) --keep-file-symbols $(DRVNAME).sys
+#	$(STRIP) --keep-file-symbols $(DRVNAME).sys
+	../checksum/checksum $(DRVNAME).sys
 
 JUNK = *.base *.exp *.o *~ junk.tmp
 

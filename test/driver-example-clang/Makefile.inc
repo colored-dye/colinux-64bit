@@ -1,7 +1,7 @@
-PREFIX = $(abspath ../../mingw/i686)
+PREFIX = $(abspath ${HOME}/llvm-mingw)
 
 Q = $(PREFIX)/bin/i686-w64-mingw32-
-CC = gcc
+CC = $(Q)gcc
 
 CFLAGS := -Wall -Wextra -Wno-sign-compare -Wno-strict-aliasing \
         -fPIC -fvisibility=hidden \
@@ -12,6 +12,8 @@ CFLAGS := -Wall -Wextra -Wno-sign-compare -Wno-strict-aliasing \
 # CFLAGS += -g
 
 DRIVER_LDFLAGS := -shared \
+	-Wl,/driver \
+	-Wl,/kernel \
         -Wl,--subsystem,native \
         -Wl,--dynamicbase \
 	-Wl,--nxcompat \
@@ -24,12 +26,12 @@ DRIVER_LDFLAGS := -shared \
 DRIVER_LIBS := -lntoskrnl
 
 define BUILD_C_OBJECT
-	$(Q)$(CC) $(CFLAGS) -c $(1) -o $(2)
+	$(CC) $(CFLAGS) -c $(1) -o $(2)
 	@echo 'CC $(2)'
 endef
 
 define LINK_C_KERNEL_TARGET
-	$(Q)$(CC) \
+	$(CC) \
 		$(CFLAGS) \
 		$(DRIVER_LDFLAGS) \
 		-Wl,-Map='$(2).map' \
@@ -37,5 +39,7 @@ define LINK_C_KERNEL_TARGET
 		$(1) \
 		$(DRIVER_LIBS)
 	@echo 'LD $(2)'
+	../checksum/checksum $(2)
+	@echo 'checksum $(2)'
 endef
 

@@ -31,7 +31,7 @@ Old setup:
 - Windows 7 32-bit:
     "https://archive.org/download/win-7-pro-32-64-iso/32-bit/GSP1RMCPRXFRER_EN_DVD.ISO"
 
-    Product key: FJH38-9YYTR-3RHFDJ-KSFDH-PPTR5 (Credit to @Bill_Gates914 in the link above).
+    Activation: "https://github.com/massgravel/Microsoft-Activation-Scripts/releases". Follow the instructions.
 
     Windows has issued a security update demanding that drivers be signed with SHA-2 algorithm. But the Windows 7 shown above does not include this update patch. So VMware tools could not be installed. The fix(From: https://vmexplorer.com/2021/11/16/tips-on-installing-windows-7-x32-sp1-on-workstation-16/) is to install the patch inside the VM: https://www.catalog.update.microsoft.com/Search.aspx?q=4474419, and install VMware tools after.
 
