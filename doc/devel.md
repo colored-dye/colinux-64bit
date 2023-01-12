@@ -66,11 +66,11 @@ Possible combination: Visual Studio 2012 Ultimate + WDK 8.0 (Worked fine for `si
 
 ## Compilers
 
-da-x's setup: gcc 4.1.2, MinGW32, WIN32API.
+da-x's setup: gcc 4.1.2, MinGW32 3.1.4, WIN32API.
 
 My older setup: gcc 12, MinGW-w64.
 
-Newest setup: LLVM-MINGW. Problem: lld-link always gets zero checksum. I did a lot of experiments to confirm that, as has been noticed by @idowestler (https://medium.com/@idowestler/why-you-shouldnt-use-clang-for-developing-a-c-program-for-windows-d23d0a12222d).
+Newest setup: LLVM-MINGW. Problem: lld-link always produces zero checksum. I did a lot of experiments to confirm that, as has been noticed by @idowestler (https://medium.com/@idowestler/why-you-shouldnt-use-clang-for-developing-a-c-program-for-windows-d23d0a12222d).
 
 ## Debugging
 
@@ -82,7 +82,7 @@ WinObj: https://download.sysinternals.com/files/WinObj.zip
 
 https://blog.csdn.net/xiayuxuan91/article/details/47399551
 
-To enable kernel debugging: append "/debug /debugport=com1 /baudrate=115200" to C:\boot.ini. Then go to VirtualBox settings, and add a serial port with port mode "Host Pipe". Then create a second VM and connect through a serial port via the host pipe.
+To enable kernel debugging through serial port: append "/debug /debugport=com1 /baudrate=115200" to `C:\boot.ini` of the Windows XP test machine. Next, go to VirtualBox settings, and add a serial port with port mode "Host Pipe". Then create a second VM as the debugger and connect through a serial port via the host pipe.
 
 Debugger VM and debuggee VM setting on a Linux host: (Credit to: https://www.matteomalvica.com/blog/2018/11/16/windows-xp-kernel-debugging-on-vmware-fusion/)
 
@@ -120,5 +120,5 @@ First select "Kernel Debugging", then load symbol path and source path.
 
 To set break points, open a source file, and press F9 to set a break point at cursor line. Kernel debugging supports at most 32 breakpoints.
 
-Another idea: insert "int 3" into code to set hard-coded breakpoints. (Works in `dpp-example')
+Another idea: insert `asm("int3")` into code to set hard-coded breakpoints. (Works in `dpp-example')
 

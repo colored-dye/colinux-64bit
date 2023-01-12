@@ -6,7 +6,7 @@ import os
 from comake.settings import settings
 from comake import LOGGER
 
-settings.arch = os.getenv('COLINUX_ARCH')
+settings.arch = os.getenv('COLINUX_HOST_ARCH')
 if not settings.arch:
     settings.arch = 'i386'
     LOGGER.info( "Target architecture not specified, defaulting to %s" % (settings.arch, ))

@@ -6,8 +6,13 @@ USER_CFG := $(shell test -f bin/user-build.cfg \
 
 ifneq ($(USER_CFG),)
 
+export BUILD_DIR := $(shell . bin/build-common.sh --get-vars; \
+	echo $$BUILD_DIR)
+
+export COLINUX_HOST_ARCH := $(shell . $(USER_CFG); echo $$COLINUX_HOST_ARCH)
+
 # Detect target host OS (only if not as argument on make)
-HOSTOS := $(shell . $(USER_CFG); echo $$COLINUX_HOST_OS)
+COLINUX_HOST_OS := $(shell . $(USER_CFG); echo $$COLINUX_HOST_OS)
 
 # Target directories
 export COLINUX_TARGET_KERNEL_SOURCE := \
@@ -36,12 +41,12 @@ endif
 .PHONY: colinux kernel clean distclean help
 
 # Include host OS specific makefile
-ifneq ($(HOSTOS),)
-include Makefile.$(HOSTOS).mk
+ifneq ($(COLINUX_HOST_OS),)
+include Makefile.$(COLINUX_HOST_OS).mk
 
 # Compile daemons
 colinux:
-	@cd src && make colinux
+	@make -C src colinux
 
 kernel:
 	@cd bin && ./build-kernel.sh

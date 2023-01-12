@@ -21,7 +21,7 @@ ROOT_PATH="$HOME/mingw-w64"
 # MINGW_W64_BRANCH="v9.x"
 MINGW_W64_BRANCH="v9.0.0"
 # BINUTILS_BRANCH="binutils-2_39-branch"
-BINUTILS_BRANCH="binutils-2.34"
+BINUTILS_BRANCH="binutils-2.39"
 # GCC_BRANCH="releases/gcc-12"
 GCC_BRANCH="gcc-12.1.0"
 

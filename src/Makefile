@@ -3,13 +3,13 @@
 FORCE:
 
 colinux: FORCE
-        python ../bin/make.py colinux
+	python ../bin/make.py colinux
 
 installer:
-        python ../bin/make.py installer
+	python ../bin/make.py installer
 
 clean:
-        python ../bin/make.py clean
-        rm -f colinux/arch/current colinux/os/current
-        rm -f src/colinux/os/darwin/kernel/build
-        rm -f src/colinux/os/darwin/linuxheaders
+	python ../bin/make.py clean
+	rm -f colinux/arch/current colinux/os/current
+	rm -f src/colinux/os/darwin/kernel/build
+	rm -f src/colinux/os/darwin/linuxheaders

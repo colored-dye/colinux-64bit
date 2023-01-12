@@ -19,6 +19,7 @@ def main(args):
         format="%(asctime)s - %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
+    os.makedirs(os.getenv('BUILD_DIR'), exist_ok=True)
     file_handler = logging.FileHandler(os.path.join(os.getenv('BUILD_DIR'), "comake.err"), mode="a")
     file_handler.setLevel(logging.ERROR)
     file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"))
@@ -40,7 +41,7 @@ def main(args):
         from comake.target import create_target_tree, statistics
         from comake.target import TargetNotFoundError, BuildCancelError
         from comake.tools import TargetNotBuildError
-        LOGGER.info("Analyzing target tree...")
+        LOGGER.info("Analyzing target tree: `%s' ..." % filename)
         try:
             target_tree = create_target_tree(filename)
         except BuildCancelError:
