@@ -1,6 +1,6 @@
 name = checksum
 src = $(name).c
-target = $(name)
+target = $(name).out
 
 .PHONY: all clean
 all: $(target)

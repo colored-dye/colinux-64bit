@@ -75,7 +75,7 @@ $(DRVNAME).sys: $(DRVNAME).o
 		$(DRVNAME).o \
 		$(KRNLIBS)
 #	$(STRIP) --keep-file-symbols $(DRVNAME).sys
-	../checksum/checksum $(DRVNAME).sys
+	../checksum/checksum.out $(DRVNAME).sys
 
 JUNK = *.base *.exp *.o *~ junk.tmp
 
