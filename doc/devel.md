@@ -31,7 +31,7 @@ Old setup:
 - Windows 7 32-bit:
     "https://archive.org/download/win-7-pro-32-64-iso/32-bit/GSP1RMCPRXFRER_EN_DVD.ISO"
 
-    Activation: "https://github.com/massgravel/Microsoft-Activation-Scripts/releases". Follow the instructions.
+    Product key: FJH38-9YYTR-3RHFDJ-KSFDH-PPTR5 (Credit to @Bill_Gates914 in the link above).
 
     Windows has issued a security update demanding that drivers be signed with SHA-2 algorithm. But the Windows 7 shown above does not include this update patch. So VMware tools could not be installed. The fix(From: https://vmexplorer.com/2021/11/16/tips-on-installing-windows-7-x32-sp1-on-workstation-16/) is to install the patch inside the VM: https://www.catalog.update.microsoft.com/Search.aspx?q=4474419, and install VMware tools after.
 
@@ -63,6 +63,14 @@ Possible combination: Visual Studio 2012 Ultimate + WDK 8.0 (Worked fine for `si
 2. WDK Repository: https://networchestration.wordpress.com/2017/12/10/wdk-download/
 
 3. Visual Studio 2012 Ultimate & Product key: https://downloaddevtools.com/en/product/22/free-download-microsoft-visual-studio-ultimate-2012
+
+## Compilers
+
+da-x's setup: gcc 4.1.2, MinGW32, WIN32API.
+
+My older setup: gcc 12, MinGW-w64.
+
+Newest setup: LLVM-MINGW. Problem: lld-link always gets zero checksum. I did a lot of experiments to confirm that, as has been noticed by @idowestler (https://medium.com/@idowestler/why-you-shouldnt-use-clang-for-developing-a-c-program-for-windows-d23d0a12222d).
 
 ## Debugging
 
