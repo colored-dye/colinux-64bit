@@ -8,5 +8,4 @@
     -r $PREFIX \
     --disable-threads \
     -j $(nproc) \
-    --keep-artifacts \
-    --cached-sources
+    --keep-artifacts
