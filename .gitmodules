@@ -1,0 +1,3 @@
+[submodule "colinux-kernel"]
+	path = colinux-kernel
+	url = https://github.com/colored-dye/colinux-kernel
