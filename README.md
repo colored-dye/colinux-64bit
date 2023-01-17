@@ -4,13 +4,11 @@
 
     Finish and test build system.
 
-    Switch WDK-related build to `colored-dye/colinux-xmake' repo.
-
 1. About MinGW:
 
     The MinGW originally used (MinGW 3.1.4) can only be integrated with gcc-4.1.2, not gcc-4.4.x and above(not thoroughly tested). Switch to MinGW-w64, which would result in some changes not limited to driver-related structs and APIs.
 
-    Now (1/6/2023): No more MinGW. Use MSVC on Visual Studio for better debugging support.
+    Now (1/16/2023): Keep MinGW. Use clang with Windows SDK & WDK for better debugging support, but in another repository (colinux-xmake).
 
 2. About Linux kernel:
 
@@ -21,6 +19,10 @@
     32-bit drivers can only be loaded by 32-bit systems. Test on 32-bit Windows XP first for functionality correctness.
 
 4. Building: Build coLinux AFTER building kernel.
+
+5. Other build system with better debugging support:
+
+    Switch Windows WDK-related demo to [colored-dye/colinux-xmake](https://github.com/colored-dye/colinux-xmake) repo, with Visual Studio SDK & WDK toolchain and xmake build tool.
 
 ## Dependencies
 
