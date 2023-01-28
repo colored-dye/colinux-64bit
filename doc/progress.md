@@ -1,10 +1,16 @@
+[2023/01/19] Build system: Python + Makefile + Bash script does not work.
+
+From 0.7.1 version source on, the developers used Python and Makefile for build system, and bash scripts for environment variables. A problem is that Makefile cannot "source" variables from bash files. The right way is to source `build-common.sh` from shell before calling `make` from the same shell.
+
+====
+
 [2023/01/11] Clang driver "Error 193: Not a valid Win32 application" problem solved.
 
 It is known that Windows checks the checksum of any code that gets loaded into the kernel. So when our clang compiler fails to write the correct checksum into the DLL driver, Windows would report an error and refuse to load the driver.
 
 The simple fix is to use `strip` program. But I want a better fix. So I choose to write a simple program to modify the driver's checksum. After correcting the checksum, the driver could be successfully loaded.
 
-Wrote a simple program to check, calculate and correct checksums for PE32 files. See `test/checksum', called by `drvtest-clang'.
+Wrote a simple program to check, calculate and correct checksums for PE32 files. See `test/checksum`, called by `drvtest-clang`.
 
 Next: Finish and test build system.
 
