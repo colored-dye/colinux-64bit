@@ -2,7 +2,7 @@
 
 ./mingw-w64/mingw-w64-build.sh \
     i686 \
-    --gcc-branch gcc-$GCC_VERSION \
+    --gcc-branch $GCC \
     --mingw-w64-branch v$MINGW_VERSION \
     --linked-runtime msvcrt \
     -r $PREFIX \

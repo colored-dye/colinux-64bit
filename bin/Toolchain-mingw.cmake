@@ -1,0 +1,15 @@
+set(CMAKE_SYSTEM_NAME Windows)
+set(MINGW_ROOT /home/colored-dye/Code/colinux-64bit/mingw/i686)
+set(CMAKE_C_COMPILER ${MINGW_ROOT}/bin/i686-w64-mingw32-gcc)
+set(CMAKE_CXX_COMPILER ${MINGW_ROOT}/bin/i686-w64-mingw32-g++)
+set(CMAKE_RC_COMPILER ${MINGW_ROOT}/bin/i686-w64-mingw32-windres)
+# set(CMAKE_LINKER ${MINGW_ROOT}/bin/i686-w64-mingw32-ld)
+
+set(CMAKE_FIND_ROOT_PATH ${MINGW_ROOT}/i686-w64-mingw32)
+
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+set(CMAKE_EXE_LINKER_FLAGS_INIT "-static-libgcc -static-libstdc++")
+
